@@ -1,0 +1,328 @@
+\input{common/0pres}
+\input{common/4archcompsys}
+
+
+% \setbeamertemplate{itemize/enumerate body begin}{\footnotesize}
+% \setbeamertemplate{itemize/enumerate subbody begin}{\footnotesize}
+% \setbeamerfont{frametitle}{size=\linespread{1.0}\large}
+
+% \addtobeamertemplate{footnote}{}{\vspace{-30ex}}
+
+\title{Прерывания. Обращение к~операционной системе}
+\graphicspath{{fig/}{fig/fpu/}}
+
+
+% \lstset{language={[x86masm]Assembler}}
+% \lstset{commentline={\/}}
+\lstset{xleftmargin=0mm}
+
+% \lstset{language=C++, alsolanguage=[x86masm]Assembler}
+% \lstset{language=C++, alsolanguage=[Motorola68k]Assembler}
+
+\makeatletter
+\newcommand{\setlistspacing}[2]{\def\@ld{#1}\expandafter\def\csname
+@list\romannumeral\@ld \endcsname{\leftmargin\csname
+leftmargin\romannumeral\@ld \endcsname
+              \topsep    #2
+              \parsep    0\p@   \@plus\p@
+              \itemsep   #2}}
+\makeatother
+
+
+\begin{document}
+\maketitle
+\section{Прерывания}
+
+\subsection{Работа с~внешними устройствами}
+\begin{frame}[fragile]{\insertsubsection}
+Два способа:
+
+\begin{enumerate}
+\item    Циклический опрос
+\item    Использование прерываний
+\end{enumerate}
+
+\includegraphics[width=\linewidth,height=0.7\slideheigth,keepaspectratio,valign=t]{irq2}
+\centering
+
+
+\end{frame}
+  
+    
+
+\subsection{Прерывание}
+\begin{frame}[fragile]{\insertsubsection}
+Прерывание "--- механизм, который позволяет изменить нормальную последовательность команд, выполняемых процессором
+{
+% \vspace{-\parskip}
+\includegraphics[width=0.5\linewidth,height=0.25\slideheigth,keepaspectratio,valign=t]{irq_mem}
+% \centering
+\vspace{-\parskip}
+
+}
+\begin{enumerate}
+
+\item аппаратные "--- запросы от периферийных устройств %на обработку данных 
+(маскируемые и~немаскируемые% "--- сбои
+);
+\item программные (\lstinline!int!);
+\item исключения (внутренние события).
+\end{enumerate}
+
+\end{frame}
+\subsection{Выполнение прерывания}
+\begin{frame}{\insertsubsection}
+\footnotesize
+{
+\includegraphics[width=\linewidth,height=\slideheigth,keepaspectratio,valign=t]{irq_uml}\centering
+
+}
+
+\end{frame}
+\section{Системные вызовы}
+
+\subsection{Системный вызов}
+\begin{frame}[fragile]{\insertsubsection}
+Системный вызов (system call) "--- обращение прикладной программы к ядру операционной системы для выполнения какой-либо операции.
+
+Способы:
+\begin{itemize}
+
+\item программное прерывание (\lstinline!int!/\lstinline!iret!);
+\item syscall/sysret (AMD, 64-битный режим Intel);
+\item sysenter/sysexit (Intel).
+
+\end{itemize}
+\end{frame}
+
+
+\subsection{Системные вызовы различных ОС}
+\begin{frame}[fragile]{\insertsubsection}
+\begin{itemize}
+
+\item Linux (x86) "--- int 0x80, параметры в~регистрах;
+
+\item BSD (x86) "--- int 0x80, параметры в~стеке;
+
+\item MS DOS "--- int 0x21, int 0x20 (завершение программы), int 0x29 (печать символа), \mbox{int 0x2E} (выполнение команды);
+
+\item Windows NT/2000/XP/2003/Vista  "--- int 0x2E;
+
+\item Windows XP  "--- sysenter/sysexit (syscall  в~64-битной).
+
+\end{itemize}
+\end{frame}
+
+
+\section{Системные вызовы Linux}
+
+\subsection{Параметры}
+\begin{frame}[fragile]{\insertsection%. \insertsubsection
+}
+int 0x80, \lstinline!%eax! "--- номер функции
+
+1 "--- 
+exit \hfill
+\lstinline!%ebx! "--- код завершения
+
+2 "--- fork
+
+3 "--- read
+
+4 "--- write
+
+...
+
+\end{frame}
+
+\subsection{%Минимальная программа (
+stdlib и~системные вызовы%)
+}
+\begin{frame}[fragile]{\insertsubsection}
+% \def\normalsize{\footnotesize}
+\lstset{basicstyle=\ttfamily\footnotesize}
+\footnotesize
+\setlength{\parskip}{0.25\parskip}
+
+Минимальная программа с~stdlib (4704 байт)
+% [caption=min.S]
+\begin{lstlisting}
+.globl main // точка входа (stdlib)
+main:
+     xorl %eax,%eax // EAX ^= EAX, то есть EAX = 0
+     ret // return EAX
+\end{lstlisting}
+% Сборка (полученный файл включает stdlib и~занимает %4.6 Кб "--- 
+% 4704 байт)
+% \begin{lstlisting}[language=Bash]
+% $ gcc -o min min.S
+% \end{lstlisting}
+% Сборка с~stdlib: 
+\lstinline!gcc -o min min.S!
+
+% Сборка без stdlib (полученный файл занимает 600 байт)
+% \begin{lstlisting}[language=Bash]
+% $ gcc -o nsmin  nsmin.S  -nostdlib
+% \end{lstlisting}
+Минимальная программа без~stdlib (600 байт)
+\begin{lstlisting}
+.globl _start
+_start: // точка входа 
+    movl $1, %eax // системный вызов № 1 — sys_exit
+    xorl %ebx, %ebx // выход с кодом 0
+    int $0x80 // вызов ядра
+\end{lstlisting}
+% Полученный файл не  включает stdlib и~занимает 600 байт)
+% Сборка без~stdlib: 
+\lstinline!gcc -o min min.S -nostdlib!
+
+% Эквивалент на С++
+% \begin{lstlisting}
+% int main(int argc, char* argv[]){
+%     return 0;
+% }
+% \end{lstlisting}
+
+
+\end{frame}
+
+
+\subsection{Вывод}
+
+\begin{frame}[fragile]{\insertsubsection}
+\lstset{basicstyle=\ttfamily\footnotesize}
+\lstset{basicstyle=\ttfamily\scriptsize}
+\lstset{basicstyle=\ttfamily\tiny}
+\setlength{\parskip}{0.\parskip}
+
+\begin{lstlisting}
+.data
+    msg:
+    .string "Hello, world!\n"
+.global main // точка входа в программу
+main:
+    pushl $msg	// Адрес строки в стек
+    call printf
+    popl %eax	// Вычищаем параметр из стека
+    movl $0,%eax
+    ret
+\end{lstlisting}
+
+\begin{lstlisting}
+.data
+    msg:
+    .ascii "Hello, world!\n"
+    len = . - msg // символу len присваивается длина строки
+.global _start // точка входа в программу
+_start:
+    movl $4, %eax // системный вызов № 4 — sys_write
+    movl $1, %ebx // поток № 1 — stdout
+    movl $msg, %ecx // указатель на выводимую строку
+    movl $len, %edx // длина строки
+    int $0x80 // вызов ядра
+    movl $1, %eax // системный вызов № 1 — sys_exit
+    xorl %ebx, %ebx // выход с кодом 0
+    int $0x80 // вызов ядра
+\end{lstlisting}
+
+\end{frame}
+
+
+
+\section{}
+\begin{frame}{Вопросы}
+\begin{enumerate}
+
+\item Что такое прерывание?
+\item Что такое системный вызов?
+\item Какие вы знаете системные вызовы Linux?
+
+\item Как отключить при сборке stdlib?
+
+\end{enumerate}
+
+\end{frame}  
+
+\section{Итоги семестра}
+
+\subsection{Контрольные сроки}
+\begin{frame}{\insertsubsection}
+
+21--31 декабря "--- консультации
+
+9, 10 и 11 января "--- зачётная неделя
+
+12--31 января "--- сессия
+
+1--14 февраля "--- каникулы
+
+
+\end{frame}  
+
+\subsection{Регламент}
+\begin{frame}{Регламент{}}
+\small
+\setlength{\parskip}{0\parskip}
+
+Баллы (максимум):
+% \begin{adjustwidth}{-1.5em}{-1.5em}\vspace{-1\baselineskip}
+$$
+\begin{array}{c}
+7\cdot9(\text{л/р})+2\cdot5(\text{к/р})+4\cdot4(\text{а/п})+
+\\
++11(\text{бонус/зачёт}) = 100
+\end{array}
+$$
+Допустимый минимум:
+$$
+\begin{array}{c}
+7\cdot5(\text{л/р})+2\cdot3(\text{к/р})+4\cdot1(\text{а/п})+
+\\
++5(\text{бонус/зачёт}) = 50
+\end{array}
+$$
+% \end{adjustwidth}
+% \bigskip
+
+% Оценки%\vspace{-0.5\baselineskip}
+Дифзачёт (оценка):\\\hfill
+% \begin{description}[123]
+% \item[$5$] ~~ $86-100$
+% \item[$4$] ~~ $70-85$
+% \item[$3$] ~~ $50-69$
+% \item[$2$] ~~ $0-49$
+% \end{description}
+\begin{tabular}{ll}
+\termin{$5$} ~~ $86-100$\\
+\termin{$4$} ~~ $70-85$\\
+\termin{$3$} ~~ $50-69$\\
+\termin{$2$} ~~ $0-49$\\
+\end{tabular}
+\hfill\strut
+
+\end{frame}
+
+
+\subsection{Заполнение зачётной книжки}
+\begin{frame}{\insertsubsection}
+% \vfill
+ФИО владельца
+
+\vfill
+
+Архитектура вычислительных систем (АрхВС)
+
+Часов/ЗЕТ "--- 144/4
+
+Дата "--- 9.01.2016--11.01.2016
+
+Кононова А.\,И.
+
+\vfill
+
+\terminblue
+Оценку и~подпись ставит преподаватель
+\end{frame}  
+
+\makethanks
+\end{document}

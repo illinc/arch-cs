@@ -1,0 +1,836 @@
+\input{common/0pres}
+\input{common/4archcompsys}
+
+
+% \setbeamertemplate{itemize/enumerate body begin}{\footnotesize}
+% \setbeamertemplate{itemize/enumerate subbody begin}{\footnotesize}
+% \setbeamerfont{frametitle}{size=\linespread{1.0}\large}
+
+% \addtobeamertemplate{footnote}{}{\vspace{-30ex}}
+
+\title{Передача управления (ветвления и~циклы)}
+\graphicspath{{fig/}{fig/fpu/}}
+
+
+% \lstset{language={[x86masm]Assembler}}
+% \lstset{commentline={\/}}
+\lstset{xleftmargin=0mm}
+% \lstset{language={[Motorola68k]Assembler}}
+% alsolanguage=[
+% h
+% dialect
+% i
+% ]
+% h
+% language
+\lstset{language=C++, alsolanguage=[x86masm]Assembler}
+% \lstset{language=C++, alsolanguage=[Motorola68k]Assembler}
+
+\makeatletter
+\newcommand{\setlistspacing}[2]{\def\@ld{#1}\expandafter\def\csname
+@list\romannumeral\@ld \endcsname{\leftmargin\csname
+leftmargin\romannumeral\@ld \endcsname
+              \topsep    #2
+              \parsep    0\p@   \@plus\p@
+              \itemsep   #2}}
+\makeatother
+
+
+\begin{document}
+\maketitle
+
+% \section{Оргвопросы}
+% \subsection{Компетенции}
+
+\begin{frame}{Цель курса}
+
+% Общепрофессиональные:
+Формирование подкомпетенции
+
+\termin{ОПК-2.2}	Знание и~понимание архитектуры и~принципов построения вычислительных систем
+
+\terminblue 
+Участвует в~формировании общепрофессиональной компетенции
+
+\termin{ОПК-2}	Владение архитектурой ЭВМ и~систем
+
+\end{frame}
+
+% \begin{frame}{Компетенция}
+% \footnotesize
+% \termin{Компетенция} "--- компонент качества человека, определяющий его способность выполнять определенную группу действий в~сфере того или иного рода деятельности. Это некий уровень требований к~человеку, соответствующий его роли в~обществе. 
+% 
+% \setlistspacing{1}{0ex}
+% 
+% Особенность компетенции как результата обучения состоит в~том, что в~сравнении с~другими результатами образования она:
+% \vspace{-1em}
+% \begin{itemize}
+% \item является интегрированным результатом, 
+% \item позволяет решать целый класс нестандартных задач, 
+% \item существует в~форме деятельности, 
+% \item переносима (связана с~целым классом предметов воздействия), совершенствуется по пути интеграции с~другими компетенциями, 
+% \item проявляется сознательно (в~отличие от навыка).
+% \end{itemize}
+% \end{frame}
+
+
+\section{Флаги}
+
+\subsection{Команды, изменяющие eflags}
+\begin{frame}{\insertsubsection}
+\begin{itemize}
+\item арифметические команды;
+\item \lstinline!cmp! (\lstinline!sub!, не изменяющий приёмник);
+\item \lstinline!test! (\lstinline!and!, не изменяющий приёмник);
+\item \lstinline!fcom! (сравнение вещественных чисел).
+\end{itemize}
+\end{frame}
+
+\subsection{Команды, использующие eflags}
+\begin{frame}{\insertsubsection}
+\begin{itemize}
+\item команды условного перехода \lstinline!jXXX метка!;
+\item команды условной пересылки \lstinline!cmovXXX src, dst!;
+\item команды условной установки байта \lstinline!setXXX dst!;
+\item команды сохранения/восстановления eflags \lstinline!pushf/popf!;
+
+\end{itemize}
+\end{frame}
+
+\subsection{Популярные флаги}
+\begin{frame}{\insertsubsection}
+\begin{description}[W]
+\item[CF] перенос/заём в/из старшего (несуществующего) разряда (беззнаковое переполнение);
+
+\item[ZF] результат операции "--- нуль;
+
+\item[SF] значение старшего (знакового) бита результата;
+
+\item[OF] потеря старшего бита результата (знаковое переполнение).
+
+
+\end{description}
+\end{frame}
+
+\section{Команды передачи управления}
+
+\subsection{Команды передачи управления}
+
+
+\newcommand\subtable[1]{{{
+\begin{tabularx}{1\linewidth}{@{}L@{}L@{}}#1\end{tabularx}
+}}}
+
+\begin{frame}{\insertsubsection}
+\begin{adjustwidth}{-2em}{-2em}
+
+\def\normalsize{\footnotesize}
+\def\theadfont{\scriptsize\bfseries}
+\normalsize
+
+
+\begin{tabularx}{1\linewidth}{|l|@{}c@{}%|L
+|L|}
+% {|K{6em}|X|H|}
+\hline
+\thead{Команда} 
+&
+% \thead{Условие (флаги)}  
+$
+\begin{array}{c}
+\text{\textbf{\theadfont Условие}}\\
+\text{\textbf{\theadfont (флаги)}}\\
+\end{array}
+$
+& %\theadfont Условие (sub src, dst или \mbox{cmp  src, dst})
+% \thead{Условие (sub src, dst или \mbox{cmp  src, dst})}
+% \thead{Условие (арифметика)}
+% &
+\theadfont Условие (sub src, dst или \mbox{cmp  src, dst})
+\\\hline
+jmp
+&	
+\multicolumn{2}{c|}{{Безусловный переход ($goto$)}}
+\\\hline
+je/jz
+&	
+$ZF = 1$
+% &
+% % $dst - src = 0$ 
+% Результат равен нулю
+% % 
+% % \jname{Jump if zero}
+&
+$dst = src$	
+% 
+% \jname{Jump if equal}
+\\\hline
+jne/jnz
+&	
+$ZF = 0$
+% &
+% % $dst - src \neq 0$ (то есть $dst \neq src$)
+% Результат не равен нулю
+% % 
+% % \jname{Jump if not zero}
+&
+$dst \neq src$
+% 
+% \jname{Jump if not equal}
+\\\hline
+jc/jb/jnae
+&	
+$CF = 1$
+% &
+% Есть беззнаковое переполнение
+% 
+% % Результат не умещается в~$dst$ (полные $2^n$ бит) 
+% 
+% Для сдвигов на один бит "--- вытесненный бит был единицей
+% % 
+% % \jname{Jump if carry }
+&
+$dst < src$ как беззнаковое 
+% % "--- $dst$ ниже (below) $src$
+% % 
+% % (не выше и~не равно)
+% 
+% \jname{Jump if below}
+% 
+% \jname{Jump if not above or equal }
+\\\hline
+jna/jbe 	
+&
+$
+\left[
+\begin{array}{l}
+CF = 1\\
+ZF = 1
+\end{array}
+\right.
+$
+% &
+% Есть беззнаковое переполнение
+% или~результат равен нулю
+&
+% не выше/ниже или равно 	
+$dst \leqslant src$ как беззнаковое 
+% % "--- $dst$ не выше $src$
+% % 
+% % (ниже или равно)
+% 
+% \jname{Jump if below or equal}
+% 
+% \jname{Jump if not above }
+\\\hline
+jnc/jnb/jae
+&	
+$CF = 0$
+% &
+% Нет беззнакового переполнения
+% 
+% % Результат умещается в~$dst$ (полные $2^n$ бит)  
+% 
+% Для сдвигов на один бит "--- вытесненный бит был нулём
+% % 
+% % \jname{Jump if not carry }
+&
+$dst \geqslant src$ как беззнаковое 
+% % "--- $dst$ не ниже $src$ (выше или равно, above or equal)
+% 
+% \jname{Jump if not below}
+% 
+% \jname{Jump if above or equal }
+\\\hline
+ja/jnbe
+&
+$
+\left\{
+\begin{array}{l}
+CF = 0\\
+ZF = 0
+\end{array}
+\right.
+$
+% &
+% Нет беззнакового переполнения
+% и~результат не равен нулю
+&
+$dst > src$ как беззнаковое 
+% % "--- $dst$ выше (above) $src$ 
+% 
+% % (не ниже и не равно)
+% 
+% \jname{Jump if below or equal}
+% 
+% \jname{Jump if not above }
+\\\hline
+% 
+% js &
+% $SF = 1$
+% &
+% Старший  бит результата (знаковый для знаковых чисел)
+%  равен 1 
+%  
+% \jname{Jump if sign }
+% &
+% \\\hline
+% 
+% jns &
+% $SF = 0$
+% &
+% Старший  бит результата (знаковый для знаковых чисел)
+%  равен 0 
+%  
+% \jname{Jump if not sign }
+% &
+% \\\hline
+% 
+% jo &
+% $OF = 1$
+% &
+% Есть знаковое переполнение
+% 
+% \jname{Jump if overflow }
+% &
+% \\\hline
+% 
+% jno &
+% $OF = 0$
+% &
+% Нет знакового переполнения
+% 
+% \jname{Jump if not overflow }
+% &
+% \\\hline
+
+jl/jnge
+&
+$SF\neq OF$
+% &
+&
+$dst < src$ как знаковое
+% % (не~больше и не~равно)
+% % 
+% % $dst - src < 0$ как знаковое %и~при этом помещается в~младшие $2^n - 1$ бит
+% 
+% \jname{Jump if less}
+% 
+% \jname{Jump if not greater or equal}
+\\\hline
+
+jle/jng&
+$
+\left[
+\begin{array}{l}
+SF\neq OF\\
+ZF = 1
+\end{array}
+\right.
+$&%&
+$dst \leqslant src$ как знаковое
+% % (меньше или равно/не больше)
+% % 
+% % $dst - src < 0$ как знаковое %и~при этом помещается в~младшие $2^n - 1$ бит
+% 
+% \jname{Jump if less or equal}
+% 
+% \jname{Jump if not greater}
+\\\hline
+
+jnl/jge 
+&
+$SF = OF$
+&%&
+$dst \geqslant src$ как знаковое
+% 
+% \jname{Jump if greater or equal}
+% 
+% \jname{Jump if not less }
+\\\hline
+jnle/jg
+&
+$
+\left\{
+\begin{array}{l}
+SF= OF\\
+ZF = 0
+\end{array}
+\right.
+$&%&
+$dst > src$ как знаковое
+% 
+% \jname{Jump if greater}
+% 
+% \jname{Jump if not less or equal }
+\\\hline
+
+
+\end{tabularx}
+\end{adjustwidth}
+\end{frame}
+
+\subsection{Команды условной пересылки}
+\begin{frame}[fragile]{\insertsubsection}
+cmovXXX src, dst
+
+$x = \left\{\begin{array}{ll}
+x,& x \geqslant 0 \\
+0, & x < 0 \\
+\end{array}\right.$
+
+\begin{lstlisting}[style=lstsmall]
+int x = -6;
+asm
+(
+  "cmpl $0, %[X]\n"
+  "cmovngel %[Zero], %[X]\n"
+  : [X]"=r"(x)
+  :"[X]" (x),[Zero]"r"(0)
+  : "cc"
+);
+\end{lstlisting}
+\end{frame}
+
+\subsection{Установка байта по условию}
+\begin{frame}[fragile]{\insertsubsection}
+setXXX dst
+
+$dst = 1$, если условие верно, 
+
+$dst = 0$ иначе.
+\end{frame}
+
+\section{Программирование нелинейных алгоритмов}
+
+\subsection{Условие с~операторами в~одной ветви}
+\begin{frame}[fragile]{\insertsubsection}
+\begin{adjustwidth}{-1em}{-2em}
+
+% \resizebox{\linewidth}{!}
+{
+\footnotesize
+% \lstset{basicstyle=\ttfamily\footnotesize\singlespacing}
+\def\normalsize{\footnotesize}
+\lstset{xleftmargin=0em}
+
+\begin{tikzpicture}[
+start chain=alg_start going below,
+every on chain/.style=join,every join/.style=blockline,
+node distance=3ex and 2em
+]
+
+
+\node[terminator,on chain=alg_start] (start) {Начало};
+\node[decision,on chain=alg_start] (is_positive) {$x\geqslant0$};
+
+\coordinate[right=  of is_positive] (is_positive_yes);
+\path[blockline] (is_positive) -- node[auto] {да} (is_positive_yes);
+
+\node[block,on chain=alg_start, join={node[right]{нет}}] (is_positive_no_op) {$x = 0$};
+\coordinate[below = of is_positive_no_op] (to_end);
+
+\path[blockarrow] (is_positive_yes) |- (to_end);
+\node[terminator, on chain=alg_start, below = of to_end, join/.style=blockarrow] (end) {Конец}; % Удаляет линию вообще
+\path[blockarrow] (is_positive_no_op) -- (end);
+
+
+\coordinate[right=  of is_positive_yes] (asm_coord);
+
+
+\node[left = 0em of current bounding box]
+{
+$x = \left\{\begin{array}{ll}
+x,& x \geqslant 0 \\
+0, & x < 0 \\
+\end{array}\right.$
+};
+
+\node[asm] at (start-|asm_coord) {
+\begin{lstlisting}
+int x = -6;
+asm
+(
+\end{lstlisting}
+};
+
+\node[asm] at (is_positive-|asm_coord) {
+\begin{lstlisting}
+  "cmpl $0, %[X]\n"
+  "jge end_check\n"
+\end{lstlisting}
+};
+\node[asm] at (is_positive_no_op-|asm_coord) {
+\begin{lstlisting}
+  "movl $0, %[X]\n"
+\end{lstlisting}
+};
+
+\node[asm] at (to_end-|asm_coord) {
+\begin{lstlisting}
+"end_check:\n"
+\end{lstlisting}
+};
+
+\node[asm] at (end.south-|asm_coord) (asm-end) {
+\begin{lstlisting}
+  : [X]"=rm"(x)
+  :"[X]" (x)   
+  : "cc"
+);
+\end{lstlisting}
+};
+
+% % \coordinate[below = of current bounding box] (lettersline);
+% % \node at (end|-lettersline) {а)};
+% % \node at (asm-end|-lettersline) {б)};
+
+\end{tikzpicture}
+}
+\end{adjustwidth}
+\end{frame}
+
+
+
+
+
+
+
+
+\subsection{Условие с~операторами в~двух ветвях}
+
+
+\begin{frame}[fragile]{\insertsubsection}
+\begin{adjustwidth}{-1.5em}{-2em}
+
+{
+\scriptsize
+% \lstset{basicstyle=\ttfamily\footnotesize\singlespacing}
+\def\normalsize{\scriptsize}
+\lstset{xleftmargin=0em}
+
+\tikzstyle{block}	= [text width=4em,text badly centered, minimum height=3ex, draw=black]
+
+\begin{tikzpicture}[
+start chain=alg_start going below,
+start chain=if_yes going below,
+start chain=if_no going below,
+start chain=alg_end going below,
+start chain=squeeze_start going below,
+start chain=squeeze_yes going below,
+start chain=squeeze_end going below,
+every on chain/.style=join,every join/.style=blockline,
+node distance=3ex and 2em
+]
+
+
+\node[terminator,on chain=alg_start] (start) {Начало};
+\node[decision,on chain=alg_start] (is_positive) {$x\geqslant0$};
+
+\tikzset{every join/.style=blockarrow}
+
+\coordinate[right= of is_positive, on chain=if_yes] (is_positive_yes);
+\path[blockline] (is_positive) -- node[auto] {да} (is_positive_yes);
+\node[block,on chain=if_yes] (yes_op) {$y = 1$};
+
+\coordinate[left=  of is_positive, on chain=if_no] (is_positive_no);
+\path[blockline] (is_positive) -- node[auto] {нет} (is_positive_no);
+\node[block,on chain=if_no] (no_op) {$y = 0$};
+
+\coordinate[below = of yes_op] (to_end_y);
+
+\coordinate[on chain=alg_end, join/.style={}] (to_end) at (to_end_y-|start);
+\path[blockline] (yes_op) |- (to_end);
+\path[blockline] (no_op) |- (to_end);
+
+\node[terminator, on chain=alg_end, below = of to_end] (end) {Конец};
+% \path[blockarrow] (to_end) -- (end);
+
+\node[below =  of current bounding box]
+{
+$
+y(x) = \left\{\begin{array}{ll}
+1, & x \geqslant 0 \\
+0, & x < 0 \\
+\end{array}\right.
+$
+};
+
+
+\tikzset{every join/.style=blockline}
+
+
+\coordinate[right= 6em of yes_op] (squeeze_coord);
+
+\node[terminator,on chain=squeeze_start] (start2) at (start-|squeeze_coord) {Начало};
+
+\node[decision,on chain=squeeze_start] (is_positive2) {$x\geqslant0$};
+
+\node[block,   on chain=squeeze_start, join={node[right]{нет}}] (no_op2) {$y = 0$};
+\coordinate[on chain=squeeze_start] (to_end_no2);
+
+
+\coordinate[right= of is_positive2] (is_positive_yes2);
+\path[blockline] (is_positive2) -- node[auto] {да} (is_positive_yes2);
+\tikzset{every join/.style=nodraw}
+\coordinate[on chain=squeeze_start] (non-used);
+
+\coordinate[on chain=squeeze_start, join/.style={}] (to_yes2);
+\node[block,   on chain=squeeze_start, join/.style={}] (yes_op2) {$y = 1$};
+\tikzset{every join/.style=blockline}
+
+\coordinate[on chain=squeeze_start] (to_end_yes2);
+% \coordinate[on chain=squeeze_start] (non-used2);
+
+\node[terminator, on chain=squeeze_start, join/.style={}] (end2) {Конец};
+
+\path[blockarrow] (is_positive_yes2) |- (to_yes2) -- (yes_op2);
+
+\coordinate[left=of yes_op2] (from_no_to_end2);
+\path[blockline] (to_end_no2) -| (from_no_to_end2);
+\path[blockarrow] (from_no_to_end2) |- (to_end_yes2);
+\path[blockarrow] (to_end_yes2) -- (end2);
+
+
+
+\coordinate[right=  of is_positive_yes2] (asm_coord);
+
+\node[asm] at (start2-|asm_coord) {
+\begin{lstlisting}
+int x = -6, y;
+asm
+(
+\end{lstlisting}
+};
+
+\node[asm] at (is_positive2-|asm_coord) {
+\begin{lstlisting}
+  "cmpl $0, %[X]\n"
+  "jge setting_1\n"
+\end{lstlisting}
+};
+
+\node[asm] at (to_yes2-|asm_coord) {
+\begin{lstlisting}
+"setting_1:\n"
+\end{lstlisting}
+};
+
+\node[asm] at (yes_op2-|asm_coord) {
+\begin{lstlisting}
+  "movl $1, %[Y]\n"
+\end{lstlisting}
+};
+
+\node[asm] at (no_op2-|asm_coord) {
+\begin{lstlisting}
+  "movl $0, %[Y]\n"
+\end{lstlisting}
+};
+
+\node[asm] at (to_end_no2-|asm_coord) {
+\begin{lstlisting}
+  "jmp end_check\n"
+\end{lstlisting}
+};
+
+\node[asm] at (to_end_yes2-|asm_coord) {
+\begin{lstlisting}
+"end_check:\n"
+\end{lstlisting}
+};
+
+\node[asm] at (end2.south-|asm_coord) (asm-end) {
+\begin{lstlisting}
+  :[Y]"=rm"(y)
+  :[X]"rm" (x)  
+  : "cc"
+);
+\end{lstlisting}
+};
+
+% \coordinate[below = of current bounding box] (lettersline);
+% \node at (end|-lettersline) {а)};
+% \node at (end2|-lettersline) {б)};
+% \node at (asm-end|-lettersline) {в)};
+
+
+\end{tikzpicture}
+}
+
+\end{adjustwidth}
+\end{frame}
+
+
+
+
+
+
+
+
+
+
+\subsection{Цикл (сумма двоичных цифр  $x$)}
+
+
+\begin{frame}[fragile]{\insertsubsection}
+\begin{adjustwidth}{-1em}{-2em}
+\vspace*{-\baselineskip}
+{
+\scriptsize
+\def\normalsize{\scriptsize}
+\lstset{xleftmargin=0em}
+
+\tikzstyle{asm}	= [text width=16em,text badly ragged, anchor=west]
+\tikzstyle{block}	= [text width=10em,text badly centered, minimum height=3ex, draw=black]
+\tikzstyle{decision}	= [text width=4em,text badly centered, draw=black, diamond,  aspect=3, inner sep=0pt]
+
+
+\begin{tikzpicture}[
+start chain=alg_start going below,
+start chain=if_yes going below,
+start chain=if_no going below,
+start chain=alg_end going below,
+start chain=squeeze_start going below,
+start chain=squeeze_yes going below,
+start chain=squeeze_end going below,
+every on chain/.style=join,every join/.style=blockline,
+node distance=2ex and 3em
+]
+
+
+\node[terminator,on chain=alg_start] (start) {Начало};
+\node[block,on chain=alg_start] (init) {$count = 0$};
+
+\coordinate[on chain=alg_start] (to_shift);
+\tikzset{every join/.style=blockarrow}
+\node[decision,on chain=alg_start] (is_zero) {$x=0$};
+\tikzset{every join/.style=blockline}
+\node[block,on chain=alg_start] (shift) {
+$CF = x \& 1$,
+$x = (x>>1)$
+};
+
+\node[decision,on chain=alg_start, join={node[right]{нет}}] (is_last_bit) {$CF=1$};
+\node[block,on chain=alg_start, join={node[right]{да}}] (inc) {$count = count+1$};
+\tikzset{every join/.style=blockarrow}
+\coordinate[on chain=alg_start] (to_next_iter);
+\coordinate[left = of current bounding box] (to_next_iter_middle);
+\path[blockarrow] (to_next_iter) -| (to_next_iter_middle) |- (to_shift);
+
+\tikzset{every join/.style=nodraw}
+\coordinate[on chain=alg_start] (non-used);
+\coordinate[on chain=alg_start] (to_end);
+
+\node[terminator, on chain=alg_start] (end) {Конец};
+
+
+\coordinate[right= of is_last_bit] (is_no_last_bit);
+\path[blockline] (is_last_bit) -- node[auto] {нет} (is_no_last_bit) |- (to_next_iter);
+
+
+
+\coordinate[right= of is_zero-|is_no_last_bit] (is_zero_yes);
+\path[blockarrow] (is_zero) -- node[auto] {да} (is_zero_yes) |- (to_end) -- (end);
+
+
+
+\coordinate[right=  of current bounding box] (asm_coord);
+
+\node[asm] at (start-|asm_coord) {
+\begin{lstlisting}
+int x = 7, count;
+asm
+(
+\end{lstlisting}
+};
+
+\node[asm] at (to_shift-|asm_coord) {
+\begin{lstlisting}
+"begin_iteration:\n"
+\end{lstlisting}
+};
+\node[asm] at (init-|asm_coord) {
+\begin{lstlisting}
+  "xorl %[Count], %[Count]\n"
+\end{lstlisting}
+};
+\node[asm] at (shift-|asm_coord) {
+\begin{lstlisting}
+  "shll $1, %[X]\n"
+\end{lstlisting}
+};
+\node[asm] at (is_zero-|asm_coord) {
+\begin{lstlisting}
+  "cmpl $0, %[X]\n"
+  "je end_loop\n"
+\end{lstlisting}
+};
+\node[asm] at (is_last_bit-|asm_coord) {
+\begin{lstlisting}
+  "jnc end_iteration\n"
+\end{lstlisting}
+};
+\node[asm] at (inc-|asm_coord) {
+\begin{lstlisting}
+  "incl %[Count]\n"
+\end{lstlisting}
+};
+
+\node[asm] at (to_next_iter-|asm_coord) {
+\begin{lstlisting}
+"end_iteration:\n"
+  "jmp begin_iteration\n"
+\end{lstlisting}
+};
+
+\node[asm] at (to_end-|asm_coord) {
+\begin{lstlisting}
+"end_loop:\n"
+\end{lstlisting}
+};
+
+\node[asm] at (end-|asm_coord) (asm-end) {
+\begin{lstlisting}
+  :[Count]"=rm"(count),[X]"=rm"(x)
+  :"[X]" (x) 
+  : "cc"
+);
+\end{lstlisting}
+};
+
+\coordinate[below = of current bounding box] (lettersline);
+\node at (end|-lettersline) {а)};
+\node at (asm-end|-lettersline) {б)};
+
+
+\end{tikzpicture}
+}
+
+\end{adjustwidth}
+\end{frame}
+
+
+
+% *****************************************************************************
+\section{}
+\begin{frame}{Вопросы}
+% \setlength{\leftmargini}{0ex}
+% \setlength{\parskip}{0.25\parskip}
+\begin{enumerate}
+
+\item Какие вы знаете флаги?
+\item Какие вы знаете команды передачи управления?
+\item Какие вы знаете команды условной пересылки?
+
+\item Как, согласно ЕСПД, изображается блок «терминатор»?
+\item Как, согласно ЕСПД, изображается блок «процесс»?
+\item Как, согласно ЕСПД, изображается блок «решение»?
+
+
+\end{enumerate}
+
+\end{frame}
+
+\makethanks
+\end{document}

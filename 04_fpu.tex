@@ -1,0 +1,583 @@
+\input{common/0pres}
+\input{common/4archcompsys}
+
+
+% \setbeamertemplate{itemize/enumerate body begin}{\footnotesize}
+% \setbeamertemplate{itemize/enumerate subbody begin}{\footnotesize}
+% \setbeamerfont{frametitle}{size=\linespread{1.0}\large}
+
+% \addtobeamertemplate{footnote}{}{\vspace{-30ex}}
+
+% \title{Введение в~язык ассемблера}
+\title{Математический сопроцессор}
+\graphicspath{{fig/}{fig/fpu/}}
+
+
+% \lstset{language={[x86masm]Assembler}}
+% \lstset{commentline={\/}}
+\lstset{xleftmargin=0mm}
+% \lstset{language={[Motorola68k]Assembler}}
+% alsolanguage=[
+% h
+% dialect
+% i
+% ]
+% h
+% language
+\lstset{language=C++, alsolanguage=[x86masm]Assembler}
+% \lstset{language=C++, alsolanguage=[Motorola68k]Assembler}
+
+\makeatletter
+\newcommand{\setlistspacing}[2]{\def\@ld{#1}\expandafter\def\csname
+@list\romannumeral\@ld \endcsname{\leftmargin\csname
+leftmargin\romannumeral\@ld \endcsname
+              \topsep    #2
+              \parsep    0\p@   \@plus\p@
+              \itemsep   #2}}
+\makeatother
+
+
+\begin{document}
+\maketitle
+
+\section{Оргвопросы}
+% \subsection{Компетенции}
+
+\subsection{Цель курса}
+\begin{frame}{Цель курса}
+
+% Общепрофессиональные:
+Формирование подкомпетенции
+
+\termin{ОПК-2.2}	Знание и~понимание архитектуры и~принципов построения вычислительных систем
+
+\terminblue 
+Участвует в~формировании общепрофессиональной компетенции
+
+\termin{ОПК-2}	Владение архитектурой ЭВМ и~систем
+
+\end{frame}
+
+\subsection{Компетенции}
+\begin{frame}{Компетенция}
+\footnotesize
+\termin{Компетенция} "--- компонент качества человека, определяющий его способность выполнять определенную группу действий в~сфере того или иного рода деятельности. Это некий уровень требований к~человеку, соответствующий его роли в~обществе. 
+
+\setlistspacing{1}{0ex}
+
+Особенность компетенции как результата обучения состоит в~том, что в~сравнении с~другими результатами образования она:
+\vspace{-1em}
+\begin{itemize}
+\item является интегрированным результатом, 
+\item позволяет решать целый класс нестандартных задач, 
+\item существует в~форме деятельности, 
+\item переносима (связана с~целым классом предметов воздействия), совершенствуется по пути интеграции с~другими компетенциями, 
+\item проявляется сознательно (в~отличие от навыка).
+\end{itemize}
+\end{frame}
+
+
+\subsection{ФОС и~КР2}
+\begin{frame}{\insertsubsection}
+ФОС по компетенции ОПК-2 
+(подкомпетенция  ОПК-2.2)
+"--- 
+16-разрядные TASM и~MASM
+"--- \termin{аккредитация}.
+
+КР2 до 17 недели "---\termin{25 ноября} или 9 декабря.
+
+\end{frame}
+\subsection{AT\&T vs Intel}
+\begin{frame}{\insertsubsection}
+\setlength{\leftmargini}{0ex}
+\begin{itemize}
+\item Суффиксы команд и~префиксы операндов
+
+\item\lstinline!byte ptr!, \lstinline!word ptr!, \lstinline!dword ptr!
+
+
+\item Порядок операндов
+
+\item Вычисление адреса:
+
+\footnotesize
+
+\lstinline!displacement(base_reg, offset_reg, scalar_multiplier)! 
+
+"--- AT\&T
+
+\lstinline![base_reg + displacement + offset_reg*scalar_multiplier]! 
+
+"--- Intel
+
+\end{itemize}
+\end{frame}
+\section{Структура сопроцессора}
+
+\subsection{Математический сопроцессор}
+\begin{frame}{\insertsubsection}
+\termin{Математический сопроцессор} (Floating Point Unit, FPU) "--- устройство для обработки числовых данных в~формате с~плавающей точкой
+
+(начиная с~i486DX "--- интегрирован в~процессор, до~Atom "--- имеет почти независимое ядро).
+
+\end{frame}
+
+
+\subsection{Регистры сопроцессора}
+\begin{frame}{\insertsubsection}
+\footnotesize
+{
+\includegraphics[width=\linewidth,height=\slideheigth,keepaspectratio,valign=t]{fpu_reg}\centering
+
+}
+
+\end{frame}
+
+\begingroup
+\renewcommand{\tabularxcolumn}[1]{m{#1}}
+
+\subsection{Стек сопроцессора}
+\begin{frame}{\insertsubsection}
+% \footnotesize
+\scriptsize
+{
+
+
+\begin{tabularx}{1\linewidth}{@{}cL@{}}
+\includegraphics[width=\linewidth,height=\slideheigth,keepaspectratio,valign=c]{fpu_push_pop}
+&
+
+\includegraphics[width=\linewidth,height=\slideheigth,keepaspectratio,valign=t]{swr}
+
+ текущее состояние сопроцессора после выполнения последней команды
+ 
+ ТОР "--- указатель  вершины стека.
+%  шесть флагов исключительных ситуаций;
+
+\bigskip
+
+\includegraphics[width=\linewidth,height=\slideheigth,keepaspectratio,valign=t]{cwr}
+
+шесть масок исключений (i--p)
+
+поле управления точностью рс;
+
+поле управления округлением rс:
+\end{tabularx}
+
+}
+
+\end{frame}
+\endgroup
+
+% \section{Работа с~сопроцессором}
+% \section{Команды сопроцессора}
+\section{Сброс и~работа со стеком}
+
+\subsection{Сброс}
+\begin{frame}{\insertsubsection}
+\small
+\setlength{\parskip}{0.5\parskip}
+
+\termin{finit} восстанавливает значения по умолчанию в~регистрах сопроцессора. 
+
+\lstinline!CWR = 0x037F! (округление к~ближайшему, 64-битная мантисса, все исключения замаскированы%
+% "--- то есть можно спокойно делить на 0, брать корень из отрицательных чисел и~т.\,п., но результат будет не числом
+). 
+
+\lstinline!SWR = 0! (ТОР = 0, никакие флаги исключений не~установлены). 
+
+Регистры данных никак не изменяются, но все они помечаются пустыми в~регистре TWR. 
+
+FIP и~FDP обнуляются. 
+
+\end{frame}
+
+\begingroup
+\setbeamerfont{frametitle}{size=\linespread{1.0}\normalsize}
+
+
+\subsection{Загрузка значений в~стек сопроцессора}
+\begin{frame}{\insertsubsection}
+\small
+\def\normalsize{\small}
+
+\begin{tabularx}{1\linewidth}{|l|L|}
+\hline
+% \thead{Команда} & \thead{Действие}  %& \thead{Флаги} 
+% \\\hline
+
+fld src & Вещественное число
+\\\hline
+
+\multicolumn{2}{|c|}{\textbf{Загрузка целых чисел}}\\\hline
+
+fild src & Целое число 
+\\\hline
+
+fbld src & Целое двоично-десятичное число 
+\\\hline
+\multicolumn{2}{|c|}{\textbf{Загрузка констант}}\\\hline
+fldz 	&	 0\\\hline
+fld1 	&	 1\\\hline
+fldpi 	&	 $\pi$\\\hline
+fldl2t 	&	 $\log_2 10$\\\hline
+fldl2e	&	 $\log_2 e$\\\hline
+fldlg2 	&	 $\log_{10} 2$\\\hline
+fldln2 	&	 $\ln 2$\\\hline
+% \\\hline
+\end{tabularx}\end{frame}
+
+
+\subsection{Выгрузка значений из~стека% сопроцессора
+}
+\begin{frame}{\insertsubsection}
+
+\def\normalsize{\footnotesize}
+\normalsize
+
+\begin{tabularx}{1\linewidth}%{|l|L|}
+{|K{5em}@{}|L@{}|}
+\hline
+% \thead{Команда} & \thead{Действие}  %& \thead{Флаги} 
+% \\\hline
+
+fst dst & Копирует вещественное число из вершины стека   в~dst
+\\
+
+fstp dst & Выталкивает вещественное число с~вершины стека   в~dst
+% 
+% Операнд dst может быть переменной в~памяти или пустым регистром сопроцессора
+\\\hline
+
+fxch & Меняет местами  st(0) и~st(1)
+\\
+fxch \%st(i)
+& Меняет местами  st(0) и~st(i)
+\\\hline
+fcmovCC \%st(i), \%st(0) & Условная пересылка st(i) в~st(0)
+% 
+% Копирует вещественное число из st(i) в~st(0) в~том случае, если в~eflags взведены или сброшены определённые флаги
+% 
+% Приёмником может быть только st(0)
+% \\
+% % Команда 	Значения флагов 	Действие после FCOM
+% fcmove 	& ZF = 1 \\	%если равно
+% fcmovne 	& ZF = 0 \\	%если не равно
+% fcmovb 	& CF = 1 \\	%если меньше
+% fcmovbe 	& CF = 1 и ZF = 1 \\	%если меньше или равно
+% fcmovnb 	& CF = 0 \\	%если не меньше
+% fcmovnbe 	& CF = 0 и ZF = 0 \\	%если не меньше или равно
+% fcmovu 	& PF = 1 \\	%если несравнимы
+% fcmovnu 	& PF = 0 	%если сравнимы
+\\\hline
+
+\multicolumn{2}{|c|}{\textbf{Выгрузка с~округлением}}\\\hline
+
+fist dst & Копирует целое число из вершины стека  в~dst
+\\
+fistp dst & Выталкивает целое число с~вершины стека  в~dst
+% 
+% Операнд dst может быть только переменной в~памяти
+\\\hline
+
+
+fbst dst & Копирует целое двоично-десятичное число из вершины стека  в~dst
+\\
+fbstp dst & Выталкивает целое двоично-десятичное число  с~вершины стека в~dst
+% 
+% Операнд dst может быть только переменной в~памяти
+\\\hline
+
+\end{tabularx}
+\end{frame}
+
+\section{Команды вычислений}
+
+\subsection{Формы основных арифметических команд}
+\begin{frame}{\insertsubsection}
+
+\def\normalsize{\footnotesize}
+\def\theadfont{\scriptsize\bfseries}
+\normalsize
+
+\begin{tabularx}{1\linewidth}%{|l@{}|l@{}|l@{}|L@{}|}
+{|K{8em}|l|l|L|}
+\hline
+\thead{Команда} &\thead{Источник}&\thead{Приёмник}& \thead{Стек}  %& \thead{Флаги} 
+\\\hline
+fXXXp
+
+fXXX
+&	
+ st(0) & st(1)& источник st(0) извлекается из стека
+\\\hline
+fXXX память
+&	
+память & st(0)& не изменяется
+\\\hline
+fiXXX память
+&	
+память %(целое число)
+&st(0)&  не изменяется
+\\\hline
+fXXX st(i), st(0)
+&	
+st(i) &  st(0)&  не изменяется
+\\\hline
+fXXX st(0), st(i)
+&	
+st(0) &  st(i)&  не изменяется
+\\\hline
+
+fXXXp st(0), st(i)
+&	
+st(0) &  st(i)& % после выполнения команды 
+источник st(0) извлекается из стека
+% 
+% (то есть результат получает обозначение st(i-1))
+\\\hline
+\end{tabularx}
+
+
+XXX "--- операция (add, sub, subr, mul, div, divr)
+
+\end{frame}
+
+% 
+% \begingroup
+% \renewcommand{\tabularxcolumn}[1]{p{#1}}
+
+\subsection{Основные арифметические операции}
+\begin{frame}{\insertsubsection}
+
+% \def\normalsize{\small}
+% % \def\theadfont{\scriptsize\bfseries}
+% \normalsize
+
+\begin{tabularx}{1\linewidth}{|l|L|l|}
+\hline
+% \thead{Команда} & \thead{Действие}  %& \thead{Флаги} 
+% \\\hline
+add
+&	
+
+Сложение
+& $dest := dest + src$
+\\\hline
+sub
+&	
+Вычитание
+& $dest := dest - src$
+\\\hline
+subr
+&	
+Обратное вычитание
+& $dest := src - dest$
+\\\hline
+mul
+&	
+Умножение
+& $dest := dest \cdot src$
+\\\hline
+div
+&	
+Деление
+& $dest := dest / src$
+\\\hline
+divr
+&
+Обратное деление
+& $dest := src / dest$
+\\\hline
+\end{tabularx}
+\end{frame}
+% \endgroup
+
+
+
+\newcommand\subtable[1]{{{
+\begin{tabularx}{1\linewidth}{@{}L@{}L@{}}#1\end{tabularx}
+}}}
+
+\subsection{Дополнительные арифметические и~трансцендентные команды}
+\begin{frame}{\insertsubsection}
+\begin{adjustwidth}{-2em}{-2em}
+
+\def\normalsize{\footnotesize}
+\def\theadfont{\scriptsize\bfseries}
+\normalsize
+
+
+\begin{tabularx}{1\linewidth}{|l|l|L|}
+\hline
+\thead{Команда} &\thead{Операнды}&\thead{Результат} %& \thead{Флаги} 
+\\\hline
+fabs
+& 
+$x = st(0)$
+&
+$st(0) = |x|$
+\\\hline
+fsqrt
+&	
+$x = st(0)$
+&
+$st(0) = \sqrt{x}$
+\\\hline
+fptan
+&	
+$x = st(0)$
+&
+\subtable{
+$st(0) = 1$,&
+$st(1) = \tg(x)$
+}
+\\\hline
+fpatan
+&	$x = st(0), y = st(1)$	& $st(0) = \arctg(x/y)$
+\\\hline
+fsincos
+& 
+$x = st(0)$
+&
+\subtable{
+$st(0) = \cos(x)$,&
+$st(1) = \sin(x)$
+}
+\\\hline
+fsin
+&	$x = st(0)$	&	$st(0) = \sin(x)$
+\\\hline
+fcos
+&	$x = st(0)$	&	$st(0) = \cos(x)$
+\\\hline
+fscale
+&	$x = st(0), y = st(1)$	& $st(0) = {x}\cdot 2^{\lfloor y \rfloor}$
+\\\hline
+f2xmi
+&	$x = st(0), x \in (-1, +1)$	&	$st(0) = 2^{x} -1$
+\\\hline
+fyl2x
+&	$x = st(0) \geqslant 0, y = st(1)$	& $st(0) = y\cdot\log_2(x)$
+\\\hline
+fyl2xp1
+&	$
+% \begin{array}{l}
+x = st(0) \approx 0, y = st(1)
+% \\
+% -(1 - \sqrt{2}/2)<x<(1 + \sqrt{2}/2)
+% \end{array}
+$	& $st(0) = y\cdot\log_2(x+1)$
+% &
+% Вычисляет $st(1)*\log_2\big(st(0)+1\big)$, помещает результат в~st(1) и~выталкивает st(0) из стека, так что после этой операции результат оказывается в~st(0). Первоначальное значение ST(0) должно быть в~пределах от $-(1 - \sqrt{2}/2)\approx -0,3$ до $(1 + \sqrt{2}/2)\approx 1,7$, иначе результат не определён. 
+% 
+% Команда fyl2xp1 дает б\'{о}льшую точность для st(0), близких к~нулю, чем fyl2x для суммы того же st(0) и~1.
+\\\hline
+
+\end{tabularx}
+\end{adjustwidth}
+\end{frame}
+
+\endgroup 
+
+\section{Примеры}
+
+
+\subsection{Загрузка и~выгрузка из стека}
+\begin{frame}[fragile]{\insertsubsection}
+\begin{adjustwidth}{-0em}{-2em}
+\scriptsize
+\begin{lstlisting}[xleftmargin=0mm]
+double x = 5.7, y;
+int i = 10;
+asm(
+    "fldl %[SRC]\n" // st(0) = %[SRC]
+    "fldz\n"        // st(0) = 0, st(1) = %[SRC]
+    "fld1\n"        // st(0) = 1, st(1) = 0, st(2) = %[SRC]
+    "fild %[I]\n"   // st(0) = %[I], st(1) = 1, st(2) = 0, st(3) = %[SRC]
+    "fstpl %[DST]\n"// %[DST] = %[I],   st(0) = 1, st(1) = 0, st(2) = %[SRC]
+    "fstpl %[DST]\n"// %[DST] = 1,      st(0) = 0, st(1) = %[SRC]
+    "fstpl %[DST]\n"// %[DST] = 0,      st(0) = %[SRC]
+    "fstpl %[DST]\n"// %[DST] = %[SRC], стек пуст
+
+    :[DST]"=m"(y)
+    :[SRC]"m"(x), [I]"m"(i)
+    :"cc"
+); // y = x и много лишних действий
+\end{lstlisting}
+\end{adjustwidth}
+\end{frame}
+
+\subsection{Арифметические операции}
+\begin{frame}[fragile]{\insertsubsection}
+\begin{adjustwidth}{-1em}{-2em}
+\scriptsize
+\begin{lstlisting}[xleftmargin=0mm]
+const double a = 0.01;
+double x = 5, y;
+int i = 10;
+asm(
+    "fldl %[SRC]\n" // st(0) = %[SRC]
+    "fldpi\n"       // st(0) = pi, st(1) = %[SRC]
+    "fld1\n"        // st(0) = 1, st(1) = pi, st(2) = %[SRC]
+    "fildl %[I]\n"  // st(0) = %[I], st(1) = 1, st(2) = pi, st(3) = %[SRC]
+    "fdivr\n"       // st(0) = 1/%[I], st(1) = pi, st(2) = %[SRC]
+    "fldl  %[A]\n"  // st(0) = %[A], st(1) = 1/%[I], st(2) = pi, st(3) = %[SRC]
+    "fmulp %%st(0), %%st(2)\n"  // st(0) = 1/%[I], st(1) = pi*%[A], st(2) = %[SRC]
+    "faddp\n"       // st(0) = 1/%[I] + pi*%[A], st(1) = %[SRC]
+    "faddp\n"       // st(0) = 1/%[I] + pi*%[A] + %[SRC]
+    "fstpl %[DST]\n"// %[DST] = 1/%[I] + pi*%[A] + %[SRC], стек пуст
+
+    :[DST]"=m"(y)
+    :[SRC]"m"(x), [A]"m"(a), [I]"m"(i)
+    :"cc"
+);// y = x + 1/i + a*pi
+\end{lstlisting}
+\end{adjustwidth}
+\end{frame}
+
+
+
+\subsection{Тригонометрические операции}
+\begin{frame}[fragile]{\insertsubsection}
+\scriptsize
+\begin{lstlisting}[xleftmargin=0mm]
+const double a = 100;
+double x = M_PI/6, y;
+asm(
+    "fldl %[SRC]\n" // st(0) = %[SRC]
+    "fsincos\n"     // st(0) = cos(%[SRC]), st(1) = sin(%[SRC])
+    "fmull %[A]\n"  // st(0) = %[A]*cos(%[SRC]), st(1) = sin(%[SRC])
+    "fadd\n"        // st(0) = %[A]*cos(%[SRC]) + sin(%[SRC])
+    "fstpl %[DST]\n"// %[DST] = %[A]*cos(%[SRC]) + sin(%[SRC]) стек пуст
+
+    :[DST]"=m"(y)
+    :[SRC]"m"(x), [A]"m"(a)
+    :"cc"
+);	// y = a*cos(x) + sin(x)
+\end{lstlisting}
+\end{frame}
+
+
+
+% *****************************************************************************
+\section{}
+\begin{frame}{Вопросы}
+% \setlength{\leftmargini}{0ex}
+% \setlength{\parskip}{0.25\parskip}
+\begin{enumerate}
+
+\item Какие регистры используются в~сопроцессоре для хранения операндов?
+
+\item Какие команды используются для выполнения арифметических операций над вещественными числами?
+
+\item Какие команды используются для выполнения тригонометрических операций?
+
+\end{enumerate}
+
+\end{frame}
+
+\makethanks
+\end{document}
