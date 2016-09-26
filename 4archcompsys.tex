@@ -1,0 +1,85 @@
+\title{Архитектура вычислительных систем}
+
+\newcommand\EAX{\lstinline!EAX!}
+\newcommand\EBX{\lstinline!EBX!}
+\newcommand\ECX{\lstinline!ECX!}
+\newcommand\EDX{\lstinline!EDX!}
+
+
+\newcommand\ESP{\lstinline!ESP!}
+
+\nmsNewName{\Competencia}{\termin{ОПК-2.2}	Знание и~понимание архитектуры и~принципов построения вычислительных систем}
+
+
+\def\Byte(#1,#2,#3,#4,#5,#6,#7,#8){
+\node [rectangle split,rectangle split parts=8, rectangle split horizontal,draw ] at (2,2)
+{\nodepart{one}#1\nodepart{two}#2\nodepart{three}#3\nodepart{four}#4\nodepart{five}#5\nodepart{six}#6\nodepart{seven}#7\nodepart{eight}#8};
+}
+
+\newcommand\mathlst[1]{\text{\lstinline!#1!}}
+
+\lstset{language=C++}
+
+
+%% far from complete list of gasm-specific keywords and instructions in AT&T syntax
+% \lstdefinelanguage[x86gas]{Assembler}[x86masm]{Assembler}{%
+%     ,morekeywords={rax,rbx,rcx,rdx,rip,rdi,rsi,rsp,subq,decl,movq,movl,xorl,imull,popq}%
+%     ,morekeywords=[2]{.file,.section,.string,.text,.globl,.cfi_startproc,.cfi_def_cfa_offset,.cfi_endproc,.size,.ident}%
+%     ,morecomment=[s][\color{olive}]{\%}{x}%
+%     ,morecomment=[s][\color{olive}]{\%}{l}%
+%     ,morecomment=[s][\color{olive}]{\%}{h}%
+% %     ,morecomment=[s][\color{olive}]{\%}{ }%
+%     ,morecomment=[s][\color{olive}]{\%}{,}%
+%     ,morecomment=[s][\color{olive}]{\%}{)}%
+% %     ,morecomment=[l][\color{olive}]{\%}%
+% }
+
+\lstdefinelanguage[x86gas]{Assembler}
+{%
+ keywords=[1]{\%, \$},
+ keywordstyle=[1]\color{olive}
+    ,morekeywords=[2]{.file,.section,.string,.text,.globl,.cfi_startproc,.cfi_def_cfa_offset,.cfi_endproc,.size,.ident}%
+%     ,morekeywords={mov,movq,movl,xorl,imull,popq}%
+%     ,morecomment=[s][\color{olive}]{\%}{x}%
+%     ,morecomment=[s][\color{olive}]{\%}{l}%
+%     ,morecomment=[s][\color{olive}]{\%}{h}%
+%     ,morecomment=[s][\color{olive}]{\%}{i}%
+%     ,morecomment=[s][\color{olive}]{\%}{p}%
+%     ,morecomment=[s][\color{olive}]{\%}{s}%
+}
+
+
+
+
+\lstnewenvironment{ccol}[1][]{\lstset{language=c,#1}}{}
+\lstnewenvironment{acol}[1][]{\lstset{language=[x86gas]Assembler,#1}}{}
+
+\lstset{language=[x86gas]Assembler}
+
+
+
+
+\definecolor{blue(ncs)}{rgb}{0.0, 0.53, 0.74}
+\colorlet{colorRegister}{olive}
+\colorlet{colorMemory}{blue(ncs)}
+
+\colorlet{colorRegisterLight}{colorRegister!40!white}
+\colorlet{colorMemoryLight}{colorMemory!20!white}
+\colorlet{colorCalcLight}{yellow!40!white}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

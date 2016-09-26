@@ -1,0 +1,920 @@
+\input{commonpres}
+
+% \setbeamertemplate{itemize/enumerate body begin}{\footnotesize}
+% \setbeamertemplate{itemize/enumerate subbody begin}{\footnotesize}
+% \setbeamerfont{frametitle}{size=\linespread{1.0}\large}
+
+% \addtobeamertemplate{footnote}{}{\vspace{-30ex}}
+
+
+% Представление и форматы данных. Стандартные типы данных C++. Адресация памяти ЭВМ
+% \title{Представление данных (x86)}
+\title{Языки высокого уровня. \mbox{Представление и~форматы данных}}
+\graphicspath{{fig/}{fig/tanenbaum/}{fig/intro/}}
+
+
+
+
+
+
+\begin{document}
+\maketitle
+
+
+
+% \section{Уровень языка высокого уровня}
+\section{Языки высокого уровня}
+
+\begin{frame}{\insertsection}
+% \small
+\footnotesize
+\setlength{\parskip}{0.5\parskip}
+% \setlength{\itemsep}{0mm}
+
+% \setlength{\parskip}{0.\parskip}
+\termin{Прикладное программирование}
+% \bigskip
+
+\begin{tabularx}{1\linewidth}{@{}Lp{0.4\linewidth}@{}}
+Трансляция
+\begin{itemize}
+\item Фортран;
+% \item Алгол;
+\item C/Objective-C/C++;
+\item Pascal/Object Pascal/Delphi.
+\end{itemize}
+&
+Интерпретация
+\begin{itemize}
+\item sh/bash;
+\item Python;
+\item PHP.
+\end{itemize}
+\end{tabularx}
+Уровень виртуальной машины \itemizeball{} Java.
+% \begin{itemize}
+% \item Java.
+% \end{itemize}
+
+\termin{Сверхвысокоуровневые языки программирования}
+\setlength{\parskip}{0.\parskip}
+\begin{itemize}
+\item  Python;
+\item Ruby;
+\item AWK/Perl.
+\end{itemize}
+\end{frame}
+
+
+\subsection{Стандарты C/C++}
+\newcommand{\Old}[1]{{%
+  \renewcommand{\terminblue}{\color{blue!20!gray!60}}
+  \color{blue!20!gray!70}
+  #1%
+}}
+\newcommand{\UnderConstruction}[1]{\Old{%
+  #1%
+}}
+\begin{frame}{\insertsubsection}
+\footnotesize
+\setlength{\leftmargini}{0ex}
+\setlength{\leftmarginii}{2ex}
+\setlistspacing{1}{0ex}
+
+\begin{itemize}
+\item C
+\begin{itemize}
+\Old{
+\item \termin{C89 (ANSI C)} ANSI X3.159-1989
+\item \termin{C90} ISO/IEC 9899:1990
+
+\item \termin{C99} ISO/IEC 9899:1999 %от 2007-11-15
+}
+\item \termin{C11} {ISO/IEC 9899:2011} %от 2011-12-19 
+% 
+% Последний бесплатный черновик "--- \termin{n1570} %от 2011-04-12
+(последний черновик "--- \termin{n1570})
+
+\end{itemize}
+
+% https://isocpp.org/std/the-standard
+\item C++
+\begin{itemize}
+\Old{
+\item \termin{C++98} ISO/IEC 14882:1998 
+\item \termin{C++11} ISO/IEC 14882:2011
+}
+\item \termin{C++14} ISO/IEC 14882:2014
+% 
+% Последний бесплатный черновик "--- \termin{n4296} %от 2014-11-19
+\rlap{(последний черновик "--- \termin{n4296})}
+
+\UnderConstruction{
+\item \termin{C++17} Черновик \termin{n4595}
+}
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+
+\subsection{Компиляторы C++ (x86)}
+\begin{frame}{\insertsubsection}
+\footnotesize
+% \scriptsize
+\setlength{\leftmargini}{0ex}
+\setlength{\parskip}{0.\parskip}
+
+
+\begin{itemize}
+\item \termin{GNU Compiler Collection (GCC)} "--- более 45 платформ, большинство ОС (порт под MS Windows "---  \termin{MinGW}), %7 языков (в~том числе C и~C++, стандарт), 
+лицензия GNU GPL 3+ 
+\item \termin{Portable C Compiler (PCC)} "--- Unix-подобные ОС, %GNU/Linux, 
+MS Windows; лицензия BSD
+
+
+\item \termin{TenDRA} "--- x86, x86-64, IA-64; POSIX-совместимые ОС; лицензия BSD
+
+\item \termin{Oracle Solaris Studio} "--- x86, x86-64, SPARC; Solaris, OpenSolaris, GNU/Linux; собственническая лицензия
+
+\item \termin{Intel C++ compiler} "--- x86, x86-64,  IA-64 (Itanium), GNU/Linux, MacOS X, MS Windows, коммерческая собственническая лицензия
+
+\item \termin{Open Watcom} "--- DOS, OS/2 и MS Windows; лицензия  	
+Sybase Open Watcom Public License version 1.0, 
+%не полностью поддерживает стандарт С++
+неполная поддержка стандарта
+
+\item \termin{MS Visual C++} "--- x86, x86-64, IA-64 и~.NET, только MS Windows, коммерческая собственническая лицензия, %грубые 
+нарушения стандарта
+
+% \item \termin{Norcroft C Сompiler} "--- Intel Pentium для GNU/Linux, коммерческая собственническая лицензия
+% 
+% 
+% \hrulefill
+% \item \termin{Clang} "--- виртуальная RISC-машина LLVM
+
+\end{itemize}
+
+\end{frame}
+
+\section{Сборка программы}
+\subsection{Сборка программы (GCC)}
+% \begin{frame}{\insertsubsection}
+% 
+% \hfill
+% \includegraphics[width=\linewidth,height=\slideheigth-1\baselineskip,keepaspectratio,valign=t]{halfcompilecpp}
+% \hfill
+% \includegraphics[width=\linewidth,height=\slideheigth-1\baselineskip,keepaspectratio,valign=t]{halfcompileS}
+% \hfill\strut
+% % \centering
+% 
+% \end{frame}
+\begin{frame}[fragile]{\insertsubsection}
+
+% \begin{columns}
+% \begin{column}{0.6\linewidth}
+% \resizebox{\linewidth}{!}{
+\resizebox{!}{\slideheigth}{
+\tikzstyle{blockarrow}	= [-latex',thick,draw=blue]
+\footnotesize
+\begin{tikzpicture}[start chain=cpp going below,start chain=S going below,
+every on chain/.style=join,every join/.style=blockarrow,
+node distance=2ex and 4ex
+]
+\tikzstyle{block}	= [text width=16ex,text badly centered, minimum height=3ex, draw=black]
+\tikzstyle{file}	= [block,  fill=yellow!40!white]
+\tikzstyle{stage}	= [block, fill=blue,text=white]
+
+% \node (cpp) {\includegraphics[width=\linewidth,height=\slideheigth-1\baselineskip,keepaspectratio,valign=t]{halfcompilecpp}};
+\node[file,on chain=cpp] (prog1_cpp) {prog1.cpp};
+\node[stage,on chain=cpp] (cpp_preprocess) {Препроцессор};
+\node[file, on chain=cpp] (prog1_pp) {Временный файл (stdout)};
+\node[stage,on chain=cpp] (compiler) {Компилятор};
+\node[file,on chain=cpp] (prog1_s) {prog1.s};
+\node[stage,on chain=cpp] (cpp_asm) {Ассемблер};
+\node[file,on chain=cpp] (prog1_o) {prog1.o};
+\node[stage,on chain=cpp] (cpp_linker) {Компоновщик};
+% \coordinate[on chain=cpp] (cpp_linker);
+
+\node[file, right= of cpp_preprocess,text width=20ex] (cpp_headers) {Заголовочные файлы (\#include)};
+\path[blockarrow] (cpp_headers) -- (cpp_preprocess);
+
+
+% \node[text width=18ex] at (compiler-|cpp_headers) (mangling) {Декорирование \lstinline!int foo(int x)! $\to$ \lstinline!_Z3fooi!};
+
+\node[fit=(prog1_cpp) (cpp_headers), inner sep=0ex] (cpp_box) {};
+\coordinate[right=0ex of cpp_box] (cpp_egde);
+
+
+% \node[file,right= of prog1_cpp-|cpp_egde,on chain=S] (prog2_S) {prog2.S};
+% \node[stage,on chain=S] (S_preprocess) {Препроцессор};
+% \node[file, on chain=S] (prog2_pp) {Временный файл (stdout)};
+% \node[stage,on chain=S,right= of cpp_asm-|cpp_egde]  (S_asm) {Ассемблер};
+% \node[file,on chain=S] (prog2_o) {prog2.o};
+% \node[stage,on chain=S] (S_linker) {Компоновщик};
+% 
+% 
+% \path[blockarrow] (cpp_headers) -- (S_preprocess);
+% 
+% 
+% \node[stage,fit=(cpp_linker) (S_linker), inner sep=0ex,align=center] (linker) {\strut
+% 
+%   \vspace{-0.5\baselineskip}Компоновщик};
+\node[fit=(cpp_linker), inner sep=0ex,align=center] (linker) {};
+
+\node[file, right= of linker,text width=20ex] (obj_lib) {Объектные файлы библиотек};
+\path[blockarrow] (obj_lib) -- (linker);
+
+\node[file,below= of linker] (prog) {prog};
+\path[blockarrow] (linker) -- (prog);
+
+% \node[below= of prog-|cpp_linker]  {extern};
+
+% \node[below= of prog-|S_linker]  {.globl};
+
+% \begin{pgfonlayer}{background}
+% \node[rectangle,fit=(compiler) (mangling), fill=blue!20!white]  {};
+% \end{pgfonlayer} 
+
+% \node[left=of cpp_preprocess] {g++ -E main.cpp > main.E};
+
+\node[text width=28ex, left=of prog1_s] {Коллекция GCC:
+
+\termin{gcc} "---  компилятор~C;
+
+\termin{g++} "---  компилятор~C++.
+};
+
+\end{tikzpicture}
+}
+\centering
+% \end{column}
+% \begin{column}{0.39\linewidth}
+% \footnotesize
+% 
+% Коллекция GCC:
+% 
+% % \begin{description}
+% \termin{gcc} "---  компилятор~C;
+% 
+% \termin{g++} "---  компилятор~C++.
+% 
+% % \end{description}
+% \end{column}
+% \end{columns}
+\end{frame}
+
+\subsection{Макросы препроцессора}
+\begin{frame}[fragile]{\insertsubsection}
+\footnotesize
+\lstset{xleftmargin=0mm, numbers=none}
+\begin{lstlisting}
+#include <iostream>
+#include "myheader.h"
+
+#define N 13
+#define MAX(x, y) ((x) > (y) ? (x) : (y))
+#define INTEGER short
+
+// так делать плохо
+#define true 0
+
+#define FLAG
+#ifdef FLAG
+...
+#else
+...
+#endif
+
+\end{lstlisting}
+
+\end{frame}
+
+% \subsection{Макросы препроцессора: работа со строками}
+\begin{frame}[fragile]{\insertsubsection}
+\footnotesize
+\lstset{xleftmargin=0mm, numbers=none}
+
+Взятие строк в кавычки
+\begin{lstlisting}
+#define QUOTES(x) #x
+cout <<  QUOTES(1+2) << " " << QUOTES(x) << " " << QUOTES(мяу) << " " << QUOTES("мяу") << endl;
+1+2 x мяу "мяу"
+\end{lstlisting}
+
+Склейка строк
+\begin{lstlisting}
+#define FOO(type) type x##type = 1, y##type; \
+cout << typeid(x##type).name() << " " << x##type << endl;
+\end{lstlisting}
+\end{frame}
+
+
+\subsection{Шаблоны}
+\begin{frame}[fragile]{\insertsubsection}
+\footnotesize
+\lstset{xleftmargin=1ex}
+
+\begin{columns}
+\begin{column}{0.50\linewidth}
+\begin{lstlisting}
+template<typename T>
+int foo(T x)
+{
+...
+}
+\end{lstlisting}
+\begin{lstlisting}
+template<typename T>
+T bar(T x)
+{
+  T y = x + 12;
+  ....
+}
+\end{lstlisting}
+
+\end{column}
+\begin{column}{0.499\linewidth}
+\begin{lstlisting}
+int i = 0, j, k, n;
+double x = 1, y;
+
+j = foo(i);
+k = foo(x);
+
+n = bar(i);
+y = bar(x);
+\end{lstlisting}
+\end{column}
+\end{columns}
+\end{frame}
+
+% \subsection{}
+\subsection{Компиляция}
+\begin{frame}[fragile]{\insertsubsection}
+\footnotesize
+\lstset{xleftmargin=1ex}
+
+\begin{columns}
+\begin{column}{0.50\linewidth}
+main.cpp
+\begin{lstlisting}
+int x = 13;
+int main()
+{
+    int y = 2*x + 123;
+...
+}
+\end{lstlisting}
+
+g++ -S main.cpp $\to$
+
+\end{column}
+\begin{column}{0.499\linewidth}
+main.s
+\begin{lstlisting}
+...
+.globl	x
+	.data
+	.align 4
+	.type	x, @object
+	.size	x, 4
+x:
+	.long	13
+...
+	movl	x, %eax
+	addl	%eax, %eax
+	addl	$123, %eax
+	movl	%eax, -12(%ebp)
+\end{lstlisting}
+\end{column}
+\end{columns}
+\end{frame}
+
+
+% \section{Данные}
+
+
+
+% \section{Значения и~указатели}
+% \subsection{а}
+% \begin{frame}{\insertsubsection}
+% а
+% \end{frame}
+
+\section{Представление целых беззнаковых чисел}
+
+% \subsection{f}
+% \begin{frame}{\insertsubsection}
+% 
+% \begin{enumerate}
+% \item Натуральный двоичный код для беззнаковых чисел.
+% 
+% \item Прямой порядок байтов и слов.
+% 
+% \end{enumerate}
+% 
+% \end{frame}
+
+
+% \subsection{Единицы измерения}
+% \begin{frame}{\insertsubsection}
+% \footnotesize
+% \setlength{\parskip}{0.25\parskip}
+% \begin{adjustwidth}{-0.5em}{-2em}
+% % Дискретная информация хранится в~виде последовательностей нулей и~единиц.
+% 
+% \termin{Бит} "--- единица измерения количества информации, равная одному разряду в~двоичной системе счисления ($2$ состояния).
+% 
+% \termin{Тетрада (nibble)} "--- 4 двоичных разряда ($2^4 = 16$ состояний).
+% 
+% \termin{Октет} "--- 8 двоичных разрядов ($2^8 = 256$ состояний).
+% 
+% \termin{Байт} "--- совокупность битов, обрабатываемая компьютером одномоментно (обычно байт=октет).
+% 
+% Машинное \termin{слово}  "--- разрядность регистров процессора и/или шины данных.
+% 
+% \end{adjustwidth}
+% 
+% \includegraphics[width=0.7\linewidth,valign=t]{bit_byte_word}
+% 
+% \end{frame}
+
+
+% \subsubsection{Единицы измерения x86 %(целые)
+% }
+% \begingroup
+% \renewcommand{\tabularxcolumn}[1]{m{#1}}
+% \begin{frame}{\insertsubsubsection}
+% 
+% % \footnotesize
+% \small
+% \renewcommand{\arraystretch}{1.2}
+% 
+% \begin{tabularx}{\linewidth}{|@{}M{5em}|@{}c@{}|L|L|L|}
+% \hline
+% & \theadlong{Бит} & \theadlong{Состо-яний %(разных значений)
+% } 
+% & \theadlong{GAS} &  \theadlong{Intel} \\\hline
+% \theadlong{Байт} & 8  & $2^{8} = 256$ & b (byte)& byte ptr \\\hline
+% 
+% \theadlong{Слово} & 16  & $2^{16} = 65\,536$ & w (word)& word ptr \\\hline
+% \theadlong{Двойное слово} & 32  & $2^{32}$ "--- около $4$~млрд. & l (long) & dword ptr \\\hline
+% \theadlong{Четверное слово} & 64  & $2^{64}$ & q (quad) & qword  ptr \\\hline
+% 
+% \end{tabularx}
+% 
+% Прямой порядок байтов и слов
+% 
+% \end{frame}
+% \endgroup
+
+\subsection{Позиционные системы счисления}
+\begin{frame}{\insertsubsection}
+
+Величина, обозначаемая цифрой в~записи числа, зависит от её позиции
+$$\overline{x_k \ldots x_1 x_0}_N = x_0 + x_1\cdot N + \ldots + x_k\cdot N^k$$
+$0\leqslant x_i < N$ "--- цифры.\\
+Такое разложение существует и единственно для каждого неотрицательного целого
+$$12345_{10} = 5\cdot10^0 + 4\cdot10^1 + 3\cdot10^2 + 2\cdot10^3 + 1\cdot10^4$$
+$$101_{2} = 1\cdot2^0 + 0\cdot2^1 + 1\cdot2^2 = 5_{10}$$
+% $$1A_{16} = A\cdot16^0 + 1\cdot16^1 = 26_{10}$$
+$$1A_{16} = 10\cdot16^0 + 1\cdot16^1 = 26_{10}$$
+
+\end{frame}
+
+\subsection{Двоичная, восьмеричная и~шестнадцатеричная системы}
+\begin{frame}{\insertsubsection}
+\footnotesize
+    \setlength{\abovedisplayskip}{0.ex}
+    \setlength{\belowdisplayskip}{0.5ex}
+
+$$(\overline{x_k \ldots x_1 x_0})_2 = \underbrace{x_0 + x_1\cdot 2 + x_2\cdot 2^2} + \underbrace{x_3\cdot 2^3 + x_4\cdot 2^4 + x_5\cdot 2^5} + \ldots = $$
+$$=(x_0 + x_1\cdot 2 + x_2\cdot 2^2) + (x_3\cdot  + x_4\cdot 2 + x_5\cdot 2^2)\cdot2^3 + \ldots =$$
+$$=(x_0 + x_1\cdot 2 + x_2\cdot 2^2) + (x_3\cdot  + x_4\cdot 2 + x_5\cdot 2^2)\cdot8 + \ldots $$
+
+$$1101010_{2} = 001\,101\,010_{2} = 152_8$$
+
+$$1101010_{2} = 0110\,1010_{2} = 6A_{16}$$
+
+\end{frame}
+
+
+\subsection{Натуральный двоичный код}
+% \subsection{Целые беззнаковые числа}
+\begin{frame}{\insertsubsection}
+
+% Натуральный двоичный код:
+Целые числа \mbox{от $0$ до $2^N-1$} %(беззнаковые)
+% Разряды двоичного представления числа = биты
+($N$ "--- длина кода)
+
+% $2^N = 0$
+
+\renewcommand{\arraystretch}{1.5}
+\begin{tabularx}{1\linewidth}{XXXXXXXX}
+\hline
+
+0 & 1 & 2 & 3 & 4 & 5 & 6 & 7  \\
+0000 & 0001 & 0010 &  0011  & 0100 & 0101 & 0110 & 0111 \\\hline
+
+8 & 9 & 10 (A)& 11 (B) & 12 (C) & 13 (D) & 14 (E) & 15 (F) \\
+1000 & 1001 & 1010 &  1011 & 1100 & 1101 & 1110 & 1111 \\\hline
+
+\end{tabularx}
+
+\end{frame}
+
+
+% \section{Логические, арифметические и~битовые операции}
+% \subsection{Логические операции}
+% \begin{frame}{\insertsubsection}
+% % \small
+% % \footnotesize
+% 
+% Цифровой логический уровень "--- сигналы (0, 1) и~вентили (NOT, NOR, NAND и~т.\,д.) "--- \termin{логические операции}.
+% 
+% Микроархитектурный уровень включает регистры, шины и~АЛУ "--- \termin{побитовые и~арифметические операции}.
+% 
+% \end{frame}
+
+\subsection{Операции над беззнаковыми целыми числами}
+\begin{frame}{\insertsubsection}
+\begin{itemize}
+\item Побитовые (NOT, AND, OR, XOR).
+
+\item Арифметические.
+\item Беззнаковое расширение (дополнение ведущими нулями).
+
+\item Беззнаковый (логический) сдвиг.
+
+\end{itemize}
+\end{frame}
+
+
+
+
+\section{Представление целых знаковых чисел}
+
+
+\colorlet{csMarker}{yellow!50}
+
+
+\subsection{Целые знаковые числа}
+\begingroup
+% \makeatletter
+\renewcommand\theadlong[1]{\multicolumn{1}{@{}S{0.16\linewidth}@{}}{{\tiny\bfseries #1\par
+\vspace*{-1\baselineskip}
+\strut
+}}}
+% \renewcommand\theadlong[1]{\text{{#1}}}
+% \makeatother
+\begin{frame}{\insertsubsection}
+% \small
+% \footnotesize
+ \scriptsize
+\renewcommand{\arraystretch}{1.05}
+\newcolumntype{Y}{>{$}S{0.14\linewidth}<{$}}
+% \makeatletter
+% \renewcommand\theadlong[1]{\multicolumn{1}{|@{}c@{}|}{{#1}}}
+% \renewcommand\theadlong[1]{\text{{#1}}}
+% \makeatother
+\begin{tabularx}{1\linewidth}{r>{$}S{0.1\linewidth}<{$}>{\columncolor{csMarker}}YYYYY@{\hspace{4em}}}
+% \hline
+& {\llap{\tiny\bfseries Беззнаковое}} 
+& \theadlong{Дополнительный код (доп. до 2)} 
+		  & \theadlong{Обратный код (доп. до 1)}
+				& \theadlong{Значение со знаком}
+						& \theadlong{Код с~избытком~8}\\\hline
+% \text{Беззнаковое}
+% & \text{Дополнительный код (доп. до 2)} 
+% 		  & \text{Значение со знаком}
+% 				& \text{Обратный код (доп. до 1)}
+% 				\\\hline
+0000 & 0 &	0  &	+0 	&	+0 	&	-8		\\%\hline
+0001 & 1 &	+1 &	+1	 &	+1	&	-7		\\%\hline
+0010 & 2 &	+2 &	+2	 &	+2	&	-6		\\%\hline
+0011 & 3 &	+3 &	+3	 &	+3	&	-5		\\\hline
+0100 & 4 &	+4 &	+4	 &	+4	&	-4		\\%\hline
+0101 & 5 &	+5 &	+5	 &	+5	&	-3		\\%\hline
+0110 & 6 &	+6 &	+6	 &	+6	&	-2		\\%\hline
+0111 & 7 &	+7 &	+7	 &	+7	&	-1		\\\hline
+1000 & 8 &	-8 &	-7	&	-0	&	0		\\%\hline
+1001 & 9 &	-7 &	-6	&	-1	&	+1		\\%\hline
+1010 & 10 &	-6 &	-5	&	-2	&	+2		\\%\hline
+1011 & 11 &	-5 &	-4	&	-3	&	+3		\\\hline
+1100 & 12 &	-4 &	-3	&	-4	&	+4		\\%\hline
+1101 & 13 &	-3 &	-2	&	-5	&	+5		\\%\hline
+1110 & 14 &	-2 &	-1	&	-6	&	+6		\\%\hline
+1111 & 15 &	-1 &	-0	&	-7	&	+7		\\\hline
+
+
+\end{tabularx}
+
+\end{frame}
+\endgroup
+
+
+
+
+\subsection{Расширение целых чисел}
+\begin{frame}{\insertsubsection}
+\termin{Расширение беззнаковых чисел}: расширяемая часть заполняется нулями
+
+Пример: 	F1 ==> 00F1
+		0F ==> 000F
+		
+		
+\termin{Расширение чисел со знаком:} расширяемая часть заполняется значением знакового бита
+
+Примеры: 	F1 ==> FFF1
+			0F ==> 000F		
+\end{frame}
+
+
+
+
+
+
+
+
+
+
+
+
+\subsection{Битовые сдвиги}
+% \subsubsection{Логический сдвиг влево}
+\renewcommand{\tabularxcolumn}[1]{m{#1}}
+\begin{frame}{\insertsubsection}
+\footnotesize
+
+\begin{tabularx}{1\linewidth}{@{}ccL@{}}
+\includegraphics[height=0.25\linewidth,valign=c]{shr}&
+\includegraphics[height=0.25\linewidth,valign=c]{sar}&
+Деление на 2 с~остатком
+\end{tabularx}
+
+
+\hfill
+\begin{tabular}{@{}cl@{}}
+\includegraphics[height=0.25\linewidth,valign=c]{shl-sal}&
+Умножение на 2
+\end{tabular}
+\hfill\strut
+
+\end{frame}
+
+
+
+\subsection{Циклические сдвиги}
+% \subsubsection{Логический сдвиг влево}
+\renewcommand{\tabularxcolumn}[1]{m{#1}}
+\begin{frame}{\insertsubsection}
+\footnotesize
+
+\begin{tabularx}{1\linewidth}{@{}cL@{}}
+\includegraphics[height=0.25\linewidth,valign=c]{ror-rol}&
+Простой циклический сдвиг
+\end{tabularx}
+
+\begin{tabularx}{1\linewidth}{@{}cL@{}}
+\includegraphics[height=0.25\linewidth,valign=c]{rcr-rcl}&
+Циклический сдвиг через флаг переноса
+\end{tabularx}
+
+
+\end{frame}
+
+
+
+
+\section{Стандартные типы C++}
+
+\subsection{Некоторые стандартные типы C++}
+\begin{frame}{\insertsubsection}
+Целые:
+% 
+char, signed char, short, int, long, long long,
+% 
+unsigned char, unsigned short, unsigned, unsigned long, unsigned long long
+
+Указатели:
+% 
+void*, char*, ...
+
+Разность указателей:
+% 
+ptrdiff\_t
+
+Длина: size\_t
+
+% Вещественные:
+
+\end{frame}
+
+\subsection{Символы = целые %беззнаковые 
+числа}
+\begin{frame}{\insertsubsection}
+\small
+% Конечное число символов
+
+American Standard Code for Information Interchange (ASCII) "--- %кодовая таблица (
+128 символов
+%) 
+% и~однобайтовая кодировка
+\\
+\includegraphics[width=1\linewidth,valign=t]{ASCII_Code_Chart}
+
+Unicode "--- 113 021 символ (в~версии~7) и~набор кодировок: UTF-8, UTF-16 (UTF-16BE, UTF-16LE) и~UTF-32 (UTF-32BE, UTF-32LE)
+
+\end{frame}
+
+
+
+
+\subsection{Размер целых типов}
+% www.texample.net/tikz/examples/labeled-chain/
+\makeatletter
+\tikzset{join/.code=\tikzset{after node path={%
+\ifx\tikzchainprevious\pgfutil@empty\else(\tikzchainprevious)%
+edge[every join]#1(\tikzchaincurrent)\fi}}}
+\makeatother
+%
+% \tikzset{>=stealth',every on chain/.append style={join},
+%          every join/.style={->}}
+\tikzstyle{labeled}=[execute at begin node=$\scriptstyle\leqslant,
+   execute at end node=$]
+%
+
+\begin{frame}[fragile]{\insertsubsection}
+
+\begin{tikzpicture}
+  \matrix (m) [matrix of math nodes, row sep=3em, column sep=2em]
+    { char & short  & int  & long  & long~long \\
+      8 & 16 & 16 & 32 & 64 \\ };
+      
+%   \path (m-1-1) -- node[sloped] {$\leqslant$} (m-1-2);      
+\foreach \i / \j in {1/2,2/3,3/4,4/5}
+{
+  \path (m-1-\i) -- node[sloped] {$\leqslant$} (m-1-\j);
+};
+\foreach \i in {1,...,5}
+{
+\path (m-1-\i) -- node[sloped] {$\geqslant$} (m-2-\i);
+};
+
+
+%   { [start chain] \chainin (m-1-1) [join={node[] {$\leqslant$}}];
+%     \chainin (m-1-2);
+%     { [start branch=A] \chainin (m-2-2)
+%         [join={node[] {$\leqslant$}}];}
+%     \chainin (m-1-3) [join={node[above,labeled] {\varphi}}];
+%     { [start branch=B] \chainin (m-2-3)
+%         [join={node[right,labeled] {\eta_2}}];}
+%     \chainin (m-1-4) [join={node[above,labeled] {\psi}}];
+%     { [start branch=C] \chainin (m-2-4)
+%         [join={node[right,labeled] {\eta_3}}];}
+%     \chainin (m-1-5); }
+%   { [start chain] \chainin (m-2-1);
+%     \chainin (m-2-2);
+%     \chainin (m-2-3) [join={node[above,labeled] {\varphi'}}];
+%     \chainin (m-2-4) [join={node[above,labeled] {\psi'}}];
+%     \chainin (m-2-5); }
+\end{tikzpicture}
+
+sizeof(char) = 1
+
+\end{frame}
+
+
+
+\subsection{Преобразование типов}
+\begin{frame}[fragile]{\insertsubsection}
+
+\begin{itemize}
+\item \lstinline!const_cast! const/volatile;
+\item \lstinline!static_cast! неявные преобразования: значение в~значение, void* в~любой указатель;
+
+\item \lstinline!dynamic_cast! приведение по иерархии наследования;
+\item \lstinline!reinterpret_cast! указатель к указателю, указатель к целому, целое к указателю.
+
+\end{itemize}
+
+\begin{lstlisting}[style=lstsmall]
+double x = 1;
+char *pc = reinterpret_cast<char *>(&x);
+\end{lstlisting}
+
+\end{frame}
+
+\section{Представление чисел в~коде}
+
+\subsection{Литералы}
+\begin{frame}[fragile]{\insertsubsection}
+\footnotesize
+\setlength{\parskip}{0.\parskip}
+
+Префиксы системы счисления
+\begin{description}
+\item[0x, 0X] "--- шестнадцатеричная;
+\item[0] (ведущий ноль) "--- восьмеричная;
+\item[0b, 0B] "--- двоичная.
+\end{description}
+Суффиксы:
+\begin{description}
+\item[u, U] "---  беззнаковое;
+\item[l, L] "---  \lstinline!long!;
+\item[ll, LL] "---  \lstinline!long long!;
+\item[f, F] "---  \lstinline!float!;
+\item[l, L] "---  \lstinline!long double!.
+\end{description}
+Коды символов "---
+\lstinline!'\0' == 0!, \lstinline!'\t' == 9!, \lstinline!'0' == 48!,  \lstinline!'r' == 114!. 
+
+
+
+\end{frame}
+
+
+\subsection{Ввод-вывод в~поток}
+\begin{frame}[fragile]{\insertsubsection}
+\footnotesize
+\setlength{\parskip}{0.5\parskip}
+
+
+<iomanip>
+
+Система счисления (префикс не добавляется):
+\begin{itemize}
+\item манипуляторы \lstinline!hex, oct, dec!
+\item манипулятор \lstinline!setbase(int base)! (фактически "--- 8, 10 и~16).
+\end{itemize}
+
+Регистр цифр \lstinline!A..F! и~символа \lstinline!E! в~экспоненциальной форме "--- манипуляторы \lstinline!uppercase! и~\lstinline!lowercase!.
+
+Ширина "---  \lstinline!setw(int w)! (только для следующего выводимого значения).
+
+Символ заполнения "--- \lstinline!setfill(int ch)!.
+
+
+\end{frame}
+
+
+% \section{Вещественные числа}
+% 
+% \subsection{Экспоненциальное представление}
+% \begin{frame}{\insertsubsection}
+% $$x = (-1)^s\cdot m \cdot 2^p$$
+% $$0.1_2 \leqslant m < 1$$
+% \end{frame}
+% 
+% \subsection{Стандартные вещественные типы}
+% \begin{frame}{\insertsubsection}
+% float, double, long double
+% \end{frame}
+% 
+% \section{Указатели}
+% \subsection{Память}
+% \begin{frame}{\insertsubsection}
+% Память
+% \end{frame}
+% 
+% \section{Данные, стек, куча, код}
+% \subsection{Глобальные и~статические данные}
+% \begin{frame}{\insertsubsection}
+% Сегмент данных
+% \end{frame}
+% 
+% 
+% \subsection{Локальные переменные и~параметры функций}
+% \begin{frame}{\insertsubsection}
+% Стек
+% \end{frame}
+% 
+% 
+% \subsection{Динамические структуры}
+% \begin{frame}{\insertsubsection}
+% Куча
+% 
+% new/delete
+% 
+% malloc/free
+% \end{frame}
+
+\section{}
+\subsection{Вопросы}
+\begin{frame}{\insertsubsection}
+\setlength{\leftmargini}{0ex}
+\begin{enumerate}
+% \item Какие вы знаете единицы измерения информации?
+
+\item Какие способы представления беззнаковых чисел используются в~ЭВМ?
+\item Какие способы представления знаковых чисел используются в~ЭВМ?
+\item Какие логические и~битовые операции вы~знаете?
+
+% \item Какие способы представления вещественных чисел используются в~ЭВМ?
+\end{enumerate}
+
+\end{frame}
+
+\makethanks
+\end{document}

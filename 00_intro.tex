@@ -1,0 +1,1832 @@
+\input{commonpres}
+
+% \setbeamertemplate{itemize/enumerate body begin}{\footnotesize}
+% \setbeamertemplate{itemize/enumerate subbody begin}{\footnotesize}
+% \setbeamerfont{frametitle}{size=\linespread{1.0}\large}
+
+% \addtobeamertemplate{footnote}{}{\vspace{-30ex}}
+
+\title{Архитектура вычислительных систем}
+\graphicspath{{fig/}{fig/tanenbaum/}{fig/intro/}{fig/model/}}
+
+
+
+
+\newcommand{\Reg}[1]{{\textcolor{colorRegister}{#1}}}
+
+\begin{document}
+\maketitle
+
+% \section{Оргвопросы}
+% \subsection{Компетенции}
+
+\begin{frame}{Цель курса}
+
+% Общепрофессиональные:
+Формирование подкомпетенции
+
+\termin{ОПК-2.2}	Знание и~понимание архитектуры и~принципов построения вычислительных систем
+
+\textterminblue {
+Участвует в~формировании общепрофессиональной компетенции
+}
+
+\termin{ОПК-2}	Владение архитектурой ЭВМ и~систем
+
+
+\end{frame}
+
+\begin{frame}{Компетенция}
+\footnotesize
+\termin{Компетенция} "--- компонент качества человека, определяющий его способность выполнять определенную группу действий в~сфере того или иного рода деятельности. Это некий уровень требований к~человеку, соответствующий его роли в~обществе. 
+
+\setlistspacing{1}{0ex}
+
+Особенность компетенции как результата обучения состоит в~том, что в~сравнении с~другими результатами образования она:
+\vspace{-1em}
+\begin{itemize}
+\item является интегрированным результатом, 
+\item позволяет решать целый класс нестандартных задач, 
+\item существует в~форме деятельности, 
+\item переносима (связана с~целым классом предметов воздействия), совершенствуется по пути интеграции с~другими компетенциями, 
+\item проявляется сознательно (в~отличие от навыка).
+\end{itemize}
+\end{frame}
+
+% \subsection{Регламент}
+
+\begin{frame}{Регламент{}}
+\small
+\setlength{\parskip}{0\parskip}
+
+Баллы (максимум):
+% \begin{adjustwidth}{-1.5em}{-1.5em}\vspace{-1\baselineskip}
+$$
+\begin{array}{c}
+7\cdot 11~(\text{л/р})
++23~(\text{бонус/зачёт}) = 100
+\end{array}
+$$
+% Допустимый минимум:
+% $$
+% \begin{array}{c}
+% 7\cdot7(\text{л/р})
+% +1(\text{бонус/зачёт}) = 50
+% \end{array}
+% $$
+% \end{adjustwidth}
+% \bigskip
+
+% Оценки%\vspace{-0.5\baselineskip}
+Дифзачёт (оценка):\\\hfill
+% \begin{description}[123]
+% \item[$5$] ~~ $86-100$
+% \item[$4$] ~~ $70-85$
+% \item[$3$] ~~ $50-69$
+% \item[$2$] ~~ $0-49$
+% \end{description}
+\begin{tabular}{ll}
+\termin{$5$} ~~ $86-100$\\
+\termin{$4$} ~~ $70-85$\\
+\termin{$3$} ~~ $50-69$\\
+\termin{$2$} ~~ $0-49$\\
+\end{tabular}
+\hfill\strut
+
+\end{frame}
+
+\section{Определения}
+% \subsection{Понятие архитектуры системы}
+\subsection{Архитектура системы}
+\begin{frame}{\insertsubsection}
+ 
+% http://infosys2006.narod.ru/struct/architec.htm
+% В стандарте ANSI/IEEE Std 1471-2000 (IEEE Recommended Practice for Architectural Description of Software-Intensive Systems ) 
+\termin{Архитектура системы}  "--- фундаментальная организация системы, реализованная в~её~компонентах, \\их~взаимоотношениях друг с~другом и~средой \\и~принципах, определяющих её~конструкцию (проектирование, дизайн) и~развитие. 
+
+\textterminblue{
+ANSI/IEEE Std 1471-2000 (IEEE Recommended Practice for~Architectural Description of~Software-Intensive Systems)
+}
+
+\end{frame}
+
+
+% \subsection{Архитектура ЭВМ%компьютера
+% }
+% \begin{frame}{\insertsubsection}
+% \termin{\insertsubsection{}} "---  описание её организации и~принципов функционирования её структурных элементов. 
+% 
+% Включает основные устройства ЭВМ и~структуру связей между ними.
+% \end{frame}
+
+
+
+
+\subsection{Вычислительная система}
+\begin{frame}{\insertsubsection{}  (ВС)}
+\termin{\insertsubsection{} \rlap{[computer system]}}
+\setlength{\parskip}{0.5\parskip}
+
+% \\
+% "--- 
+1. 
+Совокупность ЭВМ и~средств программного обеспечения, предназначенная для выполнения вычислительных процессов.
+
+2. Любая автоматизированная система, основанная на использовании ЭВМ.
+
+% \small
+
+\textterminblue{
+Информатика. Новый систематизированный толковый словарь.    
+\\
+Воройский Ф.\,С.
+}
+
+% Автоматизированная система (АС) [automated system] 
+% 
+%     Совокупность управляемого объекта и~автоматических управляющих устройств, в~которых часть функций управления выполняет человек-оператор;
+% 
+%     Комплекс технических, программных, др. средств и~персонала, предназначенный для автоматизации различных процессов. В отличие от автоматической системы не может функционировать без участия человека.
+
+\end{frame}
+
+\subsection{Автоматизированная система}
+\begin{frame}{\insertsubsection{} (АС)}
+\setlength{\parskip}{0.2\parskip}
+% \small
+\footnotesize
+
+% \termin{Автоматизированная система (АС) [automated system]}
+\termin{\insertsubsection{} \rlap{[automated system]}}
+
+1.    Совокупность управляемого объекта и~автоматических управляющих устройств, в~которых часть функций управления выполняет человек-оператор.
+
+2.    Комплекс технических, программных, др. средств и~персонала, предназначенный для автоматизации различных процессов. \\В отличие от автоматической системы не может функционировать без~участия человека.
+
+\textterminblue{
+Информатика. Новый систематизированный толковый словарь.    
+\\
+Воройский Ф.\,С.
+}
+\medskip
+
+% Документация на \termin{автоматизированные системы (АС).}
+
+% Согласно ГОСТ 34.003-90 Комплекс стандартов на автоматизированные системы. Автоматизированные системы. Термины и~определения,
+% \termin{Автоматизированная система (АС)}
+\termin{АС}
+ "--- система, состоящая из персонала и~комплекса средств автоматизации его деятельности, реализующая информационную технологию выполнения установленных функций. \textterminblue{
+ГОСТ 34.003-90}
+ 
+% АС  \termin{не является ПО} в~чистом виде.
+
+\end{frame}
+
+% \subsection[КСАС: автоматизированные системы]{ГОСТ 34.* Комплекс стандартов на автоматизированные системы}
+% \begin{frame}{\insertsubsection{}}
+% \setlength{\parskip}{0.5\parskip}
+% 
+% Документация на \termin{автоматизированные системы (АС).}
+% 
+% % Согласно ГОСТ 34.003-90 Комплекс стандартов на автоматизированные системы. Автоматизированные системы. Термины и~определения,
+% % \termin{Автоматизированная система (АС)}
+% \termin{АС}
+%  "--- система, состоящая из персонала и~комплекса средств автоматизации его деятельности, реализующая информационную технологию выполнения установленных функций (ГОСТ 34.003-90)
+%  
+% АС  \termin{не является ПО} в~чистом виде.
+% 
+% \end{frame}
+
+% \section{Многоуровневая %компьютерная 
+% организация}
+
+% \section{Иерархическая декомпозиция ВС}
+% 
+% % \begin{frame}{\insertsection}
+% % \setlength{\parskip}{0.25\parskip}
+% % 
+% % % {
+% % \terminblue
+% % Многоуровневая машина\hfillСовременные системы
+% % 
+% % % }
+% % \begin{adjustwidth}{-1.8em}{-1.8em}
+% % 
+% % \includegraphics[width=0.55\linewidth,valign=t]{multi-level-abstract-blue}\hfill
+% % \includegraphics[width=0.45\linewidth,valign=t]{multi-level-asm}
+% % 
+% % \end{adjustwidth}
+% % 
+% % \footnotesize
+% % % \scriptsize
+% % \hfill 
+% % % \hspace{0.55\linewidth}
+% % Уровень физических устройств
+% % \end{frame}
+% \subsection{Многоуровневая %компьютерная 
+% организация}
+\subsection{Иерархическая декомпозиция ВС}
+
+
+\begin{frame}{\insertsubsection}
+% \setlength{\parskip}{0.25\parskip}
+\includegraphics[width=0.85\linewidth,valign=t]{multi-level-abstract}\centering
+
+\end{frame}
+\subsection{Современные системы}
+\begin{frame}{\insertsubsection}
+\vspace{-0.4em}
+\begin{adjustwidth}{-0.6em}{-0.6em}
+\includegraphics[width=0.44\linewidth,height=\slideheigth,keepaspectratio,valign=c]{multi-level-asm}\hfill
+\includegraphics[width=0.54\linewidth,height=\slideheigth,keepaspectratio,valign=c]{Layered_computer_structure}
+\end{adjustwidth}
+
+\end{frame}
+
+
+% \subsection{Цифровой логический уровень}
+% \begin{frame}{\insertsubsection}
+% Сигналы и~вентили
+% 
+% \includegraphics[width=1\linewidth,valign=t]{i-ra-th1-intro-bild-basisgatter}
+% \end{frame}
+
+% \section{Иерархическая декомпозиция ВС}
+% \section{Уровни аппаратной платформы}
+\colorlet{csMarker}{yellow!50}
+
+\subsection{Цифровой логический уровень}
+\begin{frame}{\insertsubsection}
+% \small
+\footnotesize
+\setlength{\parskip}{0.5\parskip}
+
+Сигналы и~вентили
+
+\newcolumntype{Y}{>{$}C<{$}}
+\newcolumntype{Z}{>{\columncolor{csMarker}}Y}
+\begin{tabularx}{1\linewidth}{YY|YZZ|YYY}
+a 	&	b &	\lnot a 	&	\overline{a \land b} 	&	\overline{a \lor b} & a \land b 	&	a \lor b & a \oplus b\\\hline
+0 	&	0 	&\multirow{2}{*}{$1$}&	1         	&	1         &0         	&	0         &	0\\
+0 	&	1 	&		&	1         	&	0         &0         	&	1         &	1\\\hline
+1 	&	0 	&\multirow{2}{*}{$0$}&	1         	&	0         &0         	&	1         &	1\\
+1 	&	1 	&		&	0         	&	0         &1         	&	1         &	0\\\hline
+\end{tabularx}
+
+\termin{Бит} "--- двоичный разряд (одно состояние).%\raggedright
+
+% \tikz\node [and gate] {};
+
+\includegraphics[width=0.8\linewidth,valign=t]{Logic-gate-index}\centering
+% \vspace{-1\baselineskip}
+
+
+\end{frame}
+
+
+\section{Микроархитектурный уровень}
+
+% \subsection{Микроархитектурный уровень}
+\begingroup
+\renewcommand{\tabularxcolumn}[1]{m{#1}} 
+% \begin{frame}{\insertsubsection}
+\begin{frame}{\insertsection}
+\small
+\setlength{\parskip}{0.125\parskip}
+\setlistspacing{1}{1ex}
+
+% \begin{tabularx}{1\linewidth}{@{}lL@{}}
+% % \includegraphics[width=0.7\linewidth,valign=c]{data-path}
+% 
+% \includegraphics[width=0.6\linewidth,height=\slideheigth,keepaspectratio,valign=c]{Intel_Core2_arch}
+% 
+% &
+% % \small
+% \footnotesize
+% \setlength{\parskip}{0.\parskip}
+
+% Микроархитектура МП – это 
+\begin{itemize}
+\item аппаратная организация и~логическая структура МП;
+\item регистры;
+\item управляющие схемы; % (УУ), 
+\item арифметико-логические устройства (АЛУ); 
+\item запоминающие устройства; 
+\item %и~
+связывающие их информационные магистрали \rlap{(шины).}
+\end{itemize}
+
+
+% % Шины и~элементы (регистры,  арифметико-логические устройства (АЛУ) и~т.\,д.)
+% % \medskip
+% % 
+% % \termin{Конвейер:}
+% % \setlistspacing{1}{0ex}
+% % \begin{itemize}
+% % \item 
+% %     чтение и~декодирование инструкции
+% %     
+% % \item    загрузка данных
+% %     
+% % \item    выполнение инструкции
+% %     
+% %  \item   запись результатов
+% % \end{itemize}
+% % \medskip
+% % 
+% % \termin{Тракт данных:}
+% % \begin{itemize}
+% % \item локальная память
+% % % \rlap
+% % {(набор регистров);}
+% % 
+% % \item АЛУ.
+% % % арифметико-логическое устройство (АЛУ).
+% % \end{itemize}
+
+
+% \end{tabularx}
+
+\termin{Машинное слово}  "--- разрядность шины данных/регистра.
+
+\termin{Байт} "--- %совокупность битов, обрабатываемая компьютером одномоментно (обычно байт=октет).
+минимальный независимо адресуемый \rlap{набор данных.}
+
+\termin{Октет} "--- 8 бит ($2^8 = 256$ состояний).
+
+
+% Машинное \termin{слово}  "--- разрядность регистров процессора и/или шины данных.
+
+
+
+\end{frame}
+\endgroup
+
+
+\colorlet{csArch}{orange!70!black}
+\newcommand{\terminModel}[1]{{\textcolor{csArch}{#1}}}
+\newcommand{\terminComment}[1]{{\textcolor{gray}{#1}}}
+
+\subsection{Поколения процессоров Intel}
+\begin{frame}{\insertsubsection}
+\footnotesize
+
+\begin{tabularx}{1\linewidth}{@{}l@{~}L@{}}
+
+\termin{4-битные:}& 4004, 4040\\
+
+\termin{8-битные:}& 8008, 8080 \terminComment{(адрес "--- %16 или 
+14),} 8085 \terminComment{(частота "--- 5 МГц)}\\
+
+\termin{16-битные:}& \termin{8086} \terminComment{(адрес "--- 20, \termin{слово "--- 16 бит}, %отдельный 
+FPU 8087),} 8088 \rlap{\terminComment{(8 бит),}}\\
+&80186, 80188,\\
+&80286 \terminComment{(адрес "--- 24)}\\
+\termin{32-битные:}& \textcolor{colorRegister}{
+iAPX 432 %, 80960, 80860, 
+"--- не x86-совместим
+}
+\\
+&80386DX, 80386SX\\
+&80486DX \terminComment{(встроенный FPU),} 80486SX\\
+\end{tabularx}
+\scriptsize
+\begin{tabularx}{1\linewidth}{@{}l@{}L@{}}
+&Pentium (P5, P54, P54C, \terminComment{данные "--- 64}), Pentium MMX\\
+&Pentium Pro, Pentium II \terminModel{(Klamath, Deschutes)}, Celeron \terminModel{(Covington, Mendocino)},\\
+&Pentium III (SSE, \terminModel{Katmai, Coppermine, Tualatin}), Celeron \terminModel{(Coppermine, Tualatin)}...\\
+\end{tabularx}
+\\
+\includegraphics[width=1\linewidth,height=\slideheigth,keepaspectratio,valign=t]{IntelProcessorRoadmap}\centering
+
+
+\end{frame}
+
+
+
+\subsection{%Микроархитектура %процессора 
+Структура
+Intel 8008
+и~Core2}
+\begin{frame}{\insertsubsection}
+
+\begin{adjustwidth}{-1.5em}{-1.2em}
+\begin{tabularx}{1\linewidth}{@{}l@{\,}l@{}}
+% \includegraphics[width=0.7\linewidth,valign=c]{data-path}
+
+
+\includegraphics[width=0.595\linewidth,height=\slideheigth,keepaspectratio,valign=c]{Intel_8008_arch}\centering
+&
+
+\includegraphics[width=0.395\linewidth,height=\slideheigth,keepaspectratio,valign=c]{Intel_Core2_arch}
+\end{tabularx}
+\end{adjustwidth}
+
+\end{frame}
+
+
+\subsection{Регистры x86}
+\begingroup
+\renewcommand{\tabularxcolumn}[1]{p{#1}} 
+\begin{frame}{\insertsubsection}
+% регистры общего назначения, 
+% указатель команд, 
+% регистр флагов и~сегментные регистры. 
+\setlength{\leftmargini}{0ex}
+% \small
+% \footnotesize
+\setbeamertemplate{itemize/enumerate body begin}{\footnotesize}
+\setbeamertemplate{itemize/enumerate subbody begin}{\footnotesize}
+
+ 
+\raisebox{-2.15\baselineskip}[0mm][0mm]{%
+\noindent\begin{tabularx}{1\linewidth+1.5em}{@{}L@{~}l@{}}
+&
+\includegraphics[width=0.5\linewidth,height=\slideheigth,keepaspectratio,valign=t]{Registers}
+\end{tabularx}
+}
+\vspace{-4\baselineskip}
+
+\begin{itemize}
+\item {Регистры общего назначения} 
+ \begin{itemize}
+\item   \Reg{a, b, c, d;}  
+\item    \Reg{si, di, bp;}
+\item   {указатель стека} \Reg{sp}.
+ \end{itemize}    
+   
+\item Сегментные %регистры 
+  \Reg{cs, ds, ss, es, fs, gs.}
+
+\item  Регистры состояния и~управления:
+\begin{itemize}
+\item   регистр флагов \Reg{eflags/flags};
+
+\item       указатель команды \Reg{eip/ip}.
+\end{itemize}   
+
+\item   Регистры сопроцессора x87 \Reg{st(0)...st(7)}/расширения MMX \rlap{\Reg{mm0...mm7}}
+
+\item        Регистры расширения XMM \rlap{(128-разрядные \Reg{xmm0...xmm7})}
+\end{itemize}
+
+
+% \begin{tabularx}{1\linewidth+1.8em}{@{}L@{~}l@{}}
+% \vspace{-1\baselineskip}
+% \begin{itemize}
+% \item {Регистры общего назначения} 
+%  \begin{itemize}
+% \item   \Reg{a, b, c, d;}  
+% \item    \Reg{si, di, bp;}
+% \item   {указатель стека} \Reg{sp}.
+%  \end{itemize}    
+%    
+% \item Сегментные регистры \rlap{(\Reg{cs, ds, ss, es, fs, gs}).}
+% 
+% \item  Регистры состояния и~управления:
+% \begin{itemize}
+% \item   регистр флагов \Reg{eflags/flags};
+% 
+% \item       указатель команды \Reg{eip/ip}.
+% \end{itemize}   
+% 
+% \end{itemize}    
+% &
+% \includegraphics[width=0.45\linewidth,height=\slideheigth,keepaspectratio,valign=t]{Registers}
+% \end{tabularx}
+% \vspace{-2\baselineskip}
+% 
+% \begin{itemize}
+% 
+% \item   Регистры сопроцессора x87 \Reg{st(0)...st(7)}/расширения MMX \rlap{\Reg{mm0...mm7}}
+% 
+% \item        Регистры расширения XMM \rlap{(128-разрядные \Reg{xmm0...xmm7})}
+% \end{itemize}
+\end{frame}
+\endgroup
+
+% \subsection{Регистры общего назначения}
+% \begin{frame}{\insertsubsection}
+% \footnotesize
+% {
+% \includegraphics[width=\linewidth,height=\slideheigth,keepaspectratio,valign=t]{Registers}\centering
+% 
+% }
+% \end{frame}
+
+
+% \begin{frame}{\insertsubsection}
+% Некоторые команды работают только с~определёнными регистрами. Например, 
+% команды умножения и~деления используют регистры EAX и~EDX для хранения исходных данных и~результата операции. Команды управления циклом используют регистр ECX в~качестве счётчика цикла.
+% 
+% Ещё один нюанс состоит в~использовании регистров в~качестве базы, т.е. хранилища адреса оперативной памяти. В качестве регистров базы можно использовать любые регистры, но желательно использовать регистры EBX, ESI, EDI или EBP. В этом случае размер машинной команды обычно бывает меньше. 
+% \end{frame}
+
+
+% \subsection{Регистры состояния и~управления}
+% \begin{frame}{\insertsubsection}
+% 
+% % Указатель команд
+% 
+% ip (указатель команд) "--- смещение следующей подлежащей выполнению команды 
+% \\
+% % Этот регистр непосредственно недоступен программисту, но загрузка и~изменение его значения производятся различными командами управления, к~которым относятся команды 
+% (условные и~безусловные переходы, вызов и~возврат из функций). 
+% 
+% 
+% flags "--- набор флагов (1 "--- установлен, 0 "--- сброшен), отражающий текущее состояние процессора.
+% 
+% \footnotesize
+% \vspace{-1\baselineskip}
+% \begin{itemize}
+% \item lahf/sahf (8 бит)% "--- 8 бит в~ah;
+% 
+% \item pushf/popf (16 бит) %"--- 16 бит в~стек;
+% 
+% \item pushfd/popfd (32 бита) %"---  32-бит eflags.
+% \end{itemize}
+% 
+% \end{frame}
+
+
+
+
+% \subsection{Фон-Неймановская и~гарвардская архитектуры}
+% \subsection{Вычислительные архитектуры}
+\subsection{Расположение программ и~данных}
+% \begin{frame}{\insertsubsection}
+% \footnotesize
+% {
+% \includegraphics[width=0.8\linewidth,valign=t]{Harvard-vonNeumann}\centering
+% 
+% }
+% 
+% Общая шина для памяти программ и~данных "--- узкое место архитектуры фон Неймана (принстонской)
+% 
+% \end{frame}
+
+% \begingroup
+% \tikzstyle{strokednode}	= [text badly centered, draw=black, thick, minimum height=4ex]
+% \tikzstyle{block}	= [strokednode, text width=12ex]
+% \newcommand{\UuAluBlock}[1]
+% {
+%   \tikzset{node distance=4ex}
+%   \node[block] (#1Output)  at (#1) {Вывод};
+%   \node[block, minimum height=8ex, above = of #1Output] (#1Alu) {АЛУ};
+%   \node[block, above = of #1Alu] (#1Input) {Ввод};
+% 
+%   \node[strokednode, left = of #1Input, rotate=90, anchor=south] (#1Uu) {Управляющее устройство};
+%   
+%   \tikzset{node distance=0.5ex}
+% }
+\newcommand{\DoublearrowYRight}[2]
+{
+  \path[blockarrow] (#2) ++(0,0.5ex) coordinate(tmpUp) -- (tmpUp-|#1);
+  \path[blockarrow] (#2-|#1)   ++(0,-0.5ex) coordinate(tmpDown) -- (tmpDown-|#2) ;
+}
+\begin{frame}{\insertsubsection}
+
+\scriptsize
+\vspace{-1.\baselineskip}
+
+\resizebox{0.8\linewidth}{!}{
+\begin{tikzpicture}[
+node distance=2ex and 4ex,
+baseline=(current bounding box.north)
+]
+\tikzstyle{strokednode}	= [text badly centered, draw=black, thick, minimum height=4ex]
+\tikzstyle{block}	= [strokednode, text width=16ex]
+\tikzstyle{blockarrow}	= [-latex', draw]
+\tikzstyle{hiblock}	= [block, minimum height=8ex]
+
+\coordinate (Pr);
+% \UuAluBlock{Pr}
+
+\coordinate[right = 40ex of Pr] (Gv);
+% \UuAluBlock{Gv}
+
+\foreach \i/\s in {Pr/Фон-неймановская (принстонская) архитектура, Gv/Гарвардская архитектура}
+{
+%   \tikzset{node distance=4ex}
+  \node[block] ({\i}Output)  at (\i) {Вывод};
+  \node[hiblock, above = of {\i}Output] ({\i}Alu) {АЛУ};
+  \node[block, above = of {\i}Alu] ({\i}Input) {Ввод};
+
+  \node[strokednode, left = of {\i}Input, rotate=90, anchor=south, inner xsep=1.5ex] ({\i}Uu) {Управляющее устройство};
+  
+  \path[blockarrow] ({\i}Input) -- ({\i}Alu);
+  \path[blockarrow] ({\i}Alu) -- ({\i}Output);
+  
+  
+  
+%   \tikzset{node distance=0.5ex}
+%   
+%   \coordinate ({\i}UuLeft) at ({\i}Uu.south);
+%   \path[blockarrow] ({\i}Alu.west) ++(0,0.5ex) coordinate({\i}AluUp) -- ({\i}AluUp-|{\i}UuLeft);
+%   \path[blockarrow] ({\i}AluUp-|{\i}UuLeft)   ++(0,-1ex) coordinate({\i}AluDown) -- ({\i}AluDown-|{\i}Alu.west) ;
+  \DoublearrowYRight{{\i}Uu.south}{{\i}Alu.west}
+  
+  \node[text width=40ex, text badly centered, below = of {\i}Output)] {\s};
+}
+  \node[hiblock, above = of {Pr}Input] (PrMemory) {Общая память};
+  \DoublearrowYRight{{Pr}Uu.south}{PrMemory.west}
+  \path[blockarrow] (PrMemory) -- ({Pr}Input);
+  \path[blockarrow] ({Pr}Output.east) -- ++(4ex,0) |- (PrMemory);
+  
+\tikzstyle{narrowblock}	= [strokednode, text width=8ex]
+%   \node[narrowblock, above = of {Gv}Input.north east] (GvDataMemory) {Память данных};
+% %   \node[narrowblock, above = of {Gv}Input.north west|-GvDataMemory.north] (GvProgMemory) {Память команд};
+%   \node[narrowblock, above = of {Gv}Input.north west|-GvDataMemory.north, anchor=west] (GvProgMemory) {Память команд};
+
+  \coordinate[right= 5.5ex of {Gv}Input.north] (GvInputFromData);
+  \coordinate[left= 5.5ex of {Gv}Input.north] (GvInputFromProg);
+  \node[narrowblock, above = of GvInputFromData] (GvDataMemory) {Память данных};
+  \node[narrowblock, above = of GvInputFromProg|-GvDataMemory] (GvProgMemory) {Память команд};
+
+  \DoublearrowYRight{{Gv}Uu.south}{GvProgMemory.west}
+  \DoublearrowYRight{{Gv}Uu.south}{GvDataMemory.west}
+  \path[blockarrow] (GvProgMemory) -- (GvInputFromProg);
+  \path[blockarrow] (GvDataMemory) -- (GvInputFromData);
+  \path[blockarrow] ({Gv}Output.east) -- ++(4ex,0) |- (GvDataMemory);
+
+\end{tikzpicture}
+}\centering
+
+\small
+Общая шина для памяти программ и~данных "--- узкое место архитектуры фон Неймана\raggedright
+
+\end{frame}
+% \endgroup
+
+% \section{Структура компьютера}
+
+\subsection{Магистрали}
+% \subsection{Макроархитектура}
+% \subsection{Функциональная схема компьютера}
+% \begin{frame}{\insertsubsection}
+% \footnotesize
+% {
+% \includegraphics[height=\slideheigth,valign=t]{func-comp}\centering
+% 
+% }
+% 
+% \end{frame}
+
+
+
+\begin{frame}{\insertsubsection}
+\scriptsize
+\vspace{-1.\baselineskip}
+
+\resizebox{0.8\linewidth}{!}{
+% \tikzstyle{blockarrow}	= [-latex',thick,draw]
+\begin{tikzpicture}[
+start chain=uvv going right,
+start chain=bus_south going right,
+% start chain=bus_north going below,
+start chain=bus_comment going above,
+% every on chain/.style=join,
+% every on chain/.style=solidchaincell,
+% every join/.style=blockarrow,
+node distance=2ex and 2ex,
+baseline=(current bounding box.north)
+]
+\tikzstyle{strokednode}	= [text badly centered, draw=black, thick]
+\tikzstyle{block}	= [strokednode, text width=18ex, minimum height=6ex]
+
+
+\tikzstyle{bus}	= [ultra thick, draw=black!80!green]
+
+\node[block, on chain=uvv] (hdd) {Долговременная память};
+\node[block, on chain=uvv] (prn) {Принтер};
+\node[block, on chain=uvv] (kbd) {Клавиатура};
+\node[block, on chain=uvv] (mon)  {Монитор};
+\node[fit=(hdd) (mon), inner sep=0ex] (uvv_box) {};
+
+\node[strokednode, text width=50ex, above=4ex of uvv_box] (uvv_common) {Устройства ввода-вывода};
+
+\foreach \i in {hdd, prn, kbd, mon}
+{
+  \draw[] (\i.north) -- (uvv_common);
+}
+
+
+\coordinate[on chain=bus_south] (addr_south) at (uvv_common.120);
+\coordinate[on chain=bus_south] (data_south);
+\coordinate[on chain=bus_south] (ctrl_south);
+\coordinate[on chain=bus_south] (power_south);
+
+\tikzstyle{block}	= [strokednode, text width=18ex, minimum height=10ex]
+
+\coordinate[above=12ex of addr_south] (addr_ram);
+\node[block, left = 4ex of addr_ram] (ram)  {Оперативная память};
+
+\coordinate[below = of addr_ram] (data_ram);
+\coordinate[above = of addr_ram] (ctrl_ram);
+\coordinate[above = of ctrl_ram] (power_ram);
+
+\node[strokednode, text width=33ex, text badly ragged, right =4ex of addr_ram-|power_south] (cpu)  {
+Центральный процессор
+\setlength{\leftmargini}{4ex}
+\setlistspacing{1}{0ex}
+\begin{itemize}
+\item регистр команд; 
+\item устройство управления;
+\item АЛУ;
+\item адресный регистр; 
+\item указатель команды.
+\end{itemize}
+};
+
+\tikzstyle{powerline}	= [draw=green]
+
+\foreach \i/\s in {addr/, data/, ctrl/, power/powerline}
+{
+  \draw[bus, \s] (ram.east|-\i_ram) -- (cpu.west|-\i_ram);
+}
+
+
+
+\node[block, above = 20ex of ram] (bios)  {Постоянное запоминающее устройство};
+\node[block, right =4ex of bios-|power_south] (clock)  {Тактовый генератор};
+
+\coordinate[above = of bios.east-|ctrl_south] (ctrl_north);
+\coordinate (data_north) at (bios.east);
+\coordinate[below = of data_north] (addr_north);
+
+\coordinate[above = of ctrl_north-|power_south] (power_north);
+
+\foreach \i/\s in {ctrl/, power/powerline}
+{
+  \draw[bus, \s] (\i_south) -- (\i_north);
+  \draw[bus, \s] (bios.east|-\i_north) -- (clock.west|-\i_north);
+}
+
+\draw[bus] (data_south) |- (data_north);
+\draw[bus] (addr_south) |- (addr_north);
+
+
+\tikzset{node distance=3ex}
+\tikzset{draw=blue,thin}
+
+\coordinate[above =  of cpu.north-|addr_south, on chain=bus_comment] (addr_comment);
+\coordinate[on chain=bus_comment] (data_comment);
+\coordinate[on chain=bus_comment] (ctrl_comment);
+\coordinate[on chain=bus_comment] (power_comment);
+
+\coordinate (end_comment) at (cpu.east);
+
+
+\foreach \i/\s in {addr/адреса, data/данных, ctrl/управления, power/\vphantom{у}питания}
+{
+  \draw[draw=blue](\i_comment-|\i_south) -- node[above=-1ex, text=blue, at end, anchor=south east, text badly ragged] {шина \s} (\i_comment-|end_comment);
+}
+
+% \draw (bios) -- coordinate () (clock);
+
+\end{tikzpicture}
+}\centering
+
+\end{frame}
+
+
+% \subsection{Структура системной шины}
+% \begin{frame}{\insertsubsection}
+% \footnotesize
+% {
+% \includegraphics[width=\linewidth,height=\slideheigth,keepaspectratio,valign=t]{sysbus4}\centering
+% 
+% }
+% 
+% \end{frame}
+
+% \subsection{Единицы измерения тактовой частоты}
+% \begin{frame}{\insertsubsection}
+% \footnotesize
+% 
+% \includegraphics[width=0.4\linewidth,height=\slideheigth,keepaspectratio,valign=t]{sync}
+% \begin{tabular}{l}$T$ "--- длительность тактового импульса, с\\
+% $f = \frac{1}{T}$  "--- тактовая частота, 1/с
+% \end{tabular}
+% 
+% 1 Гц (Герц) "---  один такт в~секунду
+% 
+% $f = 1$ МГц, $T = 1$ мкс ($10^{-6}$ с)
+% 
+% $f = 1$ ГГц,  $T = 1$ нс   ($10^{-9}$ с)
+% \end{frame}
+
+% \setlistspacing{1}{0ex}
+\subsection{Схема системной платы}
+\begingroup
+\renewcommand{\tabularxcolumn}[1]{m{#1}} 
+\begin{frame}{\insertsubsection}
+\footnotesize
+\begin{tabularx}{1\linewidth}{@{}cL@{}}
+\includegraphics[height=\slideheigth,valign=c]{Motherboard_diagram_ru}&
+\termin{Северный мост} "--- обмен между процессором и~скоростными устройствами,
+частота шины, вид и~объём ОЗУ, тип шины видеоадаптера.
+% \begin{itemize}
+% \item память;
+% \item шина PCI Express или AGP. 
+% \end{itemize}
+
+\termin{Южный мост} "--- часы, память CMOS,
+работа с~низкоскоростными интерфейсами:
+\setlistspacing{1}{0ex}
+\begin{itemize} \itemsep0ex\parsep0ex
+\item SATA, 
+\item IDE, 
+\item контроллер прерываний, 
+\item USB, 
+\item контроллер прямого доступа.
+\end{itemize}
+
+\end{tabularx}
+\end{frame}
+
+\endgroup	% \renewcommand{\tabularxcolumn}[1]{m{#1}}
+
+
+
+
+
+\section{Уровень архитектуры команд}
+\newcommand{\grayemph}[1]{\textcolor{gray}{\emph{#1}}} 
+\begin{frame}{\insertsection}
+% \subsection{Уровень архитектуры команд}
+% \begin{frame}{\insertsubsection}
+% \includegraphics[width=1\linewidth,valign=t]{arch-code}
+\small
+\setlength{\leftmargini}{0ex}
+% \setlength{\leftmarginii}{1ex}
+\setlength{\parskip}{0.\parskip}
+\setlistspacing{1}{0.5ex}
+
+\begin{itemize}
+\item    архитектура памяти;
+\item    взаимодействие с~внешними устройствами ввода/вывода;
+\item    режимы адресации;
+\item    регистры;
+\item    машинные команды
+\begin{itemize}
+\item    CISC \grayemph{(complex instruction set computer);}
+\item    RISC \grayemph{(reduced instruction set computer, %архитектуры 
+load/store);}
+\item    VLIW \grayemph{(very long instruction word),} суперскалярные;
+\end{itemize}
+\item    различные типы внутренних данных (целочисленные, с~плавающей запятой и~т.\,д.);
+\item   обработчики прерываний и~исключений.
+\end{itemize}
+
+\end{frame}
+
+
+
+
+
+% \subsection{Архитектура набора команд}
+% \begin{frame}{\insertsubsection}
+% \begin{itemize}
+% \item    RISC
+% \item    CISC
+% \item    VLIW
+% \end{itemize}
+% \end{frame}
+
+
+
+
+
+\subsection{Структура команды x86}
+\begin{frame}{\insertsubsection}
+\includegraphics[width=1\linewidth,height=\slideheigth,keepaspectratio,valign=t]{cmd_structure}\centering
+\end{frame}
+
+
+
+
+\subsection{Методы адресации}
+\begin{frame}{\insertsubsection}
+\small
+\setlength{\leftmargini}{0ex}
+
+\begin{enumerate}
+\item \termin{Непосредственная} "--- константа
+\item \termin{Прямая} (абсолютная) "--- переменная в~памяти по~фиксированному адресу (статическая)
+\item \termin{Регистровая} "--- переменная в~регистре
+\item \termin{Косвенно-регистровая (косвенная)} "--- указатель в~регистре
+$$
+\text{Адрес} = \Reg{Base} + 2^{Scale} \cdot \Reg{Index} + Disp
+$$
+$\Reg{Base}$ и~$\Reg{Index}$ "--- регистры, $Disp$ "--- смещение (константа)
+\end{enumerate}
+\end{frame}
+
+\subsection{Стек}
+% \begin{frame}{\insertsubsection}
+% \footnotesize
+% {
+% \includegraphics[width=\linewidth,height=\slideheigth,keepaspectratio,valign=t]{Stack386}\centering
+% 
+% }
+% \end{frame}
+\begin{frame}{\insertsubsection}
+\vspace{-1.5\baselineskip}
+\resizebox{1\linewidth}{!}{
+\scriptsize
+\tikzstyle{blockarrow}	= [-latex',draw]
+% \footnotesize
+\scriptsize
+\begin{tikzpicture}[
+start chain=Mem going below,
+% every on chain/.style=join,
+% every on chain/.style=solidchaincell,
+% every join/.style=blockarrow,
+node distance=4ex and 8ex,
+baseline=(current bounding box.north)
+]
+\tikzstyle{block}	= [text width=10ex,text badly centered, minimum height=4ex, draw=black]
+
+\tikzstyle{reg}	= [block,  fill=colorRegisterLight]
+\tikzstyle{alu}	= [block,  fill=colorCalcLight, text width=20ex]
+\tikzstyle{mem}	= [reg,  fill=colorMemoryLight]
+
+\tikzstyle{reglabel}	= [block,  draw=none, node distance=0ex and 8ex, text=colorRegister]
+\tikzstyle{memlabel}	= [reglabel, text=colorMemory]
+
+\node[mem, on chain=Mem]  (s1) {};
+\node[mem,solidchaincell,on chain=Mem]  {};
+\node[mem,solidchaincell,on chain=Mem]  {};
+\node[mem,solidchaincell,on chain=Mem] (sCurrent) {};
+\node[mem,solidchaincell,on chain=Mem]  {};
+\node[mem,solidchaincell,on chain=Mem]  {};
+\node[mem,solidchaincell,on chain=Mem]  {};
+\node[mem,solidchaincell,on chain=Mem]  {};
+
+
+\node[memlabel,above= of s1.north east]   {0};
+\node[memlabel,above= of s1.north west]   {31};
+
+\node[reglabel,right= of s1, text width=24ex]  (bottom)  {Дно стека \mbox{(начальное значение sp)}};
+
+\coordinate[right=of sCurrent]  (from_sp);
+% \node[reg, right=of from_sp]  (sp) {esp/sp};
+% \node[reglabel,right= of sp]   {Вершина стека};
+\node[reglabel,right= of from_sp] (top)  {Вершина стека};
+\node[reg, right=6ex of top]  (sp) {esp/sp};
+\coordinate[above=of from_sp]  (pop);
+\coordinate[below=of from_sp]  (push);
+
+% \path[blockarrow] (bottom) -- (s1);
+\path[blockarrow] (bottom-|sp.west) -- (s1);
+
+\path[blockarrow] (sp) -- (sCurrent);
+\path[blockarrow] (from_sp) -- node[right] {pop} (pop);
+\path[blockarrow] (from_sp) -- node[right] {push} (push);
+\end{tikzpicture}
+}
+\end{frame}
+
+\subsection{Порядок следования байтов в~словах}
+\begin{frame}{\insertsubsection}
+% \renewcommand{\arraystretch}{1.5}
+\small
+
+\begin{tabularx}{1\linewidth}{@{}LL@{}}
+\termin{Прямой} (little-endian, Intel, VAX) & \termin{Обратный} (big-endian, Motorola) \\
+младший байт слова 
+по~младшему адресу
+&
+младший байт слова 
+по~старшему адресу
+\\[1ex]
+% % \multicolumn{2}{K{0.9\linewidth}}{Число  FE 0A 91 87 в~двойном слове по адресу 0 будет выглядеть в~памяти как}
+% \multicolumn{2}{c}{\termin{\texttt{FE 0A 91 87} по адресу~0:}}
+% % \multicolumn{2}{c}{ff}
+% \\
+% \renewcommand{\arraystretch}{1}
+% \begin{tabular}{@{}lr@{~}r@{~}r@{~}r@{}}
+% &87&91&0A&FE\\
+% № байта  &0      &1       &2      &3
+% \end{tabular}
+% &
+% \renewcommand{\arraystretch}{1}
+% \begin{tabular}{@{}lr@{~}r@{~}r@{~}r@{}}
+% &FE&0A&91&87\\
+% № байта  &0      &1       &2      &3
+% \end{tabular}
+% \multicolumn{2}{c}{\termin{\texttt{0A 0B 0C 0D} по адресу~0:}}
+\multicolumn{2}{c}{\termin{\texttt{0x\,0A\,0B\,0C\,0D} по адресу~0:}}
+% \multicolumn{2}{c}{ff}
+\\
+\renewcommand{\arraystretch}{1}
+\begin{tabular}{@{}lr@{~}r@{~}r@{~}r@{}}
+&0D&0C&0B&0A\\
+№ байта  &0      &1       &2      &3
+\end{tabular}
+&
+\renewcommand{\arraystretch}{1}
+\begin{tabular}{@{}lr@{~}r@{~}r@{~}r@{}}
+&0A&0B&0C&0D\\
+№ байта  &0      &1       &2      &3
+\end{tabular}
+\end{tabularx}
+
+\termin{Переключаемый} (bi-endian, bytesexual)
+
+\termin{Смешанный} (middle-endian, mixed-endian) %"--- машинные слова от старшего к~младшему.
+\begin{tabularx}{1\linewidth}{@{}LL@{}}
+\renewcommand{\arraystretch}{1}
+\begin{tabular}{@{}lr@{~}r@{~}r@{~}r@{}}
+PDP-11&0B&0A&0D&0C\\
+№ байта  &0      &1       &2      &3
+\end{tabular}
+&
+\begin{tabular}{@{}lr@{~}r@{~}r@{~}r@{}}
+&0C&0D&0A&0B\\
+№ байта  &0      &1       &2      &3
+\end{tabular}
+\end{tabularx}
+\end{frame}
+
+
+
+
+\subsection{Цикл выполнения команды}
+% \begin{frame}{\insertsubsection}
+% \footnotesize
+% \begin{tabularx}{1\linewidth}{@{}lL@{}}
+% {
+% \includegraphics[width=0.7\linewidth,height=\slideheigth,keepaspectratio,valign=t]{cmdloop}\centering
+% 
+% }
+% &
+% % \small
+% \footnotesize
+% \setlength{\parskip}{0.\parskip}
+% 
+% 
+% % Шины и~элементы (регистры,  арифметико-логические устройства (АЛУ) и~т.\,д.)
+% % \medskip
+% % 
+% \termin{Конвейер:}
+% % \setlistspacing{1}{0ex}
+% \setlength{\leftmargini}{1ex}
+% \begin{itemize}
+% \item чтение и~декодирование инструкции
+% \item    загрузка данных
+% \item    выполнение инструкции
+% \item   запись результатов
+% \end{itemize}
+% % \medskip
+% % 
+% % \termin{Тракт данных:}
+% % \begin{itemize}
+% % \item локальная память
+% % % \rlap
+% % {(набор регистров);}
+% % 
+% % \item АЛУ.
+% % % арифметико-логическое устройство (АЛУ).
+% % \end{itemize}
+% 
+% \end{tabularx}
+% \end{frame}
+
+
+
+\begin{frame}{\insertsubsection}
+\footnotesize
+\begin{tabularx}{1\linewidth}{@{}lL@{}}
+\resizebox{0.7\linewidth}{!}{
+\tikzstyle{blockarrow}	= [-latex',thick,draw]
+% \footnotesize
+\scriptsize
+\begin{tikzpicture}[
+start chain=RegA going below,
+start chain=RegB going below,
+start chain=MemData going below,
+start chain=MemProg going right,
+% every on chain/.style=join,
+% every on chain/.style=solidchaincell,
+% every join/.style=blockarrow,
+node distance=4ex and 4ex,
+baseline=(current bounding box.north)
+]
+\tikzstyle{block}	= [text width=10ex,text badly centered, minimum height=4ex, draw=black]
+
+\tikzstyle{reg}	= [block,  fill=colorRegisterLight]
+\tikzstyle{alu}	= [block,  fill=colorCalcLight, text width=20ex]
+\tikzstyle{mem}	= [reg,  fill=colorMemoryLight]
+
+\tikzstyle{reglabel}	= [block,  draw=none, node distance=0ex, text=colorRegister]
+\tikzstyle{memlabel}	= [reglabel, text=colorMemory]
+
+\node[reg,solidchaincell,on chain=RegA] (A1) {Регистры};
+\node[reg,solidchaincell,on chain=RegA] (A2) {};
+\node[reg,solidchaincell,on chain=RegA]  {};
+\node[reg,solidchaincell,on chain=RegA] (An) {};
+\coordinate[left= 8ex of A2] (result_to_A2);
+
+\node[reg,right= of A1,on chain=RegB] (B1) {Регистры};
+\node[reg,solidchaincell,on chain=RegB] (B2) {};
+\node[reg,solidchaincell,on chain=RegB]  {};
+\node[reg,solidchaincell,on chain=RegB] (Bn) {};
+\coordinate[above= of B1] (mem_to_B1);
+
+\node[fit=(A1) (Bn), inner sep=0ex] (Reg_box) {};
+\node[alu, minimum height=8ex, below = of Reg_box] (alu) {АЛУ};
+\node[alu,solidchaincell,below = of alu] (alu_exec) {Выполнение};
+\coordinate[left= of alu_exec] (flags);
+
+% \coordinate[left=  of A2-|flags] (result_to_A2);
+
+\coordinate[below= of alu_exec] (alu_exec_to_result);
+\coordinate (result) at (result_to_A2|-alu_exec_to_result);
+
+
+\node[reg,right=  of B2] (C) {К-1};
+\node[reglabel,right= of C]   {Регистр команд};
+
+\coordinate[above= of A1|-mem_to_B1] (from_prog);
+\node[mem, above= of from_prog,on chain=MemProg] (C1)  {К-1};
+\node[mem,solidchaincell,on chain=MemProg]  {К-2};
+\node[mem,solidchaincell,on chain=MemProg] (C3) {К-3};
+\node[mem,solidchaincell,on chain=MemProg]  {К-4};
+\node[memlabel,above= of C3]   {Программа};
+\coordinate[below= of C1] (C1_to_C);
+
+\node[reg,above left= of C1] (IP)  {УК};
+\node[reglabel,left= of IP]   {Указатель команды (ip)};
+
+% \node[mem,solidchaincell,above left= 8ex of A1,on chain=MemData]  {Память};
+\node[mem, left=of mem_to_B1-|result_to_A2, on chain=MemData]  (O1) {Оп-1};
+\node[mem,solidchaincell,on chain=MemData]  {Оп-2};
+\node[mem,solidchaincell,on chain=MemData]  {};
+\node[mem,solidchaincell,on chain=MemData]  {};
+\node[mem,solidchaincell,on chain=MemData] (On) {};
+\node[memlabel,above= of O1]   {Память};
+
+\path[blockarrow] (C1) -- (C1_to_C) -| node[near start, above, sloped] {выборка} (C);
+\path[blockarrow] (C) |- node[near start,above, sloped] {декодирование} (alu);
+\path[blockarrow] (O1) -- node[near start,above, sloped] {загрузка} (mem_to_B1) -- (B1);
+
+\path[blockarrow] (An) -- (An|-alu.north);
+\path[blockarrow] (Bn) -- (Bn|-alu.north);
+
+\path[blockarrow, draw=colorRegister] (IP) -| (C1);
+\path[blockarrow] (alu_exec) --  node[at end, above, sloped] {флаги} (flags);
+\path[blockarrow] (alu_exec) -- (alu_exec_to_result)  -- node[midway, above, sloped] {результат} (result) --  node[midway, above, sloped] {запись} (result_to_A2) -- (A2);
+\path[blockarrow] (result) -|  node[pos=0.84, above, sloped] {запись} (On) ;
+
+\end{tikzpicture}
+}
+&
+% \small
+\footnotesize
+\setlength{\parskip}{0.\parskip}
+
+\termin{Конвейер:}
+% \setlistspacing{1}{0ex}
+\setlength{\leftmargini}{1ex}
+\begin{itemize}
+\item выборка и~декодирование инструкции
+\item    загрузка данных
+\item    выполнение инструкции
+\item   запись результатов
+\end{itemize}
+% \medskip
+% 
+% \termin{Тракт данных:}
+% \begin{itemize}
+% \item локальная память
+% % \rlap
+% {(набор регистров);}
+% 
+% \item АЛУ.
+% % арифметико-логическое устройство (АЛУ).
+% \end{itemize}
+\end{tabularx}
+\end{frame}
+
+
+\subsection{Флаги}
+\colorlet{csControl}{green!50}
+\colorlet{csSystem}{blue!20!red!10}
+\begin{frame}{\insertsubsection}
+\begin{adjustwidth}{-1.em}{-1.em}
+% \footnotesize
+% \scriptsize
+\tiny
+\renewcommand{\arraystretch}{1.05}
+\vspace{-1.5\baselineskip}
+
+\begin{tabularx}{\linewidth}{@{}c@{~}|l@{~}|l@{~}|L@{}|l@{}}
+% № 	& 	&Название 	&Описание 	&Тип флага \\\hline
+\multicolumn{5}{c}{\Reg{flags/eflags}}\\\hline
+\rowcolor{csMarker}0 	&CF 	&Carry Flag 	&Флаг переноса 	&Состояние\\\hline
+1 	&1 	&---&Зарезервирован 	&\\\hline
+\rowcolor{csMarker}2 	&PF 	&Parity Flag 	&Флаг чётности 	&Состояние\\\hline
+3 	&0 	&---&Зарезервирован 	&\\\hline
+\rowcolor{csMarker}4 	&AF 	&Auxiliary Carry Flag 	&Вспомогательный флаг переноса 	&Состояние\\\hline
+5 	&0 	&---&Зарезервирован 	&\\\hline
+\rowcolor{csMarker}6 	&ZF 	&Zero Flag 	&Флаг нуля 	&Состояние\\\hline
+\rowcolor{csMarker}7 	&SF 	&Sign Flag 	&Флаг знака 	&Состояние\\\hline
+\rowcolor{csSystem}8 	&TF 	&Trap Flag 	&Флаг трассировки 	&Системный\\\hline
+\rowcolor{csSystem}9 	&IF 	&Interrupt Enable Flag 	&Флаг разрешения прерываний 	&Системный\\\hline
+\rowcolor{csControl}10 	&DF 	&Direction Flag 	&Флаг направления 	&Управляющий\\\hline
+\rowcolor{csMarker}11 	&OF 	&Overflow Flag 	&Флаг переполнения 	&Состояние\\\hline
+\rowcolor{csSystem}12--13 	&IOPL 	&I/O Privilege Level 	&Уровень приоритета ввода-вывода 	&Системный\\\hline
+\rowcolor{csSystem}14 	&NT 	&Nested Task 	&Флаг вложенности задач 	&Системный\\\hline
+15 	&0 	&---&Зарезервирован 	&\\\hline
+% \\\hline
+\multicolumn{5}{c}{\Reg{eflags}}\\\hline
+\rowcolor{csSystem}16 	&RF 	&Resume Flag 	&Флаг возобновления 	&Системный\\\hline
+\rowcolor{csSystem}17 	&VM 	&Virtual-8086 Mode 	&Режим виртуального процессора 8086 	&Системный\\\hline
+\rowcolor{csSystem}18 	&AC 	&Alignment Check 	&Проверка выравнивания 	&Системный\\\hline
+\rowcolor{csSystem}19 	&VIF 	&Virtual Interrupt Flag 	&Виртуальный флаг разрешения прерывания 	&Системный\\\hline
+\rowcolor{csSystem}20 	&VIP 	&Virtual Interrupt Pending 	&Ожидающее виртуальное прерывание 	&Системный\\\hline
+\rowcolor{csSystem}21 	&ID 	&ID Flag 	&Проверка на доступность инструкции CPUID 	&Системный\\\hline
+22--31	&	&---&Зарезервированы 	&\\\hline
+\end{tabularx}
+\end{adjustwidth}
+
+\end{frame}
+
+
+\section{Уровень операционной системы}
+\begin{frame}{\insertsection}
+
+% \subsection{Уровень операционной системы}
+% \begin{frame}{\insertsubsection}
+% Виртуальная память
+% 
+% Страничная организация памяти
+% 
+% % Реализация виртуальных команд ввода-вывода
+% Файловая система
+% 
+% % Виртуальные команды для параллельной работы 
+% Процессы
+
+\begin{itemize}
+\item    управление памятью (распределение между процессами, организация виртуальной памяти);
+\item    загрузка программ в~оперативную память и~их~выполнение;
+\item    исполнение запросов программ (системные вызовы);
+\item    стандартизованный доступ к~периферийным устройствам (устройства ввода-вывода).
+% \item    управление доступом к данным на энергонезависимых носителях (таких как жёсткий диск, оптические диски и др.), организованным в той или иной файловой системе.
+% \item    обеспечение пользовательского интерфейса.
+% \item    сохранение информации об ошибках системы.
+\end{itemize}
+
+
+\end{frame}
+
+
+% \subsection{Уровень языка ассемблера}
+% \begin{frame}{\insertsubsection}
+% 
+% Реализуется путем трансляции, а~не интерпретации
+% 
+% Мнемоники
+% 
+% \end{frame}
+% 
+% 
+% \subsection{Язык высокого уровня}
+% \begin{frame}{\insertsubsection}
+% 
+% Прикладное программирование
+% 
+% \end{frame}
+
+\section{Уровень языка ассемблера}
+
+
+\begin{frame}[fragile]{\insertsection}
+
+Мнемоники "--- символическое представление машинных команд.
+
+ \lstinline!B9 CC CC CC CC! $\to$ \lstinline!movl $0xCCCCCCCC, %ecx!
+
+
+Реализуется путем трансляции (ассемблирования), а~не интерпретации.
+
+\end{frame}
+
+
+\subsection{Ассемблирование и~компоновка программы (GCC)}
+
+\begin{frame}[fragile]{\insertsubsection}
+
+\resizebox{0.8\linewidth}{!}{
+\tikzstyle{blockarrow}	= [-latex',thick,draw=blue]
+\footnotesize
+\begin{tikzpicture}[start chain=cpp going below,start chain=S going below,
+every on chain/.style=join,every join/.style=blockarrow,
+node distance=2ex and 4ex
+]
+\tikzstyle{block}	= [text width=16ex,text badly centered, minimum height=3ex, draw=black]
+\tikzstyle{file}	= [block,  fill=yellow!40!white]
+\tikzstyle{stage}	= [block, fill=blue,text=white]
+
+
+\node[file,on chain=cpp] (prog1_s) {prog.s};
+\node[stage,on chain=cpp] (cpp_asm) {Ассемблер};
+\node[file,on chain=cpp] (prog1_o) {prog.o};
+\node[stage,on chain=cpp] (linker) {Компоновщик};
+
+  
+\node[file, right= of linker,text width=20ex] (obj_lib) {Объектные файлы библиотек};
+\path[blockarrow] (obj_lib) -- (linker);
+
+\node[file,below= of linker] (prog) {prog};
+\path[blockarrow] (linker) -- (prog);
+
+
+\end{tikzpicture}
+}
+\centering
+
+\end{frame}
+
+
+
+\subsection{Ассемблеры x86}
+\begin{frame}{\insertsubsection}
+\footnotesize
+
+\begin{itemize}
+\item \termin{GNU Assembler (GCC)} "--- более 45 платформ, большинство ОС, лицензия GNU GPL 3+ 
+\item \termin{Flat Assembler (FASM)} "--- x86, DOS, MS Windows, UNIX-подобные (GNU/Linux, OpenBSD и др.), MenuetOS, KolibriOS, DexOS,  лицензия BSD 
+\item \termin{NASM/Yasm} "--- x86, x86-64, GNU/Linux, DOS, MS Windows, UNIX,  лицензия BSD 
+% \item HLASM "--- z/Architecture IBM
+\item \termin{Turbo Assembler (TASM)/Lazy Assembler} "--- x86, DOS, MS~Windows
+\item \termin{MASM} "--- x86, DOS, MS Windows
+
+\end{itemize}
+
+\end{frame}
+
+
+
+
+
+\subsection{Синтаксис}
+\begin{frame}[fragile]{\insertsubsection}
+\footnotesize
+\scriptsize
+\lstset{xleftmargin=0mm}
+\begin{columns}
+\begin{column}{0.45\linewidth}
+
+\itemizeball{} \termin{AT\&T}
+
+\begin{lstlisting}[numbers=none]
+movl $42, %eax
+
+movl $0x10, %ebx
+
+
+lea  -0x30(%rcx,%rax,8), %eax
+movl (%ebx), %eax
+
+movl $0xCCCCCCCC, %ecx
+
+
+movl 0xCCCCCCCC, %ecx
+\end{lstlisting}
+
+\end{column}
+\begin{column}{0.54\linewidth}
+
+% -4(%ebp), Intel:  [ebp - 4]
+\itemizeball{} \termin{Intel}
+
+\begin{lstlisting}[numbers=none]
+mov eax, 42
+
+mov ebx, 10h
+mov ebx, 0x10 ; masm
+
+lea eax, [rcx+rax*8-0x30]
+mov eax, dword ptr [ebx]
+
+mov ecx, 0xCCCCCCCC   
+/*@\textcolor{red}{mov ecx, dword ptr [0xCCCCCCCC] ; masm}@*/
+mov ecx, ds:[0xCCCCCCCC]
+/*@\textcolor{red}{mov ecx, dword ptr [0xCCCCCCCC] ; nasm}@*/
+\end{lstlisting}
+
+\end{column}
+\end{columns}
+\end{frame}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+% 
+% 
+% \section{Уровень языка высокого уровня}
+% 
+% \begin{frame}{\insertsection}
+% % \small
+% \footnotesize
+% \setlength{\parskip}{0.5\parskip}
+% % \setlength{\itemsep}{0mm}
+% 
+% % \setlength{\parskip}{0.\parskip}
+% \termin{Прикладное программирование}
+% % \bigskip
+% 
+% \begin{tabularx}{1\linewidth}{@{}Lp{0.4\linewidth}@{}}
+% Трансляция
+% \begin{itemize}
+% \item Фортран;
+% % \item Алгол;
+% \item C/Objective-C/C++;
+% \item Pascal/Object Pascal/Delphi.
+% \end{itemize}
+% &
+% Интерпретация
+% \begin{itemize}
+% \item sh/bash;
+% \item Python;
+% \item PHP.
+% \end{itemize}
+% \end{tabularx}
+% Уровень виртуальной машины \itemizeball{} Java.
+% % \begin{itemize}
+% % \item Java.
+% % \end{itemize}
+% 
+% \termin{Сверхвысокоуровневые языки программирования}
+% \setlength{\parskip}{0.\parskip}
+% \begin{itemize}
+% \item  Python;
+% \item Ruby;
+% \item AWK/Perl.
+% \end{itemize}
+% \end{frame}
+% 
+% 
+% \subsection{Стандарты C/C++}
+% \newcommand{\Old}[1]{{%
+%   \renewcommand{\terminblue}{\color{blue!20!gray!60}}
+%   \color{blue!20!gray!70}
+%   #1%
+% }}
+% \newcommand{\UnderConstruction}[1]{\Old{%
+%   #1%
+% }}
+% \begin{frame}{\insertsubsection}
+% \footnotesize
+% \setlength{\leftmargini}{0ex}
+% \setlength{\leftmarginii}{2ex}
+% \setlistspacing{1}{0ex}
+% 
+% \begin{itemize}
+% \item C
+% \begin{itemize}
+% \Old{
+% \item \termin{C89 (ANSI C)} ANSI X3.159-1989
+% \item \termin{C90} ISO/IEC 9899:1990
+% 
+% \item \termin{C99} ISO/IEC 9899:1999 %от 2007-11-15
+% }
+% \item \termin{C11} {ISO/IEC 9899:2011} %от 2011-12-19 
+% % 
+% % Последний бесплатный черновик "--- \termin{n1570} %от 2011-04-12
+% (последний черновик "--- \termin{n1570})
+% 
+% \end{itemize}
+% 
+% % https://isocpp.org/std/the-standard
+% \item C++
+% \begin{itemize}
+% \Old{
+% \item \termin{C++98} ISO/IEC 14882:1998 
+% \item \termin{C++11} ISO/IEC 14882:2011
+% }
+% \item \termin{C++14} ISO/IEC 14882:2014
+% % 
+% % Последний бесплатный черновик "--- \termin{n4296} %от 2014-11-19
+% \rlap{(последний черновик "--- \termin{n4296})}
+% 
+% \UnderConstruction{
+% \item \termin{C++17} Черновик \termin{n4595}
+% }
+% \end{itemize}
+% \end{itemize}
+% \end{frame}
+% 
+% 
+% \subsection{Компиляторы C++ (x86)}
+% \begin{frame}{\insertsubsection}
+% \footnotesize
+% % \scriptsize
+% \setlength{\leftmargini}{0ex}
+% \setlength{\parskip}{0.\parskip}
+% 
+% 
+% \begin{itemize}
+% \item \termin{GNU Compiler Collection (GCC)} "--- более 45 платформ, большинство ОС (порт под MS Windows "---  \termin{MinGW}), %7 языков (в~том числе C и~C++, стандарт), 
+% лицензия GNU GPL 3+ 
+% \item \termin{Portable C Compiler (PCC)} "--- Unix-подобные ОС, %GNU/Linux, 
+% MS Windows; лицензия BSD
+% 
+% 
+% \item \termin{TenDRA} "--- x86, x86-64, IA-64; POSIX-совместимые ОС; лицензия BSD
+% 
+% \item \termin{Oracle Solaris Studio} "--- x86, x86-64, SPARC; Solaris, OpenSolaris, GNU/Linux; собственническая лицензия
+% 
+% \item \termin{Intel C++ compiler} "--- x86, x86-64,  IA-64 (Itanium), GNU/Linux, MacOS X, MS Windows, коммерческая собственническая лицензия
+% 
+% \item \termin{Open Watcom} "--- DOS, OS/2 и MS Windows; лицензия  	
+% Sybase Open Watcom Public License version 1.0, 
+% %не полностью поддерживает стандарт С++
+% неполная поддержка стандарта
+% 
+% \item \termin{MS Visual C++} "--- x86, x86-64, IA-64 и~.NET, только MS Windows, коммерческая собственническая лицензия, %грубые 
+% нарушения стандарта
+% 
+% % \item \termin{Norcroft C Сompiler} "--- Intel Pentium для GNU/Linux, коммерческая собственническая лицензия
+% % 
+% % 
+% % \hrulefill
+% % \item \termin{Clang} "--- виртуальная RISC-машина LLVM
+% 
+% \end{itemize}
+% 
+% \end{frame}
+% 
+% \subsection{Сборка программы (GCC)}
+% % \begin{frame}{\insertsubsection}
+% % 
+% % \hfill
+% % \includegraphics[width=\linewidth,height=\slideheigth-1\baselineskip,keepaspectratio,valign=t]{halfcompilecpp}
+% % \hfill
+% % \includegraphics[width=\linewidth,height=\slideheigth-1\baselineskip,keepaspectratio,valign=t]{halfcompileS}
+% % \hfill\strut
+% % % \centering
+% % 
+% % \end{frame}
+% \begin{frame}[fragile]{\insertsubsection}
+% 
+% \resizebox{\linewidth}{!}{
+% \tikzstyle{blockarrow}	= [-latex',thick,draw=blue]
+% \footnotesize
+% \begin{tikzpicture}[start chain=cpp going below,start chain=S going below,
+% every on chain/.style=join,every join/.style=blockarrow,
+% node distance=2ex and 4ex
+% ]
+% \tikzstyle{block}	= [text width=16ex,text badly centered, minimum height=3ex, draw=black]
+% \tikzstyle{file}	= [block,  fill=yellow!40!white]
+% \tikzstyle{stage}	= [block, fill=blue,text=white]
+% 
+% % \node (cpp) {\includegraphics[width=\linewidth,height=\slideheigth-1\baselineskip,keepaspectratio,valign=t]{halfcompilecpp}};
+% \node[file,on chain=cpp] (prog1_cpp) {prog1.cpp};
+% \node[stage,on chain=cpp] (cpp_preprocess) {Препроцессор};
+% \node[file, on chain=cpp] (prog1_pp) {Временный файл (stdout)};
+% \node[stage,on chain=cpp] (compiler) {Компилятор};
+% \node[file,on chain=cpp] (prog1_s) {prog1.s};
+% \node[stage,on chain=cpp] (cpp_asm) {Ассемблер};
+% \node[file,on chain=cpp] (prog1_o) {prog1.o};
+% \node[stage,on chain=cpp] (cpp_linker) {Компоновщик};
+% % \coordinate[on chain=cpp] (cpp_linker);
+% 
+% \node[file, right= of cpp_preprocess,text width=20ex] (cpp_headers) {Заголовочные файлы (\#include)};
+% \path[blockarrow] (cpp_headers) -- (cpp_preprocess);
+% 
+% 
+% % \node[text width=18ex] at (compiler-|cpp_headers) (mangling) {Декорирование \lstinline!int foo(int x)! $\to$ \lstinline!_Z3fooi!};
+% 
+% \node[fit=(prog1_cpp) (cpp_headers), inner sep=0ex] (cpp_box) {};
+% \coordinate[right=0ex of cpp_box] (cpp_egde);
+% 
+% 
+% \node[file,right= of prog1_cpp-|cpp_egde,on chain=S] (prog2_S) {prog2.S};
+% \node[stage,on chain=S] (S_preprocess) {Препроцессор};
+% \node[file, on chain=S] (prog2_pp) {Временный файл (stdout)};
+% \node[stage,on chain=S,right= of cpp_asm-|cpp_egde]  (S_asm) {Ассемблер};
+% \node[file,on chain=S] (prog2_o) {prog2.o};
+% \node[stage,on chain=S] (S_linker) {Компоновщик};
+% 
+% 
+% \path[blockarrow] (cpp_headers) -- (S_preprocess);
+% 
+% 
+% \node[stage,fit=(cpp_linker) (S_linker), inner sep=0ex,align=center] (linker) {\strut
+% 
+%   \vspace{-0.5\baselineskip}Компоновщик};
+%   
+% \node[file, right= of linker,text width=20ex] (obj_lib) {Объектные файлы библиотек};
+% \path[blockarrow] (obj_lib) -- (linker);
+% 
+% \node[file,below= of linker] (prog) {prog};
+% \path[blockarrow] (linker) -- (prog);
+% 
+% \node[below= of prog-|cpp_linker]  {extern};
+% 
+% \node[below= of prog-|S_linker]  {.globl};
+% 
+% % \begin{pgfonlayer}{background}
+% % \node[rectangle,fit=(compiler) (mangling), fill=blue!20!white]  {};
+% % \end{pgfonlayer} 
+% 
+% \end{tikzpicture}
+% }
+% \centering
+% 
+% \end{frame}
+% 
+% 
+% 
+
+
+
+% 
+% \subsection{Архитектуры современных ЭВМ}
+% \begin{frame}{\insertsubsection}
+% % \small
+% % \footnotesize
+% \scriptsize
+% \begin{tabularx}{1\linewidth}{l|L|L|L|}
+% \hline
+% & процессоры & Debian Jessie & Microsoft Windows 8 \\\hline
+% 
+% i386 & IA-32 & поддерживается & поддерживается частично (необходимы PAE, NX, SSE2 "--- от Pentium 4) \\\hline
+% 
+% amd64 	& 64-битные AMD  Opteron, Athlon и~Sempron,  Intel 64: Pentium D, Xeon, Core2 и~т.\,д.& поддерживается & поддерживается частично \\\hline
+% % armel 	EABI ARM 	Debian полностью поддерживает перенос на ARM с~порядком байт от младшего к~старшему. 	выпущен
+% % armhf 	Hard Float ABI ARM 	Множество современных плат и~устройств ARM поставляется с~модулем выполнения операций с~плавающей запятой (floating point unit - FPU), но текущий перенос Debian armel не использует многие из его преимуществ. Перенос armhf был запущен для исправления этой ситуации, также он использует преимущества других особенностей новых процессоров ARM. Перенос Debian armhf требует как минимум ЦП ARMv7 с~Thumb-2 и~сопроцессором VFP3D16. 	выпущен
+% % i386 	32-разрядный ПК (i386) 	Первая архитектура, на самом деле это даже не перенос. Linux изначально разрабатывался для процессоров Intel 386, отсюда и~сокращённое название этой архитектуры. Debian поддерживает все процессоры IA-32, созданные Intel (включая все серии Pentium и~последние процессоры Core Duo в~32-битном режиме), AMD (K6, все серии Athlon и~Athlon64 в~32-битном режиме), Cyrix и~другими производителями. 	выпущен
+% % ia64 	Intel Itanium IA-64 	Впервые официально выпущен в~Debian 3.0. Это перенос на первую 64-битную архитектуру Intel. Примечание: не путайте с~последними 64-разрядными расширениями Intel для процессоров Pentium 4 и~Celeron, называющимися Intel 64, вместо этого обратитесь к~переносу AMD64. 	выпущен
+% % kfreebsd-amd64 	64-разрядный ПК (amd64) 	Впервые официально выпущен в~Debian 6.0 в~качестве технологической пробы и~является первым не-Linux переносом, выпущенным Debian. Перенос системы Debian GNU на ядро FreeBSD. 	выпущен
+% % kfreebsd-i386 	32-разрядный ПК (i386) 	Впервые официально выпущен в~Debian 6.0 в~качестве технологической пробы и~является первым не-Linux переносом, выпущенным Debian. Перенос системы Debian GNU на ядро FreeBSD. 	выпущен
+% % mips 	MIPS (big-endian mode) 	Впервые официально выпущен в~Debian 3.0. Debian перенесён на архитектуру MIPS, используемую в~машинах SGI (debian-mips — big-endian) и~Digital DECstations (debian-mipsel — little-endian). 	выпущен
+% % mipsel 	MIPS (little-endian mode) 	Впервые официально выпущен в~Debian 3.0. Debian перенесён на архитектуру MIPS, используемую в~машинах SGI (debian-mips — big-endian) и~Digital DECstations (debian-mipsel — little-endian). 	выпущен
+% % powerpc 	Motorola/IBM PowerPC 	Впервые официально выпущен в~Debian 2.2. Этот перенос работает на многих моделях Apple Macintosh PowerMac и~на машинах CHRP и~PReP с~открытой архитектурой. 	выпущен
+% % ppc64el 	POWER7+, POWER8 	Перенос на ppc64 с~порядком байтов от младшего к~старшему, используется новый ABI Open Power ELFv2. 	выпущен
+% % s390 	S/390 and zSeries 	Впервые официально выпущен в~Debian 3.0. Это перенос на серверы IBM S/390. 	выпущен
+% % s390x 	System z 	64-разрядное пространство пользователя для мэйнфреймов IBM System z. 	выпущен
+% % sparc 	Sun SPARC 	Впервые официально выпущен в~Debian 2.1. Этот перенос работает на рабочих станциях Sun серии UltraSPARC, а~также на некоторых производных архитектуры sun4.
+% \end{tabularx}
+% \end{frame}
+% Linux runs on many different hardware platforms, not so with Windows. For example, Windows NT used to run on MIPS CPUs until Microsoft changed their mind. It also used to run on Alpha CPUs, again, until Microsoft changed their mind. No one gets to change their mind with Linux. It runs on a very wide range of computers, from the lowest of the low to the highest of the high. The supported range of computers is all but stunning.
+
+
+
+
+
+
+
+
+\section{}
+
+% \section{Литература}
+
+\subsection{Статьи и~HOWTO}
+\begin{frame}{\insertsubsection}
+\footnotesize
+\setlength{\leftmargini}{0ex}
+\begin{enumerate}
+\item От C к~Ассемблеру. Hiran Ramankutty, перевод Андрей Киселёв
+
+\url{opennet.ru/base/dev/from_c_to_asm.txt.html}
+
+\item Inline Assembler в~GCC.  Lonesome TSH/Digital Daemons
+
+\url{sysbin.com/files/lowlevel/gcc_inline_assembly.htm}
+
+\item GCC-Inline-Assembly-HOWTO.  Sandeep.S
+
+\rlap{\url{ibiblio.org/gferg/ldp/GCC-Inline-Assembly-HOWTO.html}}
+
+Перевод 
+\url{iakovlev.org/index.html?p=1483}
+
+\item Ассемблер в~Linux для программистов C.  Викиучебник
+
+\rlap{\url{ru.wikibooks.org/wiki/}\texttt{Ассемблер\_в\_Linux\_для\_программистов\_C}}
+
+% \url{https://ru.wikibooks.org/wiki/%D0%90%D1%81%D1%81%D0%B5%D0%BC%D0%B1%D0%BB%D0%B5%D1%80_%D0%B2_Linux_%D0%B4%D0%BB%D1%8F_%D0%BF%D1%80%D0%BE%D0%B3%D1%80%D0%B0%D0%BC%D0%BC%D0%B8%D1%81%D1%82%D0%BE%D0%B2_C}
+\end{enumerate}
+\end{frame}
+
+
+\subsection{Книги}
+\begin{frame}{\insertsubsection}
+% \footnotesize
+\small
+\setlength{\leftmargini}{0ex}
+\begin{enumerate}
+\item A. Tanenbaum, T. Austin / Э. Таненбаум, Т. Остин "--- Structured computer organization / Архитектура компьютера
+
+\item Юров В.\,И. "--- Assembler
+
+\item Бурдаев О.\,В., Иванов М.\,А., Тетерин И.\,И. "--- Ассемблер в~задачах защиты информации
+
+Введение, глава~1 (основы программирования на~Ассемблере IBM~PC), глава~4 (ассемблер в~ОС Linux)
+
+\item Касперски К. "--- Техника хакерских атак. Фундаментальные основы хакерства
+
+\item Пирогов В. "--- Ассемблер и~дизассемблирование
+
+\end{enumerate}
+\end{frame}
+
+\subsection{Справочные материалы \mbox{и~решение проблем}}
+\begin{frame}{\insertsubsection}
+\footnotesize
+\vspace{-1.3\baselineskip}
+% \setlength{\leftmargini}{0ex}
+% \small
+% \setlistspacing{1}{0ex}
+
+\begin{enumerate}
+
+\item 80x86 instruction set
+
+\url{penguin.cz/~literakl/intel/intel.html}
+
+\item Stack Overflow (вопросы и~ответы)
+
+\url{stackoverflow.com}
+
+\item WASM.RU
+% % 
+% \url{http://wasm.ru/}
+
+\item unixforum.org
+\end{enumerate}
+\vspace{-0.7\baselineskip}
+
+Единая система программной документации (ЕСПД)\\
+ГОСТ 19.701-90 Схемы алгоритмов, программ, данных и~систем. Обозначения условные и~правила выполнения
+
+\end{frame}
+
+
+
+
+
+
+
+
+
+
+
+% \section{}
+% \begin{frame}{Вопросы}
+\subsection{Вопросы}
+\begin{frame}{\insertsubsection}
+\setlength{\leftmargini}{0ex}
+\begin{enumerate}
+\small
+
+\item Какова цель курса?
+
+\item Что включает архитектура системы?
+\item Что такое вычислительная система?
+
+\item Какие вы знаете единицы измерения информации?
+
+
+% \item Какие способы представления знаковых чисел используются в~ЭВМ?
+% \item Какие логические и~битовые операции вы~знаете?
+
+\item Какие вы знаете компоненты ЭВМ?
+
+
+\item Чем отличаются фон-Неймановская и~гарвардская архитектуры?
+
+\item Из чего состоит системная шина (магистраль)?
+
+\item Какие вы знаете основные виды регистров \rlap{x86?}
+
+\item Как используется регистр ip?
+
+\item Как используется регистр sp?
+\end{enumerate}
+
+\end{frame}
+
+\makethanks
+\end{document}
