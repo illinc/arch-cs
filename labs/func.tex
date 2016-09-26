@@ -1,0 +1,604 @@
+\chapter{Модули и~функции на ассемблере}
+\setlablabel{func}
+
+
+\purpose{
+изучить процесс компиляции программы на C++; научиться включать в~проекты на языке C++ ассемблерные модули; научиться описывать функции и~вызывать из программы на языке C++.}
+
+
+
+
+\begin{tasks}
+
+\item
+Разработайте ассемблерную функцию, вычисляющую целое выражение от целого аргумента (в~соответствии с~вариантом), а~также головную программу на языке C++, использующую разработанную функцию.
+\labellocal{var}
+\begin{variants}
+$y(x) = 1 + x/2$
+\next
+$y(x) = x\%4 - x$
+\next
+$y(x) = 3x+1$
+\next
+$y(x) = x^3$
+\next
+$y(x) = 4 - 4x$
+\end{variants}
+
+\item
+Разработайте программу, целиком написанную на ассемблере, вычисляющую значение $y(x)$ для $x =13$ и~выводящую полученное значение на стандартный вывод с~использованием библиотеки stdlib (в~частности, функции printf).
+
+\item 
+%%
+\bonus{+2 балла}  %о%
+Опишите функцию на произвольном языке высокого уровня (включая C/C++) и~вызовите её из ассемблерной функции.
+
+
+\item \bonus{+2 балла}  Опишите функцию на ассемблере и~вызовите её из ассемблерной функции.
+
+\end{tasks}
+
+% \section{Варианты заданий}
+% \labellocal{var}
+% \begin{variants}
+% $y(x) = 1 + x/2$
+% \next
+% $y(x) = x\%4 - x$
+% \next
+% $y(x) = 3x+1$
+% \next
+% $y(x) = x^3$
+% \next
+% $y(x) = 4 - 4x$
+% \end{variants}
+
+
+
+\section{Компиляция программы на языке C++\footnote{%http://faculty.cs.niu.edu/~mcmahon/CS241/Notes/compile.html
+Использованы материалы CSCI 241
+Intermediate Programming in C++
+Spring 2015
+(The C++ compilation process)
+% http://knzsoft.ru/cpp-bgr-ls1/
+и~А.\,А.\,Князев. Руководство по C++ для начинающих}
+}
+
+Компиляция программы на языке C++ включает четыре этапа (рис.~\reflocal{ris:c++compile}):
+\newlength{\slideheigth}
+\setlength{\slideheigth}{0.5\textheight}
+
+\begin{illustration}[p]
+\includegraphics[width=\linewidth]{compile}
+
+% \includegraphics[width=\linewidth,height=\slideheigth-1\baselineskip,keepaspectratio,valign=t]{halfcompilecpp}
+% \hfill
+% \includegraphics[width=\linewidth,height=\slideheigth-1\baselineskip,keepaspectratio,valign=t]{halfcompileS}
+
+\caption{Этапы компиляции программы на C++}
+\labellocal{ris:c++compile}
+\end{illustration}
+
+\begin{enumerate}[wide=\parindent]
+{
+\item Препроцессор копирует содержимое включённых  директивой \lstinline!#include! заголовочных файлов в~исходный код модуля, раскрывает макросы и,~в~том числе, выполняет текстовые замены «констант», определённых с~помощью директивы \lstinline!#define!, на их значения, а~также отрабатывает директивы условной компиляции, выбрасывая из кода те или иные фрагменты.\fussy
+
+}
+{
+\lstset{language=Bash}
+
+При использовании компилятора из коллекции GCC
+увидеть результат препроцессинга можно, воспользовавшись опцией \lstinline!-E!% компилятора g++
+. Результат будет выведен в стандартный поток вывода (в~представленном %ниже 
+примере %стандартный поток вывода 
+перенаправлен в~файл main.E).
+
+\begin{lstlisting}
+$ g++ -E main.cpp > main.E
+\end{lstlisting}
+Здесь и далее, знак доллара (\lstinline!$!) обозначает стандартное приглашение %к вводу команды в 
+консоли *nix. Писать знак доллара не требуется.
+Регистр важен.
+
+
+\item Код, обработанный препроцессором, транслируется компилятором в~ассемблерный код для соответствующей платформы.
+
+Для остановки компиляции после этого этапа для компилятора g++ следует воспользоваться ключом \lstinline!-S!:
+\begin{lstlisting}
+$ g++ -S main.cpp
+\end{lstlisting}
+
+На этапе компиляции выполняется \termin{декорирование} имён функций; таким образом, если остановить ключом \lstinline!-S! сборку после этого этапа, то в~полученном ассемблерном файле имена будут изменены компилятором.
+% Имена 
+% C++ искорёжены почти до неузнаваемости, C — у меня сохранены, а у вас, если статья Фога не ошибатеся, к ним приписывается префикс _: _Sqr вместо Sqr (и было бы __Sqr вместо _Sqr, но такой функции в C++-программе нет).
+В~декорированное имя C++-функции включается информация о~всех её параметрах (явных и~неявных).
+Имена C-функций изменяются более предсказуемо %(может быть добавлен префикс, суффикс или )
+(в~большинстве случаев либо не изменяются, либо к~ним добавляется префикс \lstinline!_!).
+
+Конкретный алгоритм декорирования зависит от компилятора, платформы и~указанного соглашения о~вызове.
+В~статье Агнера Фога 
+«Calling conventions for different C++ compilers and operating systems»
+приведено, в~числе прочего, описание алгоритмов декорирования наиболее популярных компиляторов.
+В~частности, имена C-функций при компиляции gcc на платформе GNU/Linux не изменяются вообще.
+
+
+\item Ассемблерный код, созданный компилятором, транслируется в~объектный код для соответствующей платформы.
+Останов компиляции файла после этапа ассемблирования  обеспечивается ключом \lstinline!-c!:
+
+\begin{lstlisting}
+$ g++ -c main.cpp
+\end{lstlisting}
+При ассемблировании  имена функций сохраняются.
+
+}
+
+\item Объектные файлы% различных модулей и~библиотек
+, созданные ассемблером, объединяются компоновщиком (линкером, редактором связей) в~исполняемый файл.
+
+На данном этапе компоновщик ищет реализации для всех extern-функций по именам.
+Соответственно, имена, которые в~разных модулях носит одна и~та же функция, на этапе компоновки должны совпадать.
+
+
+\end{enumerate}
+\FloatBarrier
+Интегрированные среды разработки (IDE) выполняют все этапы автоматически.
+
+
+
+               
+\section{Подключение модуля на ассемблере к~C++-проекту  }
+Функции, описанные в~ассемблерном модуле, необходимо описать в~коде C++ как внешние (\lstinline!extern!).
+После спецификатора \lstinline!extern!, согласно стандарту C++, могут быть указаны строки \lstinline!"C++"! (подразумевается по умолчанию) или \lstinline!"C"! (различные компиляторы могут поддерживать и~иные строки) для указания компоновщику, какой язык использовался при написании внешней функции.
+Конкретные свойства таких функций не описываются в~стандарте. На практике \lstinline!"C++"! подразумевает декорирование (mangling) имён функций и~передачу параметров по возможности через регистры, что реализуется в~разных компиляторах по-разному.
+
+Указание \lstinline!"C"! на практике подразумевает соглашение о вызовах \lstinline!cdecl!:
+\begin{itemize}[wide=\parindent]
+
+\item размещение аргументов исключительно \emph{в~стеке,} без использования регистров, причём аргументы, меньшие 4 байт, расширяются до 4 байт;
+
+\item размещение аргументов в~стеке \emph{справа налево,} так что первый аргумент оказывается на вершине стека;
+
+\item очистку стека \emph{вызывающей программой,} так что аргументы должны не сниматься со стека, а~копироваться оттуда;
+
+\item возврат значения по возможности через регистры:
+\begin{itemize}[leftmargin=0\parindent]
+\item \EAX, если результат "--- указатель или целое число до 4 байт;
+\item пара регистров \EDX:\EAX, если результат "--- целое число 8 байт;
+\item вершина стека сопроцессора, если результат "--- вещественное число;
+
+если результат не помещается в~регистры, возвращается указатель на него (через \EAX).
+\end{itemize}
+\end{itemize}
+
+Также \lstinline!extern "C"! в~GNU/Linux подразумевает
+% \item 
+\emph{отсутствие декорирования имён,} % "--- имена функций воспринимаются линкером «как есть»
+что позволяет не задумываться о~том, как имя, используемое линкером, складывается из имени, данного разработчиком и~характеристик аргументов функции,
+но делает невозможной перегрузку таких функций.
+
+
+Если используемый компилятор для данной платформы изменяет имена внешних C-функций, %упоминаемых в~модулях C++, 
+например, добавляет префикс \lstinline!_!, как в случае gcc (mingw) под MS Windows, то ссылка на внешнюю функцию %\lstinline!sqr! 
+\lstinline!extern "C" int sqr(int x)!, упоминаемую в~некотором cpp-файле %к~моменту компоновки 
+в~соответствующем объектном файле
+будет выглядеть как \lstinline!_sqr!.
+Таким образом, для корректной компоновки имя данной функции в~объектном файле, полученном из ассемблерного модуля,  также должно быть \lstinline!_sqr!.
+
+
+Размещение аргументов в~стеке {справа налево} и~очистка стека вызывающей программой позволяет определить функции с~переменным количеством аргументов, такие, как  \lstinline!printf! и~\lstinline!scanf! из стандартной библиотеки \lstinline!C!, но надо помнить о~небезопасности таких функций.
+
+
+Рассмотрим функцию, вычисляющую квадрат целого числа.
+% \lstset{language=[Motorola68k]Assembler}
+Ассемблерный модуль с текстом функции\footnote{
+Использованы материалы статьи Hiran Ramankutty «От C к Ассемблеру», перевод: Андрей Киселев
+} находится в файле \programname{sqr.S}% (так как здесь нет необходимости в препроцессинге, можно было использовать также имя \programname{sqr.s})
+.
+
+
+% Адрес возврата принято передавать через стек
+При вызове функции в~стек сначала помещаются аргументы в~соответствии с~соглашением о~вызовах, а~затем адрес возврата.
+Соответственно, когда функция получает управление, 
+% http://trubetskoy1.narod.ru/arttranslate/FuncCallPart2_1.html
+то первые 4 байта по адресу, хранящемуся в \ESP, будут содержать адрес возврата. 
+Далее идут аргументы функции. При использовании соглашения о вызовах \lstinline!cdecl!
+непосредственно за адресом возврата (по адресу $\text{\ESP} + 4$) будет находиться первый параметр,
+% следующие 4 байта (т.\,е. 4 байта по адресу $\text{\ESP} + 4$) будут содержать первый параметр, 
+% в четырёх байтах по адресу $\text{\ESP} + 8$ будет второй параметр
+за ним идёт второй 
+и~т.\,д.
+
+Функция \lstinline!sqr! принимает единственный параметр типа \lstinline!int! (что для 32-битной платформы обычно эквивалентно 32-битному целому числу со знаком),
+т.\,е. 4 байта (что даёт суффикс \lstinline!l! "--- \lstinline!long! для команд) по адресу $\text{\ESP} + 4$ или, в~соответствии с~синтаксисом ассемблера GCC, \lstinline!4(%esp)!, будут содержать первый и~единственный параметр.
+
+Умножая  \EAX{} на \EAX, мы получаем квадрат аргумента в~регистре \EAX, через который и нужно вернуть значение.
+Таким образом, сразу после умножения можно выйти из функции командой \lstinline!ret!.
+Директива \lstinline!.globl! делает функцию   \lstinline!sqr! видимой для внешних модулей.
+\begin{lstlisting}[caption=Файл \programname{sqr.S}, label=\lablabel:sqr.S]
+.globl sqr
+        sqr:
+                movl 4(%esp), %eax
+                imull %eax, %eax
+                ret
+\end{lstlisting}
+Если в~файле несколько функций, можно указать для отладчика их границы:
+\begin{lstlisting}[caption=Файл \programname{sqr.S}, label=\lablabel:sqr.S]
+.globl sqr
+.func sqr
+        sqr:
+                movl 4(%esp), %eax
+                imull %eax, %eax
+                ret
+.endfunc
+\end{lstlisting}
+Парные директивы .func  $\ldots$  .endfunc не влияют ни на что, кроме добавления некоторой отладочной информации при сборке в~отладочном режиме.
+В~режиме Release игнорируются.
+
+Файл \programname{main.cpp} содержит импорт функции как \lstinline!extern "C"! и её вызов.
+% Функция \lstinline!sqr! может использоваться так же, как и~функция, описанная на языке C++ (кроме перегрузки).
+\begin{lstlisting}[caption=Файл \programname{main.cpp}, label=\lablabel:main.cpp]
+#include <iostream>
+
+using namespace std;
+extern "C" int sqr(int x);
+
+int main()
+{
+    int x=2, y;
+    y = sqr(x);
+    cout << y <<endl;
+    return 0;
+}
+\end{lstlisting}
+
+
+\subsection{Code::Blocks}
+
+Создать ассемблерный модуль в~Code::Blocks можно, используя меню $File \to New \to Empty~file$.
+Имя файла обязательно должно иметь расширение \lstinline!.S! (заглавное; расширение \programname{.s} не воспринимается Code::Blocks как допустимое).
+
+После создания в~проекте файла с~таким расширением он во время сборки проекта обрабатывается препроцессором и~компилируется gcc; полученный объектный файл в~дальнейшем используется линкером. Дополнительных настроек делать не нужно.
+
+\subsection{Qt~Creator}
+% \lstset{frame=top,frame=bottom}
+
+
+Файл проекта Qt~Creator для добавления ассемблерного модуля \programname{sqr.S} необходимо отредактировать вручную, добавив строку \lstinline!SOURCES += sqr.S!, так как мастер добавления файлов не воспринимает расширения  \programname{.S} и \programname{.s} как допустимые для исходного кода.
+\begin{lstlisting}[caption=Файл проекта, label=\lablabel:pro]
+TEMPLATE = app
+CONFIG += console
+CONFIG -= app_bundle
+CONFIG -= qt
+
+SOURCES += main.cpp
+SOURCES += sqr.S
+
+include(deployment.pri)
+qtcAddDeployment()
+\end{lstlisting}
+Файл  \programname{sqr.S} должен находиться в~той же папке, что и~проект.
+Других настроек, кроме редактирования файла проекта, делать не нужно.
+
+
+
+
+\section{Особенности GNU Assembler%
+\footnote{Использованы материалы:
+GCC-Inline-Assembly-HOWTO,
+Садыхов Р.Х., Поденок Л.П., Отвагин А.В., Глецевич И.И., Пынькин Д.А.
+Средства параллельного программирования в ОС Linux: Учеб. пособие / Под ред. Р.Х. Садыхова. -- Мн.: ЕГУ, 2004. -- 475 с.,
+X86 Assembly/GAS Syntax
+}
+}
+
+Ассемблер из коллекции компиляторов GCC (GNU Assembler, gas), использует синтаксис AT\&T, принятый в Unix, и~%
+% 
+% Синтаксис AT&T немного 
+отличается от синтаксиса Intel, который используется, например, MASM. 
+%
+Перечислим основные отличия. % синтаксиса GAS от синтаксиса Intel.
+
+\paragraph{Порядок операндов}
+% В~отличие от синтаксиса Intel, 
+Инструкция GAS обычно имеет вид  
+\begin{lstlisting}
+mnemonic source, destination
+\end{lstlisting} 
+то есть
+вначале указывается источник, затем приёмник.
+Например, команда \lstinline!movb $0x05, %al! помещает значение 5 в~регистр \lstinline!AL!.
+
+\paragraph{Суффикс мнемоники}
+
+Размер операндов маркируется суффиксом, например, \lstinline!movl %edx, %eax!.
+
+\noindent\begin{tabularx}{\linewidth}{|l|L|L|}
+\hline
+\thead{Суффикс} & \thead{Целые} & \thead{Вещественные} \\\hline
+    b & byte (8 bit) &\\\hline
+    s & short (16 bit integer) & single (32-bit floating point) \\\hline
+    w & word (16 bit) &\\\hline
+    l & long (32 bit integer) & double (64-bit floating point) \\\hline
+    q & quad (64 bit) &\\\hline
+    t & & ten bytes (80-bit floating point) \\\hline
+\end{tabularx}
+% If the suffix is not specified, and there are no memory operands for the instruction, GAS infers the operand size from the size of the destination register operand (the final operand).
+Если суффикс не указан,  размер может быть определён по регистровому операнду.
+Если при этом оба операнда "--- регистры, размер определяется по приёмнику.
+% По умолчанию принимается 32-bit.
+
+\paragraph{Префиксы}
+Имена \emph{регистров} начинаются с~префикса \lstinline!%! (\lstinline!%eax!, \lstinline!%dl!).
+
+\emph{Константы} отмечаются префиксом \lstinline!$!, например,
+\lstinline!addl $5, %eax!
+(добавить константу 5 к регистру \EAX).
+
+Дополнительно возможны префиксы \lstinline!0x! для шестнадцатеричных констант, \lstinline!0! для восьмеричных и~\lstinline!0b! для двоичных (\lstinline!$0xFF!, \lstinline!$0577!, \lstinline!$0b101!). Десятичные константы записываются без ведущих нулей, шестнадцатеричные и~двоичные могут иметь ведущие нули после префикса.
+
+Отсутствие префикса операнда указывает на адрес в памяти; поэтому
+\lstinline!movl $foo, %eax! помещает адрес переменной \verb|foo| в~регистр \verb|eax|, а~команда \lstinline!movl foo, %eax! помещает в \verb|eax| содержимое переменной \verb|foo|.
+% Для статических "C" также идет префикс доллара ’$’. /??
+
+\paragraph{Вычисление адреса}
+% There are up to 4 parameters of an address operand that are presented in the syntax displacement(base register, offset register, scalar multiplier).
+Для вычисления адреса используется до четырёх параметров в~форме \lstinline!displacement(base register, offset register, scalar multiplier)!,
+где \lstinline!base register! и~\lstinline!offset register! "--- регистры, \lstinline!displacement! "--- целое число (смещение), \lstinline!scalar multiplier! "--- число (степень двойки).
+% This is equivalent to [base register + displacement + offset register * scalar multiplier] in Intel syntax. 
+В~соответствии с~синтаксисом Intel это записывается в~более интуитивно понятной форме \lstinline![base register + displacement + offset register * scalar multiplier]!.
+% Either or both of the numeric, and either of the register parameters may be omitted:
+Один или оба числовых значения, а~также любой из регистров могут быть опущены.
+
+Например, следующая команда использует все четыре параметра и~загружает в~\EAX{} значение  \lstinline!*(EBP - 4 + (EDX * 4))! (звёздочка "--- разыменование указателя):
+\begin{lstlisting}
+movl    -4(%ebp, %edx, 4), %eax
+\end{lstlisting} 
+Чаще используются сокращённые варианты, когда указывается только часть параметров.
+
+Загрузка в~\EAX{} значения стековой переменной (из адреса \lstinline!EBP - 4!):
+\begin{lstlisting}
+movl    -4(%ebp), %eax
+\end{lstlisting} 
+Копирование значения по указателю (\lstinline!*ECX!) в~регистр (без смещения):
+\begin{lstlisting}
+movl    (%ecx), %edx
+\end{lstlisting} 
+Команды вычисления адреса часто используются для арифметических вычислений
+\begin{lstlisting}
+leal    8(,%eax,4), %eax    // EAX := EAX*4 + 8   
+leal    (%eax,%eax,2), %eax // EAX := EAX*2 + EAX = EAX*3
+\end{lstlisting} 
+
+% Индексация выполняется с помощью заключения индексного регистра в скобки,
+% например, \verb|in testb \$0x80, 17(%ebp)| (проверить установку старшего бита
+% в байте по смещению 17 от ячейки, указанной \verb|ebp|).
+
+% А теперь несколько примеров
+% 
+%     +------------------------------+------------------------------------+
+%      |       Intel Code             |      AT&T Code                     |
+%      +------------------------------+------------------------------------+
+%      | mov     eax,1                |  movl    $1,%eax                   |   
+%      | mov     ebx,0ffh             |  movl    $0xff,%ebx                |   
+%      | int     80h                  |  int     $0x80                     |   
+%      | mov     ebx, eax             |  movl    %eax, %ebx                |
+%      | mov     eax,[ecx]            |  movl    (%ecx),%eax               |
+%      | mov     eax,[ebx+3]          |  movl    3(%ebx),%eax              | 
+%      | mov     eax,[ebx+20h]        |  movl    0x20(%ebx),%eax           |
+%      | add     eax,[ebx+ecx*2h]     |  addl    (%ebx,%ecx,0x2),%eax      |
+%      | lea     eax,[ebx+ecx]        |  leal    (%ebx,%ecx),%eax          |
+%      | sub     eax,[ebx+ecx*4h-20h] |  subl    -0x20(%ebx,%ecx,0x4),%eax |
+%      +------------------------------+------------------------------------+
+%      
+% 
+\section{Основные команды}
+В~таблице приведены некоторые команды x86-совместимых процессоров.
+
+Если у~команды два операнда, они не могут оба находиться в~памяти.
+Таким образом, если указано, что src и~dest могут быть переменными в~памяти или регистрами,
+то возможны комбинации регистр-память, память-регистр и~регистр-регистр.
+
+\begingroup
+\small
+% \lstset{basicstyle=\ttfamily\footnotesize\singlespacing}
+\def\normalsize{\small}
+
+\LTXtable{\textwidth}{labs/instr-list.tex}
+
+\endgroup
+
+
+\section{Вызов подпрограммы}
+
+Вызов подпрограммы в~ассемблере выполняется командой call.
+Эта команда имеет один операнд "--- адрес подпрограммы в памяти.
+\begin{lstlisting}
+...
+  movl $10, %eax
+  call foo
+...
+foo:
+  addl $5, %eax
+  ret
+ \end{lstlisting}
+Команда \lstinline!call foo! сохраняет указатель команд в~стеке,
+управление передаётся foo.
+% 
+Возврат из подпрограммы выполняется командой 
+\lstinline!ret!
+"--- управление передаётся адресу, снятому со~стека.
+
+\subsection{Соглашения о~вызовах (32 бита)%
+\footnote{Использованы материалы:
+Agner Fog.
+Calling conventions
+for different C++ compilers and operating systems.
+}
+}
+
+\termin{Соглашение о~вызовах} "--- протокол передачи аргументов:
+% \vspace{-1\parskip}
+\begin{enumerate}
+\item способ передачи (через регистры, через стек, смешанный);
+\item порядок размещения аргументов (Pascal "--- первый аргумент помещается в~стек первым, C "--- последним);
+\item кто очищает стек и~сохраняет/восстанавливает регистры (и~какие);
+\item инструкции вызова и возврата;
+\item как передаётся указатель this (для ООП).
+\end{enumerate}
+
+\bigskip
+
+\begingroup
+% \scriptsize
+% \footnotesize
+\small
+
+\renewcommand{\tabularxcolumn}[1]{m{#1}}
+\noindent\begin{tabularx}{\linewidth}{|M{4em}|l|l|L|%L|
+}
+\hline
+&{Параметры в~регистрах}
+&{Порядок}
+&{Очистка стека}
+% &\theadlong{Дополнения}
+\\\hline
+cdecl&&
+ C&
+ вызывающая программа
+ %&
+ \\\hline
+pascal&&
+ Pascal&
+ функция
+ %&
+\\\hline
+winapi (stdcall)&&
+ C&
+ функция
+ %&
+ \\\hline
+Gnu&&
+ C&
+%  hybrid
+this "--- функция, \mbox{остальные "---  вызывающая программа}
+%  &
+% Стек иногда выравнивается на 16 бит
+\\\hline
+Gnu fastcall&
+ecx, edx
+&
+ C&
+функция
+\\\hline
+Gnu regparm (3)&
+eax, edx, ecx
+&
+ C&
+функция
+\\\hline
+Borland fastcall&
+ecx, edx
+&
+Pascal&
+функция
+\\\hline
+ Microsoft fastcall&
+ ecx, edx&
+ C&
+ функция
+%  &
+%  return pointer on stack if
+% not member function
+\\\hline
+% \\\hline
+\end{tabularx}
+\endgroup
+\bigskip
+
+
+Возвращаемое значение:
+% \vspace{-1\parskip}
+\begin{enumerate}
+\item целое или указатель "--- \lstinline!%eax! (long long "--- \lstinline!%edx:%eax!);
+\item вещественное значение "--- регистр сопроцессора \lstinline!st(0)!.
+\end{enumerate}
+
+\section{Вызов подпрограммы в~GAS}
+
+Соглашения о~вызове: Gnu, cdecl, Gnu fastcall, Gnu regparm (0--3).
+
+Регистры, значение которых не~должно изменяться подпрограммой "---
+% \vspace{-1\parskip}
+% \section{Подпрограммы в~GAS}
+% \subsection{Регистры, значение которых не~должно изменяться подпрограммой}
+% \begin{frame}[fragile]{\insertsubsection}
+% \begin{enumerate}
+% \item
+\lstinline!%ebx!
+% \item
+\lstinline!%esi!
+% \item
+\lstinline!%edi!
+% \item
+\lstinline!%ebp!
+% \item С
+и~сегментные регистры \lstinline!%ds, %es, %ss!.
+% \item Вершина стека \lstinline!%esp! нет
+% \item\lstinline!%r12—%r15! в~64-битном режиме
+% \end{enumerate}
+Прочие могут изменяться подпрограммами.
+
+
+\section{Вопросы}
+\begin{enumerate}
+\item Какие вы знаете соглашения о~вызове?
+\item Какая команда возвращает управление вызывающей программе?
+
+\item Какие вы знаете регистры общего назначения?
+\item Какие вы знаете команды ассемблера x86?
+
+\end{enumerate}
+
+
+
+\section{Справочные материалы}
+\begingroup
+% \lstset{language=Lisp}
+% \lstset{language=[Motorola68k]Assembler}
+\lstset{keywordstyle=}
+
+
+\begin{enumerate}
+\item Соглашения о вызовах для различных компиляторов C++ и~операционных систем "---
+Agner Fog.
+Calling conventions
+for different C++ compilers and operating systems.
+\lstinline!calling_conventions.pdf!
+
+\item
+Атрибуты функций GCC "---
+\lstinline!Function Attributes - Using the GNU Compiler Collection (GCC).html!
+
+\item
+Расширения файлов GCC "---
+C\'{e}dric Musso. Development with GNU/Linux.
+\lstinline!GCC and File Extensions - Development with GNU_Linux - labor-liber.html!
+
+\item Черновик стандарта C
+% (latest publically available version of the C11 standard) 
+(последняя общедоступная версия C11)
+"---
+\lstinline!n1570.pdf!
+
+\item
+Черновик стандарта C++ 
+% (C++14 standard plus minor editorial changes) 
+(C++14 с~незначительными редакторскими правками)
+"---
+November 2014 working draft.
+\lstinline!n4296.pdf!
+
+\end{enumerate}
+\endgroup
+
+
+
