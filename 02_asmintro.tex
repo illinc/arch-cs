@@ -142,7 +142,6 @@ another_label:           // Пустой оператор
 
 \begin{columns}
 \lstset{numbers=none}
-\lstset{xleftmargin=1.5em}
 
 \begin{column}{0.39\linewidth}
 .byte %одно или несколько выражений, разделённых запятыми
@@ -314,11 +313,11 @@ main:
 \end{lstlisting}
 Сборка (полученный файл a.out включает stdlib и~занимает 4.6 Кб)
 \begin{lstlisting}[language=Bash]
-$ gcc min.S
+$ g++ min.S
 \end{lstlisting}
 Сборка с~указанием имени выходного файла:
 \begin{lstlisting}[language=Bash]
-$ gcc -o min min.S
+$ g++ -o min min.S
 \end{lstlisting}
 % Файл a.out включает stdlib и~занимает 4.6 Кб
 
@@ -342,6 +341,55 @@ int main(int argc, char* argv[]){
 \end{frame}
 
 
+\section{Переменные}
+\subsection{Регистры общего назначения}
+\begingroup
+\renewcommand{\tabularxcolumn}[1]{p{#1}} 
+\begin{frame}{\insertsubsection}
+% регистры общего назначения, 
+% указатель команд, 
+% регистр флагов и~сегментные регистры. 
+\setlength{\leftmargini}{0ex}
+% \small
+% \footnotesize
+\setbeamertemplate{itemize/enumerate body begin}{\footnotesize}
+\setbeamertemplate{itemize/enumerate subbody begin}{\footnotesize}
+
+ 
+\raisebox{-2.15\baselineskip}[0mm][0mm]{%
+\noindent\begin{tabularx}{1\linewidth}{@{}L@{~}l@{}}
+&
+\includegraphics[width=0.7\linewidth,height=\slideheigth,keepaspectratio,valign=t]{Registers}
+\end{tabularx}
+}
+\vspace{-4\baselineskip}
+
+% \begin{itemize}
+% \item {Регистры общего назначения} 
+ \begin{itemize}
+\item   \Reg{a, b, c, d;}  
+\item    \Reg{si, di, bp;}
+\item   {указатель стека} \Reg{sp}.
+ \end{itemize}    
+   
+% \item Сегментные %регистры 
+%   \Reg{cs, ds, ss, es, fs, gs.}
+% 
+% \item  Регистры состояния и~управления:
+% \begin{itemize}
+% \item   регистр флагов \Reg{eflags/flags};
+% 
+% \item       указатель команды \Reg{eip/ip}.
+% \end{itemize}   
+% 
+% \item   Регистры сопроцессора x87 \Reg{st(0)...st(7)}/расширения MMX \rlap{\Reg{mm0...mm7}}
+% 
+% \item        Регистры расширения XMM \rlap{(128-разрядные \Reg{xmm0...xmm7})}
+% \end{itemize}
+
+\end{frame}
+\endgroup
+
 
 
 \section{Основные команды}
@@ -349,28 +397,111 @@ int main(int argc, char* argv[]){
 \begin{frame}[fragile]{\insertsubsection}
 \lstset{basicstyle=\ttfamily\small}
 \small
+\lstset{xleftmargin=0em}
 
 \lstinline!mov источник, приёмник! \\
 "--- присваивание \lstinline!приёмник = источник!
 \begin{lstlisting}[numbers=none]
-movl  $4, %eax	// eax = 4
-movb  $42, %al	// al = 42
-movl  %eax, (%esi)	// *esi = eax
-movl  %eax, 4(%esi)	// *(esi+4 байта) = eax
-movl  $some_var, %eax	// eax = &some_var
-movl  $some_var + 4, %eax	// eax = &some_var+4 байта
-movl  some_var, %eax	// eax = some_var
-movl  %eax, foo	// foo = eax
+movl $4, %eax	// eax = 4
+movb $42, %al	// al = 42
+movl %eax, (%esi)	// *esi = eax
+movl %eax, 4(%esi)	// *(esi+4 байта) = eax
+movl $some_var, %eax	// eax = &some_var
+movl $some_var+4, %eax	// eax = &some_var+4 байта
+movl some_var, %eax	// eax = some_var
+movl %eax, foo	// foo = eax
 \end{lstlisting}
 
 
 
 \end{frame}
 
+
+% \subsection{Арифметика}
+\begingroup
+\ttfamily
+\subsection{Арифметика: сложение и~вычитание}
+\begin{frame}[fragile]{\insertsubsection}
+\lstset{basicstyle=\ttfamily\footnotesize}
+\footnotesize
+
+\begin{tabularx}{\linewidth}{l|L}
+\lstinline!add источник, приёмник! & приёмник += источник\\
+\lstinline!adc источник, приёмник! & приёмник += (источник + CF)\\\hline
+\lstinline!sub источник, приёмник! & приёмник -= источник\\
+\lstinline!sbb источник, приёмник! & приёмник -= (источник + CF)\\\hline
+\lstinline!inc приёмник! & ++приёмник\\
+\lstinline!dec приёмник! & -{}-приёмник\\\hline
+\end{tabularx}
+\normalfont
+
+Флаги:
+\vspace{-\baselineskip}
+\setlistspacing{1}{0ex}
+\begin{description}
+\item[CF] беззнаковое переполнение (перенос)
+\item[ZF] результат равен нулю
+\item[SF] старший (знаковый) бит результата
+\item[OF] знаковое переполнение
+\end{description}
+\end{frame}
+\subsection{Арифметика: умножение и~деление}
+\begin{frame}[fragile]{\insertsubsection}
+\lstset{basicstyle=\ttfamily\scriptsize}
+\scriptsize
+\begin{tabularx}{\linewidth}{l@{}|L}
+\lstinline!mul множитель! & edx:eax = eax * множитель32
+
+dx:ax = ax * множитель16
+
+ax = al * множитель8\\
+\lstinline!imul множитель! & 
+\\\hline
+\lstinline!div делитель! & eax = edx:eax/делитель32, \rlap{edx = edx:eax\%делитель32}
+
+ax = dx:ax/делитель16, \rlap{dx = dx:ax\%делитель16}
+
+al = ax/делитель8, ah = ax\%делитель8\\
+\lstinline!idiv делитель! & \\\hline
+\end{tabularx}
+\begin{tabularx}{\linewidth}{l|L}
+\lstinline!imul источник, приёмник! & приёмник *= источник\\
+\lstinline!imul константа, источник, приёмник! & приёмник = источник*константа\\\hline
+
+\end{tabularx}
+\end{frame}
+\endgroup
+
+\subsection{Битовые операции}
+\begin{frame}[fragile]{\insertsubsection}
+\lstset{basicstyle=\ttfamily\footnotesize}
+\footnotesize
+\ttfamily
+
+\begin{tabularx}{\linewidth}{l|L}
+\lstinline!shr cдвиг, приёмник! & приёмник >{}>= cдвиг \rlap{(беззнаковый)}\\
+\lstinline!sar cдвиг, приёмник! & приёмник >{}>= cдвиг (знаковый)\\
+\lstinline!ror cдвиг, приёмник! & циклический сдвиг вправо\\
+\hline
+\lstinline!shl cдвиг, приёмник! & приёмник <{}<= cдвиг\\
+\lstinline!sal cдвиг, приёмник! & приёмник <{}<= cдвиг\\
+\lstinline!rol cдвиг, приёмник! & циклический сдвиг влево\\
+\hline
+\lstinline!and источник, приёмник! & приёмник \&= источник\\
+\lstinline!or источник, приёмник! & приёмник |= источник\\
+\lstinline!xor источник, приёмник! & приёмник \lstinline!^=! источник\\
+\lstinline!not приёмник! & приёмник = $\sim$приёмник\\
+\end{tabularx}
+
+\end{frame}
+
+
+
 \subsection{push, pop}
 \begin{frame}[fragile]{\insertsubsection}
 \lstset{basicstyle=\ttfamily\scriptsize}
 \scriptsize
+\setlength{\parskip}{0.5\parskip}
 \begin{columns}
 \lstset{numbers=none}
 
@@ -423,64 +554,9 @@ addl $4, %esp	// esp += sizeof(int)
 \end{column}
 \end{columns}
 
-В Linux стек выровнен по long (соглашение).
+В Linux стек выравнен по long (соглашение).
 
 Команды push и pop работают только с операндами размером 4 или 2 байта.
-
-\end{frame}
-
-\subsection{Арифметика}
-\begin{frame}[fragile]{\insertsubsection}
-\lstset{basicstyle=\ttfamily\footnotesize}
-\footnotesize
-\ttfamily
-
-\begin{tabularx}{\linewidth}{l|L}
-\lstinline!add источник, приёмник! & приёмник += источник\\
-\lstinline!adc источник, приёмник! & приёмник += (источник + CF)\\\hline
-\lstinline!sub источник, приёмник! & приёмник -= источник\\
-\lstinline!sbb источник, приёмник! & приёмник -= (источник + CF)\\\hline
-\lstinline!inc приёмник! & ++приёмник\\
-\lstinline!dec приёмник! & -{}-приёмник\\\hline
-\end{tabularx}
-\begin{tabularx}{\linewidth}{l@{}|L}
-\lstinline!mul множитель! & edx:eax = eax * множитель32
-
-dx:ax = ax * множитель16
-
-ax = al * множитель8\\
-\lstinline!imul множитель! & 
-\\\hline
-\lstinline!div делитель! & eax = edx:eax/делитель32, \rlap{edx = edx:eax\%делитель32}
-
-ax = dx:ax/делитель16, \rlap{dx = dx:ax\%делитель16}
-
-al = ax/делитель8, ah = ax\%делитель8\\
-\lstinline!idiv делитель! & 
-\end{tabularx}
-
-\end{frame}
-
-\subsection{Битовые операции}
-\begin{frame}[fragile]{\insertsubsection}
-\lstset{basicstyle=\ttfamily\footnotesize}
-\footnotesize
-\ttfamily
-
-\begin{tabularx}{\linewidth}{l|L}
-\lstinline!shr cдвиг, приёмник! & приёмник >{}>= cдвиг \rlap{(беззнаковый)}\\
-\lstinline!sar cдвиг, приёмник! & приёмник >{}>= cдвиг (знаковый)\\
-\lstinline!ror cдвиг, приёмник! & циклический сдвиг вправо\\
-\hline
-\lstinline!shl cдвиг, приёмник! & приёмник <{}<= cдвиг\\
-\lstinline!sal cдвиг, приёмник! & приёмник <{}<= cдвиг\\
-\lstinline!rol cдвиг, приёмник! & циклический сдвиг влево\\
-\hline
-\lstinline!and источник, приёмник! & приёмник \&= источник\\
-\lstinline!or источник, приёмник! & приёмник |= источник\\
-\lstinline!xor источник, приёмник! & приёмник \lstinline!^=! источник\\
-\lstinline!not приёмник! & приёмник = $\sim$приёмник\\
-\end{tabularx}
 
 \end{frame}
 
@@ -520,7 +596,7 @@ al = ax/делитель8, ah = ax\%делитель8\\
 \begin{columns}
 \lstset{numbers=none}
 
-\begin{column}{0.68\linewidth}
+\begin{column}{0.65\linewidth}
 Передача управления в~подпрограмму addr:
 
 \lstinline!call addr!
@@ -528,10 +604,12 @@ al = ax/делитель8, ah = ax\%делитель8\\
 указатель команд сохраняется в~стеке,
 управление передаётся addr
 \end{column}
-\begin{column}{0.31\linewidth}
+\begin{column}{0.34\linewidth}
+\lstset{xleftmargin=0ex}
 \begin{lstlisting}
 pushl %eip
-movl $addr, %eip  //jmp addr
+jmp addr 
+///*@@*/ movl $addr, %eip
 \end{lstlisting}
 \end{column}
 \end{columns}
@@ -606,7 +684,7 @@ popl %eip
 &\theadlong{Очистка стека}
 % &\theadlong{Дополнения}
 \\\hline
-cdecl&&
+\rowcolor{csMarker}cdecl&&
  C&
  вызывающая программа
  %&
@@ -621,7 +699,7 @@ winapi (stdcall)&&
  функция
  %&
  \\\hline
-Gnu&&
+\rowcolor{csMarker}Gnu&&
  C&
 %  hybrid
 this "--- функция, \mbox{остальные "---  вызывающая программа}
@@ -720,6 +798,7 @@ main:
 
 \vspace{-2\baselineskip}
 \lstset{xleftmargin=14em}
+\terminblue
 \begin{lstlisting}[numbers=none]
 int main(){
     printf("Hello, world!\n");
@@ -740,22 +819,24 @@ fmt: .string "Переменные: %d %d\n"
 foo: .int 13
 .global main // точка входа в программу
 main:
-    pushl foo	// Значение foo в стек
-    pushl $19	// Значение 19 в стек
-    pushl $fmt	// Адрес строки fmt в стек
-    call printf
-    addl $3*4, %esp // Три четырёхбайтовых числа из стека
-    movl $0,%eax
-    ret    
+  pushl foo	// Значение foo в стек
+  pushl $19	// Значение 19 в стек
+  pushl $fmt	// Адрес строки fmt в стек
+  call printf
+  addl $3*4, %esp // Три четырёхбайтовых числа из стека
+  movl $0,%eax
+  ret    
 \end{lstlisting}
 
 \vspace{-2\baselineskip}
-\lstset{xleftmargin=14em}
+\lstset{xleftmargin=12em}
+\terminblue
 \begin{lstlisting}[numbers=none]
 int foo = 13;
 int main(){
-    printf("Переменные: %d %d\n", foo, 19);
-    return 0;
+  printf("Переменные: %d %d\n", 
+    19, foo);
+  return 0;
 }
 \end{lstlisting}
 \end{frame}

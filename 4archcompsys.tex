@@ -55,6 +55,8 @@
 \lstnewenvironment{acol}[1][]{\lstset{language=[x86gas]Assembler,#1}}{}
 
 \lstset{language=[x86gas]Assembler}
+\lstset{language=C++, alsolanguage=[x86masm]Assembler}
+% \lstset{language=C++, alsolanguage=[x86gas]Assembler}
 
 
 
@@ -67,6 +69,7 @@
 \colorlet{colorMemoryLight}{colorMemory!20!white}
 \colorlet{colorCalcLight}{yellow!40!white}
 
+\newcommand{\Reg}[1]{{\textcolor{colorRegister}{#1}}}
 
 
 
