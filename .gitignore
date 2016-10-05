@@ -18,7 +18,9 @@
 # *.ps
 # *.eps
 # *.pdf
-./*.pdf
+*.pdf
+!fig/**/*.pdf
+
 
 ## Bibliography auxiliary files (bibtex/biblatex/biber):
 *.bbl
@@ -179,3 +181,5 @@ TSWLatexianTemp*
 
 # KBibTeX
 *~[0-9]*
+
+!!!*

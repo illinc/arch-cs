@@ -495,352 +495,352 @@ al = ax/делитель8, ah = ax\%делитель8\\
 
 \end{frame}
 
+% 29.09.2016^^^^
 
-
-\subsection{push, pop}
-\begin{frame}[fragile]{\insertsubsection}
-\lstset{basicstyle=\ttfamily\scriptsize}
-\scriptsize
-\setlength{\parskip}{0.5\parskip}
-\begin{columns}
-\lstset{numbers=none}
-
-\begin{column}{0.5\linewidth}
-
-\lstinline!push источник! \\
-"--- помещение источника в~стек \phantom{wwwwwwwwwwwww}
-\bigskip
-
-% \begin{lstlisting}[numbers=none]
-% pushl $13
-% \end{lstlisting}
-\lstinline!pushl $13! эквивалентно
-\begin{lstlisting}[numbers=none]
-subl $4, %esp	// esp -= sizeof(int)
-movl $13, (%esp)// *esp = 13
-\end{lstlisting}
-
-% \begin{lstlisting}[numbers=none]
-% pushl foo
-% \end{lstlisting}
-\lstinline!pushl foo! эквивалентно
-\begin{lstlisting}[numbers=none]
-subl $4, %esp	// esp -= sizeof(int)
-movl foo, %eax	// eax= foo
-movl %eax, (%esp)// *esp = eax
-\end{lstlisting}
-
-
-\end{column}
-\begin{column}{0.5\linewidth}
-
-\lstinline!pop приёмник! \\
-"--- извлечение значения из стека и~помещение его в~приёмник
-\bigskip
-
-
-\lstinline!popl %eax! эквивалентно
-\begin{lstlisting}
-movl (%esp), %eax // eax = *esp
-addl $4, %esp	// esp += sizeof(int)
-\end{lstlisting}
-
-\lstinline!popl foo! эквивалентно
-\begin{lstlisting}
-movl (%esp), %eax // eax = *esp
-movl %eax, foo	// foo = eax
-addl $4, %esp	// esp += sizeof(int)
-\end{lstlisting}
-\end{column}
-\end{columns}
-
-В Linux стек выравнен по long (соглашение).
-
-Команды push и pop работают только с операндами размером 4 или 2 байта.
-
-\end{frame}
-
-
-\section{Подпрограммы}
-
-\subsection{Вызов подпрограммы}
-\begin{frame}{\insertsubsection}
-\begin{enumerate}
-\item Передача параметров
-\item Сохранение адреса возврата
-\item Передача управления вызываемой подпрограмме
-\item Выполнение вызываемой подпрограммы
-\item Подготовка возвращаемого значения
-\item Возвращение управления вызывающей программе
-\end{enumerate}
-\end{frame}
-
-\subsection{Требования}
-\begin{frame}{\insertsubsection}
-\begin{enumerate}
-\item Передача управления на произвольный адрес
-\item Возврат управления назад после завершения подпрограммы
-\item Вложенные вызовы подпрограмм
-\item Сохранение и~восстановление регистров вызывающей программы
-\item Передача заданного количества аргументов
-\item Передача и~возврат структур
-\item Выделение и~освобождение памяти под локальные переменные подпрограмм
-\end{enumerate}
-\end{frame}
-
-\subsection{Передача и~возврат управления}
-\begin{frame}[fragile]{\insertsubsection}
-\lstset{basicstyle=\ttfamily\footnotesize}
-\footnotesize
-
-\begin{columns}
-\lstset{numbers=none}
-
-\begin{column}{0.65\linewidth}
-Передача управления в~подпрограмму addr:
-
-\lstinline!call addr!
-
-указатель команд сохраняется в~стеке,
-управление передаётся addr
-\end{column}
-\begin{column}{0.34\linewidth}
-\lstset{xleftmargin=0ex}
-\begin{lstlisting}
-pushl %eip
-jmp addr 
-///*@@*/ movl $addr, %eip
-\end{lstlisting}
-\end{column}
-\end{columns}
-\medskip
-
-\begin{columns}
-\lstset{numbers=none}
-
-\begin{column}{0.68\linewidth}
-Возврат из подпрограммы:
-
-\lstinline!ret!
-
-\lstinline!ret n!
-
-управление передаётся адресу, снятому со~стека (если указан аргумент n, со~стека затем снимается ещё n байт)
-\end{column}
-\begin{column}{0.31\linewidth}
-\begin{lstlisting}
-popl %eip
-\end{lstlisting}
-\end{column}
-\end{columns}
-\vspace{-1.5\parskip}
-
-\hfill\includegraphics[width=\linewidth,height=0.3\slideheigth,keepaspectratio,valign=t]{nested-call}
-\centering
-
-\end{frame}
-
-
-\subsection{Параметры и~возвращаемое значение}
-\begin{frame}[fragile]{\insertsubsection}
-\footnotesize
-\setlength{\parskip}{0.25\parskip}
-\setlength{\leftmargini}{0.5\leftmargini}
-
-\termin{Соглашение о~вызовах} "--- протокол передачи аргументов:
-\vspace{-1\parskip}
-\begin{enumerate}
-\item способ передачи (через регистры, через стек, смешанный);
-\item порядок размещения аргументов (Pascal "--- первый аргумент помещается в~стек первым, C "--- последним);
-\item кто очищает стек и~сохраняет/восстанавливает регистры (и~какие);
-\item инструкции вызова и возврата;
-\item как передаётся указатель this (для ООП).
-\end{enumerate}
-
-Возвращаемое значение:
-\vspace{-1\parskip}
-\begin{enumerate}
-\item целое или указатель "--- \lstinline!%eax! (long long "--- \lstinline!%edx:%eax!);
-\item вещественное значение "--- регистр сопроцессора \lstinline!st(0)!.
-\end{enumerate}
-
-\end{frame}
-
-
-
-\subsection{Соглашения о~вызовах (32 бита)}
-\begin{frame}[fragile]{\insertsubsection}
-% \footnotesize
-\scriptsize
-\setlength{\parskip}{0.5\parskip}
-\setlength{\leftmargini}{0.5\leftmargini}
-
-\renewcommand{\tabularxcolumn}[1]{m{#1}}
-\begin{tabularx}{\linewidth}{|M{3.5em}|M{5.5em}|M{3.5em}|L|%L|
-}
-\hline
-&\theadlong{Параметры в~регистрах}
-&\theadlong{Порядок}
-&\theadlong{Очистка стека}
-% &\theadlong{Дополнения}
-\\\hline
-\rowcolor{csMarker}cdecl&&
- C&
- вызывающая программа
- %&
- \\\hline
-pascal&&
- Pascal&
- функция
- %&
-\\\hline
-winapi (stdcall)&&
- C&
- функция
- %&
- \\\hline
-\rowcolor{csMarker}Gnu&&
- C&
-%  hybrid
-this "--- функция, \mbox{остальные "---  вызывающая программа}
-%  &
-% Стек иногда выравнивается на 16 бит
-\\\hline
-Gnu fastcall&
-ecx, edx
-&
- C&
-функция
-\\\hline
-Gnu regparm (3)&
-eax, edx, ecx
-&
- C&
-функция
-\\\hline
-Borland fastcall&
-ecx, edx
-&
-Pascal&
-функция
-\\\hline
- Microsoft fastcall&
- ecx, edx&
- C&
- функция
-%  &
-%  return pointer on stack if
-% not member function
-\\\hline
-% \\\hline
-\end{tabularx}
-
-\tiny
-gcc.gnu.org/onlinedocs/gcc-3.4.5/gcc/Function-Attributes.html\\
-Agner Fog.
-Calling conventions
-for different C++ compilers and operating systems.
-
-\end{frame}
-
-
-
-\section{Вызов подпрограммы в~GAS}
-\begin{frame}[fragile]{\insertsection}
-
-Соглашение о~вызове: Gnu %(cdecl)
-
-Регистры, значение которых не~должно изменяться подпрограммой:
-\vspace{-1\parskip}
-% \section{Подпрограммы в~GAS}
-% \subsection{Регистры, значение которых не~должно изменяться подпрограммой}
+% \subsection{push, pop}
 % \begin{frame}[fragile]{\insertsubsection}
-\begin{enumerate}
-\item\lstinline!%ebx!
-\item\lstinline!%esi!
-\item\lstinline!%edi!
-\item\lstinline!%ebp!
-\item Сегментные регистры \lstinline!%ds, %es! и~\lstinline!%ss!
-% \item Вершина стека \lstinline!%esp! нет
-% \item\lstinline!%r12—%r15! в~64-битном режиме
-\end{enumerate}
-% Прочие могут изменяться подпрограммами.
-\end{frame}
+% \lstset{basicstyle=\ttfamily\scriptsize}
+% \scriptsize
+% \setlength{\parskip}{0.5\parskip}
+% \begin{columns}
+% \lstset{numbers=none}
 % 
-% \subsection{Регистры, значение которых можно изменять}
-% \begin{frame}[fragile]{\insertsubsection}
-% \begin{enumerate}
-% \item\lstinline!%eax! "--- возвращаемое значение (целое до 4 байт или указатель)
-% \item\lstinline!%edx! "--- старшие 4 байта возвращаемого значения (long long)
-% \end{enumerate}
+% \begin{column}{0.5\linewidth}
+% 
+% \lstinline!push источник! \\
+% "--- помещение источника в~стек \phantom{wwwwwwwwwwwww}
+% \bigskip
+% 
+% % \begin{lstlisting}[numbers=none]
+% % pushl $13
+% % \end{lstlisting}
+% \lstinline!pushl $13! эквивалентно
+% \begin{lstlisting}[numbers=none]
+% subl $4, %esp	// esp -= sizeof(int)
+% movl $13, (%esp)// *esp = 13
+% \end{lstlisting}
+% 
+% % \begin{lstlisting}[numbers=none]
+% % pushl foo
+% % \end{lstlisting}
+% \lstinline!pushl foo! эквивалентно
+% \begin{lstlisting}[numbers=none]
+% subl $4, %esp	// esp -= sizeof(int)
+% movl foo, %eax	// eax= foo
+% movl %eax, (%esp)// *esp = eax
+% \end{lstlisting}
+% 
+% 
+% \end{column}
+% \begin{column}{0.5\linewidth}
+% 
+% \lstinline!pop приёмник! \\
+% "--- извлечение значения из стека и~помещение его в~приёмник
+% \bigskip
+% 
+% 
+% \lstinline!popl %eax! эквивалентно
+% \begin{lstlisting}
+% movl (%esp), %eax // eax = *esp
+% addl $4, %esp	// esp += sizeof(int)
+% \end{lstlisting}
+% 
+% \lstinline!popl foo! эквивалентно
+% \begin{lstlisting}
+% movl (%esp), %eax // eax = *esp
+% movl %eax, foo	// foo = eax
+% addl $4, %esp	// esp += sizeof(int)
+% \end{lstlisting}
+% \end{column}
+% \end{columns}
+% 
+% В Linux стек выравнен по long (соглашение).
+% 
+% Команды push и pop работают только с операндами размером 4 или 2 байта.
+% 
 % \end{frame}
 
-
-\subsection{Приветствие (GAS, stdlib)}
-
-% \subsection{Приветствие (GAS, GNU/Linux)}
-\begin{frame}[fragile]{\insertsubsection}
-\lstset{basicstyle=\ttfamily\footnotesize}
-
-\begin{lstlisting}
-.data
-    msg:
-    .string "Hello, world!\n"
-.global main // точка входа в программу
-main:
-    pushl $msg	// Адрес строки в стек
-    call printf
-    popl %eax	// Вычищаем параметр из стека
-  
-    movl $0,%eax
-    ret
-\end{lstlisting}
-
-\vspace{-2\baselineskip}
-\lstset{xleftmargin=14em}
-\terminblue
-\begin{lstlisting}[numbers=none]
-int main(){
-    printf("Hello, world!\n");
-    return 0;
-}
-\end{lstlisting}
-\end{frame}
-
-\subsection{Форматированный вывод (GAS, stdlib)}
-
-% \subsection{Приветствие (GAS, GNU/Linux)}
-\begin{frame}[fragile]{\insertsubsection}
-\lstset{basicstyle=\ttfamily\footnotesize}
-
-\begin{lstlisting}
-.data
-fmt: .string "Переменные: %d %d\n"
-foo: .int 13
-.global main // точка входа в программу
-main:
-  pushl foo	// Значение foo в стек
-  pushl $19	// Значение 19 в стек
-  pushl $fmt	// Адрес строки fmt в стек
-  call printf
-  addl $3*4, %esp // Три четырёхбайтовых числа из стека
-  movl $0,%eax
-  ret    
-\end{lstlisting}
-
-\vspace{-2\baselineskip}
-\lstset{xleftmargin=12em}
-\terminblue
-\begin{lstlisting}[numbers=none]
-int foo = 13;
-int main(){
-  printf("Переменные: %d %d\n", 
-    19, foo);
-  return 0;
-}
-\end{lstlisting}
-\end{frame}
-
+% 
+% \section{Подпрограммы}
+% 
+% \subsection{Вызов подпрограммы}
+% \begin{frame}{\insertsubsection}
+% \begin{enumerate}
+% \item Передача параметров
+% \item Сохранение адреса возврата
+% \item Передача управления вызываемой подпрограмме
+% \item Выполнение вызываемой подпрограммы
+% \item Подготовка возвращаемого значения
+% \item Возвращение управления вызывающей программе
+% \end{enumerate}
+% \end{frame}
+% 
+% \subsection{Требования}
+% \begin{frame}{\insertsubsection}
+% \begin{enumerate}
+% \item Передача управления на произвольный адрес
+% \item Возврат управления назад после завершения подпрограммы
+% \item Вложенные вызовы подпрограмм
+% \item Сохранение и~восстановление регистров вызывающей программы
+% \item Передача заданного количества аргументов
+% \item Передача и~возврат структур
+% \item Выделение и~освобождение памяти под локальные переменные подпрограмм
+% \end{enumerate}
+% \end{frame}
+% 
+% \subsection{Передача и~возврат управления}
+% \begin{frame}[fragile]{\insertsubsection}
+% \lstset{basicstyle=\ttfamily\footnotesize}
+% \footnotesize
+% 
+% \begin{columns}
+% \lstset{numbers=none}
+% 
+% \begin{column}{0.65\linewidth}
+% Передача управления в~подпрограмму addr:
+% 
+% \lstinline!call addr!
+% 
+% указатель команд сохраняется в~стеке,
+% управление передаётся addr
+% \end{column}
+% \begin{column}{0.34\linewidth}
+% \lstset{xleftmargin=0ex}
+% \begin{lstlisting}
+% pushl %eip
+% jmp addr 
+% ///*@@*/ movl $addr, %eip
+% \end{lstlisting}
+% \end{column}
+% \end{columns}
+% \medskip
+% 
+% \begin{columns}
+% \lstset{numbers=none}
+% 
+% \begin{column}{0.68\linewidth}
+% Возврат из подпрограммы:
+% 
+% \lstinline!ret!
+% 
+% \lstinline!ret n!
+% 
+% управление передаётся адресу, снятому со~стека (если указан аргумент n, со~стека затем снимается ещё n байт)
+% \end{column}
+% \begin{column}{0.31\linewidth}
+% \begin{lstlisting}
+% popl %eip
+% \end{lstlisting}
+% \end{column}
+% \end{columns}
+% \vspace{-1.5\parskip}
+% 
+% \hfill\includegraphics[width=\linewidth,height=0.3\slideheigth,keepaspectratio,valign=t]{nested-call}
+% \centering
+% 
+% \end{frame}
+% 
+% 
+% \subsection{Параметры и~возвращаемое значение}
+% \begin{frame}[fragile]{\insertsubsection}
+% \footnotesize
+% \setlength{\parskip}{0.25\parskip}
+% \setlength{\leftmargini}{0.5\leftmargini}
+% 
+% \termin{Соглашение о~вызовах} "--- протокол передачи аргументов:
+% \vspace{-1\parskip}
+% \begin{enumerate}
+% \item способ передачи (через регистры, через стек, смешанный);
+% \item порядок размещения аргументов (Pascal "--- первый аргумент помещается в~стек первым, C "--- последним);
+% \item кто очищает стек и~сохраняет/восстанавливает регистры (и~какие);
+% \item инструкции вызова и возврата;
+% \item как передаётся указатель this (для ООП).
+% \end{enumerate}
+% 
+% Возвращаемое значение:
+% \vspace{-1\parskip}
+% \begin{enumerate}
+% \item целое или указатель "--- \lstinline!%eax! (long long "--- \lstinline!%edx:%eax!);
+% \item вещественное значение "--- регистр сопроцессора \lstinline!st(0)!.
+% \end{enumerate}
+% 
+% \end{frame}
+% 
+% 
+% 
+% \subsection{Соглашения о~вызовах (32 бита)}
+% \begin{frame}[fragile]{\insertsubsection}
+% % \footnotesize
+% \scriptsize
+% \setlength{\parskip}{0.5\parskip}
+% \setlength{\leftmargini}{0.5\leftmargini}
+% 
+% \renewcommand{\tabularxcolumn}[1]{m{#1}}
+% \begin{tabularx}{\linewidth}{|M{3.5em}|M{5.5em}|M{3.5em}|L|%L|
+% }
+% \hline
+% &\theadlong{Параметры в~регистрах}
+% &\theadlong{Порядок}
+% &\theadlong{Очистка стека}
+% % &\theadlong{Дополнения}
+% \\\hline
+% \rowcolor{csMarker}cdecl&&
+%  C&
+%  вызывающая программа
+%  %&
+%  \\\hline
+% pascal&&
+%  Pascal&
+%  функция
+%  %&
+% \\\hline
+% winapi (stdcall)&&
+%  C&
+%  функция
+%  %&
+%  \\\hline
+% \rowcolor{csMarker}Gnu&&
+%  C&
+% %  hybrid
+% this "--- функция, \mbox{остальные "---  вызывающая программа}
+% %  &
+% % Стек иногда выравнивается на 16 бит
+% \\\hline
+% Gnu fastcall&
+% ecx, edx
+% &
+%  C&
+% функция
+% \\\hline
+% Gnu regparm (3)&
+% eax, edx, ecx
+% &
+%  C&
+% функция
+% \\\hline
+% Borland fastcall&
+% ecx, edx
+% &
+% Pascal&
+% функция
+% \\\hline
+%  Microsoft fastcall&
+%  ecx, edx&
+%  C&
+%  функция
+% %  &
+% %  return pointer on stack if
+% % not member function
+% \\\hline
+% % \\\hline
+% \end{tabularx}
+% 
+% \tiny
+% gcc.gnu.org/onlinedocs/gcc-3.4.5/gcc/Function-Attributes.html\\
+% Agner Fog.
+% Calling conventions
+% for different C++ compilers and operating systems.
+% 
+% \end{frame}
+% 
+% 
+% 
+% \section{Вызов подпрограммы в~GAS}
+% \begin{frame}[fragile]{\insertsection}
+% 
+% Соглашение о~вызове: Gnu %(cdecl)
+% 
+% Регистры, значение которых не~должно изменяться подпрограммой:
+% \vspace{-1\parskip}
+% % \section{Подпрограммы в~GAS}
+% % \subsection{Регистры, значение которых не~должно изменяться подпрограммой}
+% % \begin{frame}[fragile]{\insertsubsection}
+% \begin{enumerate}
+% \item\lstinline!%ebx!
+% \item\lstinline!%esi!
+% \item\lstinline!%edi!
+% \item\lstinline!%ebp!
+% \item Сегментные регистры \lstinline!%ds, %es! и~\lstinline!%ss!
+% % \item Вершина стека \lstinline!%esp! нет
+% % \item\lstinline!%r12—%r15! в~64-битном режиме
+% \end{enumerate}
+% % Прочие могут изменяться подпрограммами.
+% \end{frame}
+% % 
+% % \subsection{Регистры, значение которых можно изменять}
+% % \begin{frame}[fragile]{\insertsubsection}
+% % \begin{enumerate}
+% % \item\lstinline!%eax! "--- возвращаемое значение (целое до 4 байт или указатель)
+% % \item\lstinline!%edx! "--- старшие 4 байта возвращаемого значения (long long)
+% % \end{enumerate}
+% % \end{frame}
+% 
+% 
+% \subsection{Приветствие (GAS, stdlib)}
+% 
+% % \subsection{Приветствие (GAS, GNU/Linux)}
+% \begin{frame}[fragile]{\insertsubsection}
+% \lstset{basicstyle=\ttfamily\footnotesize}
+% 
+% \begin{lstlisting}
+% .data
+%     msg:
+%     .string "Hello, world!\n"
+% .global main // точка входа в программу
+% main:
+%     pushl $msg	// Адрес строки в стек
+%     call printf
+%     popl %eax	// Вычищаем параметр из стека
+%   
+%     movl $0,%eax
+%     ret
+% \end{lstlisting}
+% 
+% \vspace{-2\baselineskip}
+% \lstset{xleftmargin=14em}
+% \terminblue
+% \begin{lstlisting}[numbers=none]
+% int main(){
+%     printf("Hello, world!\n");
+%     return 0;
+% }
+% \end{lstlisting}
+% \end{frame}
+% 
+% \subsection{Форматированный вывод (GAS, stdlib)}
+% 
+% % \subsection{Приветствие (GAS, GNU/Linux)}
+% \begin{frame}[fragile]{\insertsubsection}
+% \lstset{basicstyle=\ttfamily\footnotesize}
+% 
+% \begin{lstlisting}
+% .data
+% fmt: .string "Переменные: %d %d\n"
+% foo: .int 13
+% .global main // точка входа в программу
+% main:
+%   pushl foo	// Значение foo в стек
+%   pushl $19	// Значение 19 в стек
+%   pushl $fmt	// Адрес строки fmt в стек
+%   call printf
+%   addl $3*4, %esp // Три четырёхбайтовых числа из стека
+%   movl $0,%eax
+%   ret    
+% \end{lstlisting}
+% 
+% \vspace{-2\baselineskip}
+% \lstset{xleftmargin=12em}
+% \terminblue
+% \begin{lstlisting}[numbers=none]
+% int foo = 13;
+% int main(){
+%   printf("Переменные: %d %d\n", 
+%     19, foo);
+%   return 0;
+% }
+% \end{lstlisting}
+% \end{frame}
+% 
 
 % *****************************************************************************
 \section{}
