@@ -56,9 +56,13 @@ mul arg & Ѕеззнаковое умножение. %регистра A на arg.
 2 байта: $DX:AX := AX*arg$
 
 1 байт: $AX := AL*arg$
+
+arg "--- регистр или переменна€ в~пам€ти
 % & 
 \\\hline
 imul arg & «наковое умножение, аналогично mul
+\\\hline
+imul src, dest & «наковое умножение $dest := dest*src$
 \\\hline
 imul aux, src, dest & «наковое умножение $dest := aux*src$, aux "--- константа
 \\\hline
@@ -74,6 +78,8 @@ EDX := (EDX:EAX)\%arg \\
 2 байта: $\left\{\begin{array}{l}AX := (DX:AX)/arg\\ DX := (DX:AX)\%arg\end{array}\right.$
 
 1 байт: $\left\{\begin{array}{l}AL := AX/arg\\ AH := AX\%arg\end{array}\right.$
+
+arg "--- регистр или переменна€ в~пам€ти
 \\\hline
 idiv arg & «наковое деление с~остатком, аналогично div
 \\\hline
