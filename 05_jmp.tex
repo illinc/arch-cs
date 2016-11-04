@@ -1,5 +1,5 @@
-\input{common/0pres}
-\input{common/4archcompsys}
+\input{commonpres}
+
 
 
 % \setbeamertemplate{itemize/enumerate body begin}{\footnotesize}
@@ -12,66 +12,11 @@
 \graphicspath{{fig/}{fig/fpu/}}
 
 
-% \lstset{language={[x86masm]Assembler}}
-% \lstset{commentline={\/}}
-\lstset{xleftmargin=0mm}
-% \lstset{language={[Motorola68k]Assembler}}
-% alsolanguage=[
-% h
-% dialect
-% i
-% ]
-% h
-% language
-\lstset{language=C++, alsolanguage=[x86masm]Assembler}
-% \lstset{language=C++, alsolanguage=[Motorola68k]Assembler}
-
-\makeatletter
-\newcommand{\setlistspacing}[2]{\def\@ld{#1}\expandafter\def\csname
-@list\romannumeral\@ld \endcsname{\leftmargin\csname
-leftmargin\romannumeral\@ld \endcsname
-              \topsep    #2
-              \parsep    0\p@   \@plus\p@
-              \itemsep   #2}}
-\makeatother
-
 
 \begin{document}
 \maketitle
 
-% \section{Оргвопросы}
-% \subsection{Компетенции}
 
-\begin{frame}{Цель курса}
-
-% Общепрофессиональные:
-Формирование подкомпетенции
-
-\termin{ОПК-2.2}	Знание и~понимание архитектуры и~принципов построения вычислительных систем
-
-\terminblue 
-Участвует в~формировании общепрофессиональной компетенции
-
-\termin{ОПК-2}	Владение архитектурой ЭВМ и~систем
-
-\end{frame}
-
-% \begin{frame}{Компетенция}
-% \footnotesize
-% \termin{Компетенция} "--- компонент качества человека, определяющий его способность выполнять определенную группу действий в~сфере того или иного рода деятельности. Это некий уровень требований к~человеку, соответствующий его роли в~обществе. 
-% 
-% \setlistspacing{1}{0ex}
-% 
-% Особенность компетенции как результата обучения состоит в~том, что в~сравнении с~другими результатами образования она:
-% \vspace{-1em}
-% \begin{itemize}
-% \item является интегрированным результатом, 
-% \item позволяет решать целый класс нестандартных задач, 
-% \item существует в~форме деятельности, 
-% \item переносима (связана с~целым классом предметов воздействия), совершенствуется по пути интеграции с~другими компетенциями, 
-% \item проявляется сознательно (в~отличие от навыка).
-% \end{itemize}
-% \end{frame}
 
 
 \section{Флаги}
@@ -82,7 +27,8 @@ leftmargin\romannumeral\@ld \endcsname
 \item арифметические команды;
 \item \lstinline!cmp! (\lstinline!sub!, не изменяющий приёмник);
 \item \lstinline!test! (\lstinline!and!, не изменяющий приёмник);
-\item \lstinline!fcom! (сравнение вещественных чисел).
+\item \lstinline!fcomi! (сравнение вещественных чисел), но не \lstinline!fcom!;
+\item команды сохранения/восстановления eflags \lstinline!pushf/popf!;
 \end{itemize}
 \end{frame}
 
@@ -92,7 +38,7 @@ leftmargin\romannumeral\@ld \endcsname
 \item команды условного перехода \lstinline!jXXX метка!;
 \item команды условной пересылки \lstinline!cmovXXX src, dst!;
 \item команды условной установки байта \lstinline!setXXX dst!;
-\item команды сохранения/восстановления eflags \lstinline!pushf/popf!;
+% \item команды сохранения/восстановления eflags \lstinline!pushf/popf!;
 
 \end{itemize}
 \end{frame}
@@ -112,7 +58,7 @@ leftmargin\romannumeral\@ld \endcsname
 \end{description}
 \end{frame}
 
-\section{Команды передачи управления}
+\section{Условные команды}
 
 \subsection{Команды передачи управления}
 
@@ -122,9 +68,10 @@ leftmargin\romannumeral\@ld \endcsname
 }}}
 
 \begin{frame}{\insertsubsection}
-\begin{adjustwidth}{-2em}{-2em}
+% \begin{adjustwidth}{-2em}{-2em}
 
-\def\normalsize{\footnotesize}
+% \def\normalsize{\footnotesize}
+\def\normalsize{\scriptsize}
 \def\theadfont{\scriptsize\bfseries}
 \normalsize
 
@@ -138,7 +85,7 @@ leftmargin\romannumeral\@ld \endcsname
 % \thead{Условие (флаги)}  
 $
 \begin{array}{c}
-\text{\textbf{\theadfont Условие}}\\
+\text{\textbf{\theadfont Условие}}\\[-1ex]
 \text{\textbf{\theadfont (флаги)}}\\
 \end{array}
 $
@@ -367,7 +314,7 @@ $dst > src$ как знаковое
 
 
 \end{tabularx}
-\end{adjustwidth}
+% \end{adjustwidth}
 \end{frame}
 
 \subsection{Команды условной пересылки}
@@ -400,6 +347,25 @@ $dst = 1$, если условие верно,
 
 $dst = 0$ иначе.
 \end{frame}
+
+
+
+\section{Сравнение вещественных чисел}
+
+
+\subsection{Флаги сопроцессора}
+\begin{frame}[fragile]{\insertsubsection}
+C3, C2 и C0
+\end{frame}
+
+\subsection{Команды сравнения вещественных чисел}
+\begin{frame}[fragile]{\insertsubsection}
+fcom, fcomi, fucom
+\end{frame}
+
+
+
+
 
 \section{Программирование нелинейных алгоритмов}
 

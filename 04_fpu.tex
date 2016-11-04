@@ -44,6 +44,19 @@
 
 \end{frame}
 
+\subsection{Структура вещественных чисел}
+\begin{frame}{\insertsubsection}
+$$
+(-1)^s \cdot 2^p \cdot m
+$$
+
+$0,1_2 \leqslant m < 1$ нормализованное число
+
+$0 \leqslant m < 0,1_2$ денормализованное число
+
+IEEE 754
+
+\end{frame}
 
 \subsection{Регистры сопроцессора}
 \begin{frame}{\insertsubsection}
@@ -89,6 +102,7 @@
 
 }
 
+перерисовать
 \end{frame}
 \endgroup
 
@@ -400,6 +414,329 @@ $	& $st(0) = y\cdot\log_2(x+1)$
 \end{tabularx}
 \end{adjustwidth}
 \end{frame}
+
+\section{Слово состояния (флаги сопроцессора)}
+
+
+\subsection{Слово состояния (флаги сопроцессора)
+% и~сравнение чисел
+}
+\colorlet{csControl}{green!50}
+\colorlet{csExceptionStatus}{green!7!yellow!7!white}
+\colorlet{csSystem}{blue!20!red!10}
+\begin{frame}{\insertsubsection}
+
+\setlength{\parskip}{0\parskip}
+{
+% \begin{adjustwidth}{-1.em}{-1.em}
+% \footnotesize
+\scriptsize
+% \tiny
+\renewcommand{\arraystretch}{1.05}
+% \vspace{-1.5\baselineskip}
+
+% \begin{tabularx}{0.45\linewidth}{@{}c@{~}|l@{~}|L@{~}}
+% % № 	& 	&Название 	&Описание 	&Тип флага \\\hline
+% \multicolumn{3}{c}{\Reg{flags/eflags}}\\\hline
+% \rowcolor{csMarker}0 	&CF 	&Carry Flag 	\\\hline
+% 1 	&1 	&---\\\hline
+% \rowcolor{csMarker}2 	&PF 	&Parity Flag 	\\\hline
+% 3 	&0 	&---\\\hline
+% \rowcolor{csMarker}4 	&AF 	&Auxiliary Carry Flag 	\\\hline
+% 5 	&0 	&---\\\hline
+% \rowcolor{csMarker}6 	&ZF 	&Zero Flag 	\\\hline
+% \rowcolor{csMarker}7 	&SF 	&Sign Flag 	\\\hline
+% \rowcolor{csSystem}8 	&TF 	&Trap Flag 	\\\hline
+% \rowcolor{csSystem}9 	&IF 	&Interrupt Enable Flag 	\\\hline
+% \rowcolor{csControl}10 	&DF 	&Direction Flag 	\\\hline
+% \rowcolor{csMarker}11 	&OF 	&Overflow Flag 	\\\hline
+% % \rowcolor{csSystem}12 	&\multirow{2}{*}{IOPL} 	 	&\multirow{2}{*}{I/O Privilege Level}\\\hline
+% % \rowcolor{csSystem}13 	& 	 	&\\\hline
+% \rowcolor{csSystem}12 	& 	 	&\\%\hline
+% \rowcolor{csSystem}13 	&\multirow{-2}{*}{IOPL} 	 	&\multirow{-2}{*}{I/O Privilege Level}\\\hline
+% \rowcolor{csSystem}14 	&NT 	&Nested Task 	\\\hline
+% 15 	&0 	&---\\\hline
+% \end{tabularx}
+% \begin{tabularx}{0.45\linewidth}{@{}c@{~}|l@{~}|L@{~}}
+% % № 	& 	&Название 	\\\hline
+% \multicolumn{3}{c}{\Reg{SW}}\\\hline
+% \rowcolor{csControl}0 	&IE 	& 	\\\hline
+% \rowcolor{csControl}1 	&DE 	&\\\hline
+% \rowcolor{csControl}2 	&ZE 	&	\\\hline
+% \rowcolor{csControl}3 	&ОЕ 	&\\\hline
+% \rowcolor{csControl}4 	&UE 	& 	\\\hline
+% \rowcolor{csControl}5 	&РЕ 	&\\\hline
+% \rowcolor{csControl}6 	&SF 	&\\\hline
+% \rowcolor{csControl}7 	&ES 	&\\\hline
+% \rowcolor{csMarker}8 	&C0 	&\\\hline
+% \rowcolor{csMarker}9 	&C1 	&\\\hline
+% \rowcolor{csMarker}10 	&C2 	&\\\hline
+% \rowcolor{csSystem}11 	& 	 	&\\
+% \rowcolor{csSystem}12 	& 	 	&\\
+% \rowcolor{csSystem}13 	&\multirow{-3}{*}{TOP} 	 	&\multirow{-3}{*}{}\\\hline
+% \rowcolor{csMarker}14 	&C3 	&\\\hline
+% 15 	&В 	&Busy\\\hline
+% \end{tabularx}
+\begin{tabularx}{1\linewidth}{@{}c@{~}|l@{~}|L@{~}|c@{~}|l@{~}|l@{~}}
+% № 	& 	&Название 	\\\hline
+\multicolumn{3}{c}{\Reg{SW}}\\\hhline{---~~~}
+\rowcolor{csExceptionStatus}0 	&IE 	& Недействительная операция %(#I)	
+&\multicolumn{3}{c}{\cellcolor{white}}\\\hhline{---~~~}
+\rowcolor{csExceptionStatus}1 	&DE 	& Денормализованный операнд %(#D)	
+&\multicolumn{3}{c}{\cellcolor{white}}\\\hhline{---~~~}
+\rowcolor{csExceptionStatus}2 	&ZE 	& Деление на нуль %(#Z)	
+&\multicolumn{3}{c}{\cellcolor{white}}\\\hhline{---~~~}
+\rowcolor{csExceptionStatus}3 	&ОЕ 	& Переполнение %(#O)	
+&\multicolumn{3}{c}{\cellcolor{white}}\\\hhline{---~~~}
+\rowcolor{csExceptionStatus}4 	&UE 	& Антипереполнение %(#U)	
+&\multicolumn{3}{c}{\cellcolor{white}}\\\hhline{---~~~}
+\rowcolor{csExceptionStatus}5 	&РЕ 	& Неточный результат %(#P)	
+&\multicolumn{3}{c}{\cellcolor{white}}\\\hhline{---~~~}
+\rowcolor{csExceptionStatus}6 	&SF 	& Стековая ошибка	&\multicolumn{3}{c}{\cellcolor{white}}\\\hhline{---~~~}
+\rowcolor{csExceptionStatus}7 	&ES 	& Бит суммарной ошибки&\multicolumn{3}{c}{\cellcolor{white}\Reg{eflags}, f(n)stsw + sahf} %&&\multirow{-8}{*}{f(n)stsw/sahf}&
+\\\hline
+\rowcolor{csMarker}8 	&C0 	&&0 	&CF 	&Carry Flag\\\hline
+\rowcolor{csMarker}9 	&C1 	&&\multicolumn{3}{c}{{\cellcolor{white}}игнорируется}\\\hline
+\rowcolor{csMarker}10 	&C2 	&&2 	&PF 	&Parity Flag\\\hline
+\rowcolor{csSystem}11 	& 	&&\multicolumn{3}{c}{{\cellcolor{white}}игнорируется}\\%\hhline{-~~---}
+\rowcolor{csSystem}12 	& 	&&\cellcolor{csMarker}4 	&\cellcolor{csMarker}AF 	&\cellcolor{csMarker}Auxiliary Carry Flag\\
+\rowcolor{csSystem}13 	&\multirow{-3}{*}{TOP} 	&\multirow{-3}{*}{}&\multicolumn{3}{c}{{\cellcolor{white}}игнорируется}\\\hline
+\rowcolor{csMarker}14 	&C3 	& 	&6 	&ZF 	&Zero Flag\\\hline
+\rowcolor{csExceptionStatus}15 	&В 	&Дублирует ES	&7 	&SF 	&Sign Flag \\\hline
+\end{tabularx}
+% \begin{tabularx}{0.45\linewidth}{@{}c@{~}|l@{~}|L@{~}}
+% \\ \\ \\ \\
+% \\ \\ \\ \\
+% % № 	& 	&Название 	&Описание 	&Тип флага \\\hline
+% \multicolumn{3}{c}{\Reg{flags/eflags}}\\\hline
+% \rowcolor{csMarker}0 	&CF 	&Carry Flag 	\\\hline
+% 1 	&1 	&---\\\hline
+% \rowcolor{csMarker}2 	&PF 	&Parity Flag 	\\\hline
+% 3 	&0 	&---\\\hline
+% \rowcolor{csMarker}4 	&AF 	&Auxiliary Carry Flag 	\\\hline
+% 5 	&0 	&---\\\hline
+% \rowcolor{csMarker}6 	&ZF 	&Zero Flag 	\\\hline
+% \rowcolor{csMarker}7 	&SF 	&Sign Flag 	\\\hline
+% \end{tabularx}
+% \end{adjustwidth}
+}
+% \footnotesize
+% \vspace{-0.5\baselineskip}
+
+% \scriptsize
+% {
+% \tiny
+% $\left.
+% \begin{tabular}{l@{}l}
+% $src$ "--- st(i) или в~памяти & 
+% $\left\{\begin{tabular}{@{}r@{}}
+% fcom[p[p]] [src]\\
+% fucom[p[p]] [src]
+% \end{tabular}\right.$\\
+% $src$ "--- целое в~памяти & ficom[p] src\\
+% $src = 0$ & ftst
+% \end{tabular}
+% \right\}$
+% % 
+% \begin{tabular}{c@{~}c@{~}c@{~}c}
+% Условие & C3 & C0 &C2\\
+% $st(0)>src$ & 0 & 0 & 0 \\
+% $st(0)<src$ & 0 & 1 & 0 \\
+% $st(0)=src$ & 1 & 0 & 0 \\
+% несравнимы& 1 & 1 & 1
+% \end{tabular}
+% % 
+% }
+% % \vspace{-\baselineskip}
+% \footnotesize
+\scriptsize
+
+% \hfill
+% fstsw \%ax и fnstsw \%ax
+f[n]stsw \%ax
+"--- выгрузка \Reg{SW} в~\Reg{AX};%/память, 
+% \vspace{-\baselineskip}
+% 
+\hfill
+sahf "--- загрузка \Reg{AH} в~младший байт \Reg{eflags}.
+
+\end{frame}
+
+
+% \subsection{Сравнение с~результатом в~eflags}
+\subsection{Команды сравнения}
+\newcommand{\farg}[1]{\textbf{\textcolor{green!30!black}{#1}}}
+\begin{frame}{\insertsubsection}
+\begin{adjustwidth}{-1.em}{-1.em}
+\footnotesize
+% \setlength{\parskip}{0\parskip}
+
+$\left.
+\begin{tabular}{l@{}l}
+$src$ "--- st(i) или в~памяти & 
+$\left\{\begin{tabular}{@{}r@{}}
+\termin{fcom[p[p]]} \farg{[src]}\\
+\termin{fucom[p[p]]} \farg{[src]}
+\end{tabular}\right.$\\
+$src$ "--- целое в~памяти & \termin{ficom[p]} \farg{src}\\
+$src = 0$ & \termin{ftst}
+\end{tabular}
+\right\}$
+% 
+\begin{tabular}{c|@{~}c@{~}c@{~}c}
+Условие & C3 & C0 &C2\\\hline
+$st(0)>src$ & 0 & 0 & 0 \\
+$st(0)<src$ & 0 & 1 & 0 \\
+$st(0)=src$ & 1 & 0 & 0 \\
+несравнимы& 1 & 1 & 1
+\end{tabular}
+
+{
+\vspace{-0.5\baselineskip}
+\termin{f[n]stsw + sahf:} C3, C0, C2 $\to$ ZF, CF, PF.
+\centering
+
+}
+
+\vspace{-\baselineskip}\hrulefill
+
+
+\begin{tabular}{r}
+\termin{fcomi[p]} \farg{src, \%st(0)}\\
+\termin{fucomi[p]} \farg{src, \%st(0)}\\
+% $src$ "--- st(i)\hfill \strut сравнивают вершину стека с операндом-источником, который может быть регистром или операндом в памяти (коротким или длинным вещественным).
+\end{tabular}
+% 
+% 
+\begin{tabular}{c|c@{~}c@{~}c|c@{~}c@{~}c|c}
+Условие & ZF & CF &PF	&OF& SF & AF & C2\\\hline
+$st(0)>src$ & 0 & 0 & 0 &\multirow{4}{*}{0} &\multirow{4}{*}{0}  &\multirow{4}{*}{0} &\multirow{4}{*}{0}\\
+$st(0)<src$ & 0 & 1 & 0 &&&&\\
+$st(0)=src$ & 1 & 0 & 0 &&&&\\
+несравнимы& 1 & 1 & 1&&&&
+\end{tabular}
+
+\end{adjustwidth}
+\end{frame}
+
+% \begingroup
+% \renewcommand{\tabularxcolumn}[1]{m{#1}}
+\subsection{Условная пересылка}
+\begin{frame}[fragile]{\insertsubsection}
+% \begin{adjustwidth}{-2em}{-2em}
+
+\def\normalsize{\footnotesize}
+% \def\normalsize{\scriptsize}
+\def\theadfont{\scriptsize\bfseries}
+\normalsize
+\setlength{\parskip}{0\parskip}
+
+\lstinline!fcmovXXX  %st(i), %st(0)! %"--- 
+
+$st(0) := st(i)$ при %некотором условии
+некоторой комбинации флагов \Reg{eflags}
+
+
+\begin{tabularx}{1\linewidth}{|l|@{}c@{}|%K{7em}|
+L|}
+% {|K{6em}|X|H|}
+\hline
+\thead{Команда} 
+&
+% \thead{Условие (флаги)}  
+$
+\begin{array}{c}
+\text{\textbf{\theadfont Условие}}\\[-0.8ex]
+\text{\textbf{\theadfont (флаги)}}\\
+\end{array}
+$
+% & %\theadfont Условие (sub src, dst или \mbox{cmp  src, dst})
+% % \thead{Условие (sub src, dst или \mbox{cmp  src, dst})}
+% % \thead{Условие (арифметика)}
+% % &
+% \theadfont Условие (\mbox{cmp  src, dst}) 
+& \theadfont Условие \mbox{(f[u]comi[p] src, \%st(0))}
+\\\hline
+fcmove
+&	
+$ZF = 1$
+% &
+% %\multicolumn{2}{c|}
+% {$dst = src$}
+&
+$st(0) = src$\\\hline
+fcmovne
+&	
+$ZF = 0$
+% &
+% $dst \neq src$
+&
+$st(0) \neq src$
+% 
+\\\hline
+fcmovb/fcmovnae
+&	
+$CF = 1$
+% &
+% $dst < src$ как беззнаковое 
+&
+$st(0) < src$\\\hline
+fcmovna/fcmovbe 	
+&
+$
+\left[
+\begin{array}{l}
+CF = 1\\
+ZF = 1
+\end{array}
+\right.
+$
+% &
+% $dst \leqslant src$ как беззнаковое 
+&
+$st(0) \leqslant src$\\\hline
+fcmovnb/fcmovae
+&	
+$CF = 0$
+% &
+% $dst \geqslant src$ как беззнаковое 
+&
+$st(0) \geqslant src$\\\hline
+fcmova/fcmovnbe
+&
+$
+\left\{
+\begin{array}{l}
+CF = 0\\
+ZF = 0
+\end{array}
+\right.
+$
+% &
+% $dst > src$ как беззнаковое 
+&
+$st(0) > src$\\\hline
+fcmovu
+&	
+$PF = 1$
+&
+% Число единиц младшего байта чётно &
+$st(0)$ и~$src$ несравнимы
+\\\hline
+fcmovnu
+&	
+$PF = 0$
+&
+% Число единиц младшего байта нечётно &
+$st(0)$ и~$src$ сравнимы
+\\\hline
+
+
+
+\end{tabularx}
+% \end{adjustwidth}
+\end{frame}
+% \endgroup 
 
 \endgroup 
 
