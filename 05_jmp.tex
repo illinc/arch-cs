@@ -19,7 +19,170 @@
 
 
 
-\section{Флаги}
+\section{Флаги (eflags)}
+
+
+\colorlet{csControl}{green!50}
+\colorlet{csSystem}{blue!20!red!10}
+\begin{frame}{\insertsection}
+\begin{adjustwidth}{-1.em}{-1.em}
+% \footnotesize
+% \scriptsize
+\tiny
+\renewcommand{\arraystretch}{1.05}
+\vspace{-1.5\baselineskip}
+
+\begin{tabularx}{\linewidth}{@{}c@{~}|l@{~}|l@{~}|L@{}|l@{}}
+% № 	& 	&Название 	&Описание 	&Тип флага \\\hline
+\multicolumn{5}{c}{\Reg{flags/eflags}}\\\hline
+\rowcolor{csMarker}0 	&CF 	&Carry Flag 	&Флаг переноса 	&Состояние\\\hline
+1 	&1 	&---&Зарезервирован 	&\\\hline
+\rowcolor{csMarker}2 	&PF 	&Parity Flag 	&Флаг чётности 	&Состояние\\\hline
+3 	&0 	&---&Зарезервирован 	&\\\hline
+\rowcolor{csMarker}4 	&AF 	&Auxiliary Carry Flag 	&Вспомогательный флаг переноса (тетрад) 	&Состояние\\\hline
+5 	&0 	&---&Зарезервирован 	&\\\hline
+\rowcolor{csMarker}6 	&ZF 	&Zero Flag 	&Флаг нуля 	&Состояние\\\hline
+\rowcolor{csMarker}7 	&SF 	&Sign Flag 	&Флаг знака 	&Состояние\\\hline
+\rowcolor{csSystem}8 	&TF 	&Trap Flag 	&Флаг трассировки 	&Системный\\\hline
+\rowcolor{csSystem}9 	&IF 	&Interrupt Enable Flag 	&Флаг разрешения прерываний 	&Системный\\\hline
+\rowcolor{csControl}10 	&DF 	&Direction Flag 	&Флаг направления 	&Управляющий\\\hline
+\rowcolor{csMarker}11 	&OF 	&Overflow Flag 	&Флаг переполнения 	&Состояние\\\hline
+\rowcolor{csSystem}12--13 	&IOPL 	&I/O Privilege Level 	&Уровень приоритета ввода-вывода 	&Системный\\\hline
+\rowcolor{csSystem}14 	&NT 	&Nested Task 	&Флаг вложенности задач 	&Системный\\\hline
+15 	&0 	&---&Зарезервирован 	&\\\hline
+% \\\hline
+\multicolumn{5}{c}{\Reg{eflags}}\\\hline
+\rowcolor{csSystem}16 	&RF 	&Resume Flag 	&Флаг возобновления 	&Системный\\\hline
+\rowcolor{csSystem}17 	&VM 	&Virtual-8086 Mode 	&Режим виртуального процессора 8086 	&Системный\\\hline
+\rowcolor{csSystem}18 	&AC 	&Alignment Check 	&Проверка выравнивания 	&Системный\\\hline
+\rowcolor{csSystem}19 	&VIF 	&Virtual Interrupt Flag 	&Виртуальный флаг разрешения прерывания 	&Системный\\\hline
+\rowcolor{csSystem}20 	&VIP 	&Virtual Interrupt Pending 	&Ожидающее виртуальное прерывание 	&Системный\\\hline
+\rowcolor{csSystem}21 	&ID 	&ID Flag 	&Проверка на доступность инструкции CPUID 	&Системный\\\hline
+22--31	&	&---&Зарезервированы 	&\\\hline
+\end{tabularx}
+\end{adjustwidth}
+
+\end{frame}
+
+
+
+\subsection{Сравнение вещественных чисел}
+
+\newcommand{\farg}[1]{\textbf{\textcolor{green!30!black}{#1}}}
+\begin{frame}{\insertsubsection}
+\begin{adjustwidth}{-1.em}{-1.em}
+\footnotesize
+% \setlength{\parskip}{0\parskip}
+
+$\left.
+\begin{tabular}{l@{}l}
+$src$ "--- st(i) или в~памяти & 
+$\left\{\begin{tabular}{@{}r@{}}
+\termin{fcom[p[p]]} \farg{[src]}\\
+\termin{fucom[p[p]]} \farg{[src]}
+\end{tabular}\right.$\\
+$src$ "--- целое в~памяти & \termin{ficom[p]} \farg{src}\\
+$src = 0$ & \termin{ftst}
+\end{tabular}
+\right\}$
+% 
+\begin{tabular}{c|@{~}c@{~}c@{~}c}
+Условие & C3 & C0 &C2\\\hline
+$st(0)>src$ & 0 & 0 & 0 \\
+$st(0)<src$ & 0 & 1 & 0 \\
+$st(0)=src$ & 1 & 0 & 0 \\
+несравнимы& 1 & 1 & 1
+\end{tabular}
+
+{
+\vspace{-0.5\baselineskip}
+\termin{f[n]stsw + sahf:} C3, C0, C2 $\to$ ZF, CF, PF.
+\centering
+
+}
+
+\vspace{-\baselineskip}\hrulefill
+
+
+\begin{tabular}{r}
+\termin{fcomi[p]} \farg{src, \%st(0)}\\
+\termin{fucomi[p]} \farg{src, \%st(0)}\\
+% $src$ "--- st(i)\hfill \strut сравнивают вершину стека с операндом-источником, который может быть регистром или операндом в памяти (коротким или длинным вещественным).
+\end{tabular}
+% 
+% 
+\begin{tabular}{c|c@{~}c@{~}c|c@{~}c@{~}c|c}
+Условие & ZF & CF &PF	&OF& SF & AF & C2\\\hline
+$st(0)>src$ & 0 & 0 & 0 &\multirow{4}{*}{0} &\multirow{4}{*}{0}  &\multirow{4}{*}{0} &\multirow{4}{*}{0}\\
+$st(0)<src$ & 0 & 1 & 0 &&&&\\
+$st(0)=src$ & 1 & 0 & 0 &&&&\\
+несравнимы& 1 & 1 & 1&&&&
+\end{tabular}
+
+\end{adjustwidth}
+\end{frame}
+
+
+% \subsection{Флаги сопроцессора}
+% \colorlet{csControl}{green!50}
+% \colorlet{csExceptionStatus}{green!7!yellow!7!white}
+% \colorlet{csSystem}{blue!20!red!10}
+% \begin{frame}{\insertsubsection}
+% 
+% \setlength{\parskip}{0\parskip}
+% {
+% % \begin{adjustwidth}{-1.em}{-1.em}
+% % \footnotesize
+% \scriptsize
+% % \tiny
+% \renewcommand{\arraystretch}{1.05}
+% 
+% \begin{tabularx}{1\linewidth}{@{}c@{~}|l@{~}|L@{~}|c@{~}|l@{~}|l@{~}}
+% % № 	& 	&Название 	\\\hline
+% \multicolumn{3}{c}{\Reg{SW}}\\\hhline{---~~~}
+% \rowcolor{csExceptionStatus}0 	&IE 	& Недействительная операция %(#I)	
+% &\multicolumn{3}{c}{\cellcolor{white}}\\\hhline{---~~~}
+% \rowcolor{csExceptionStatus}1 	&DE 	& Денормализованный операнд %(#D)	
+% &\multicolumn{3}{c}{\cellcolor{white}}\\\hhline{---~~~}
+% \rowcolor{csExceptionStatus}2 	&ZE 	& Деление на нуль %(#Z)	
+% &\multicolumn{3}{c}{\cellcolor{white}}\\\hhline{---~~~}
+% \rowcolor{csExceptionStatus}3 	&ОЕ 	& Переполнение %(#O)	
+% &\multicolumn{3}{c}{\cellcolor{white}}\\\hhline{---~~~}
+% \rowcolor{csExceptionStatus}4 	&UE 	& Антипереполнение %(#U)	
+% &\multicolumn{3}{c}{\cellcolor{white}}\\\hhline{---~~~}
+% \rowcolor{csExceptionStatus}5 	&РЕ 	& Неточный результат %(#P)	
+% &\multicolumn{3}{c}{\cellcolor{white}}\\\hhline{---~~~}
+% \rowcolor{csExceptionStatus}6 	&SF 	& Стековая ошибка	&\multicolumn{3}{c}{\cellcolor{white}}\\\hhline{---~~~}
+% \rowcolor{csExceptionStatus}7 	&ES 	& Бит суммарной ошибки&\multicolumn{3}{c}{\cellcolor{white}\Reg{eflags}, f(n)stsw + sahf} %&&\multirow{-8}{*}{f(n)stsw/sahf}&
+% \\\hline
+% \rowcolor{csMarker}8 	&C0 	&&0 	&CF 	&Carry Flag\\\hline
+% \rowcolor{csMarker}9 	&C1 	&&\multicolumn{3}{c}{{\cellcolor{white}}игнорируется}\\\hline
+% \rowcolor{csMarker}10 	&C2 	&&2 	&PF 	&Parity Flag\\\hline
+% \rowcolor{csSystem}11 	& 	&&\multicolumn{3}{c}{{\cellcolor{white}}игнорируется}\\%\hhline{-~~---}
+% \rowcolor{csSystem}12 	& 	&&\cellcolor{csMarker}4 	&\cellcolor{csMarker}AF 	&\cellcolor{csMarker}Auxiliary Carry Flag\\
+% \rowcolor{csSystem}13 	&\multirow{-3}{*}{TOP} 	&\multirow{-3}{*}{}&\multicolumn{3}{c}{{\cellcolor{white}}игнорируется}\\\hline
+% \rowcolor{csMarker}14 	&C3 	& 	&6 	&ZF 	&Zero Flag\\\hline
+% \rowcolor{csExceptionStatus}15 	&В 	&Дублирует ES	&7 	&SF 	&Sign Flag \\\hline
+% \end{tabularx}
+% 
+% }
+% 
+% \scriptsize
+% 
+% % \hfill
+% % fstsw \%ax и fnstsw \%ax
+% f[n]stsw \%ax
+% "--- выгрузка \Reg{SW} в~\Reg{AX};%/память, 
+% % \vspace{-\baselineskip}
+% % 
+% \hfill
+% sahf "--- загрузка \Reg{AH} в~младший байт \Reg{eflags}.
+% 
+% \end{frame}
+
+
+
+
 
 \subsection{Команды, изменяющие eflags}
 \begin{frame}{\insertsubsection}
@@ -27,36 +190,41 @@
 \item арифметические команды;
 \item \lstinline!cmp! (\lstinline!sub!, не изменяющий приёмник);
 \item \lstinline!test! (\lstinline!and!, не изменяющий приёмник);
-\item \lstinline!fcomi! (сравнение вещественных чисел), но не \lstinline!fcom!;
-\item команды сохранения/восстановления eflags \lstinline!pushf/popf!;
+\item \lstinline!fcomi! (сравнение вещественных чисел), \mbox{но не \lstinline!fcom!;}
+\item команды сохранения/восстановления \Reg{eflags} в~стек (память) \lstinline!pushf/popf!;
+\item команды сохранения/восстановления флагов состояния в~регистр \Reg{AH} \lstinline!lahf/sahf!;
 \end{itemize}
 \end{frame}
+
+
 
 \subsection{Команды, использующие eflags}
 \begin{frame}{\insertsubsection}
 \begin{itemize}
 \item команды условного перехода \lstinline!jXXX метка!;
-\item команды условной пересылки \lstinline!cmovXXX src, dst!;
+\item команды условной пересылки \lstinline!cmovXXX src, dst! и~\lstinline!fcmovXXX src, st(0)!;
 \item команды условной установки байта \lstinline!setXXX dst!;
 % \item команды сохранения/восстановления eflags \lstinline!pushf/popf!;
 
 \end{itemize}
 \end{frame}
 
-\subsection{Популярные флаги}
-\begin{frame}{\insertsubsection}
-\begin{description}[W]
-\item[CF] перенос/заём в/из старшего (несуществующего) разряда (беззнаковое переполнение);
-
-\item[ZF] результат операции "--- нуль;
-
-\item[SF] значение старшего (знакового) бита результата;
-
-\item[OF] потеря старшего бита результата (знаковое переполнение).
-
-
-\end{description}
-\end{frame}
+% \subsection{Популярные флаги}
+% \begin{frame}{\insertsubsection}
+% \begin{description}[W]
+% \item[CF] перенос/заём в/из старшего (несуществующего) разряда (беззнаковое переполнение);
+% % { (приёмник меньше источника при сравнении вещественных чисел);}
+% 
+% \item[ZF] результат операции "--- нуль;
+% 
+% \item[SF] значение старшего (знакового) бита результата;
+% 
+% \item[OF] потеря старшего бита результата (знаковое переполнение).
+% \item[PF] чётность количества единиц младшего байта результата.
+% 
+% 
+% \end{description}
+% \end{frame}
 
 \section{Условные команды}
 
@@ -74,7 +242,12 @@
 \def\normalsize{\scriptsize}
 \def\theadfont{\scriptsize\bfseries}
 \normalsize
+\setlength{\parskip}{0\parskip}
 
+\lstinline!jXXX  label! %"--- 
+\hfill от 8086/386
+
+передача управления по адресу $label$ при некоторой комбинации флагов \Reg{eflags}
 
 \begin{tabularx}{1\linewidth}{|l|@{}c@{}%|L
 |L|}
@@ -311,7 +484,20 @@ $dst > src$ как знаковое
 % 
 % \jname{Jump if not less or equal }
 \\\hline
-
+jp/jpe
+&	
+$PF = 1$
+&
+Число единиц младшего байта чётно
+\\\hline
+jnp/jpo
+&	
+$PF = 0$
+&
+Число единиц младшего байта нечётно
+\\\hline
+% \multicolumn{3}{|c|}{$...$}
+% \\\hline
 
 \end{tabularx}
 % \end{adjustwidth}
@@ -320,11 +506,18 @@ $dst > src$ как знаковое
 \subsection{Команды условной пересылки}
 \begin{frame}[fragile]{\insertsubsection}
 cmovXXX src, dst
+\\
+{
+\scriptsize
+$dst$ "--- регистр, $src$ "--- регистр или память; 16/32 бита; от~Pentium Pro (P6)
+
+}
 
 $x = \left\{\begin{array}{ll}
 x,& x \geqslant 0 \\
 0, & x < 0 \\
 \end{array}\right.$
+
 
 \begin{lstlisting}[style=lstsmall]
 int x = -6;
@@ -342,26 +535,29 @@ asm
 \subsection{Установка байта по условию}
 \begin{frame}[fragile]{\insertsubsection}
 setXXX dst
-
+\hfill от 386
+\\
 $dst = 1$, если условие верно, 
-
+% 
 $dst = 0$ иначе.
+
+$x = (x \geqslant 0)$
+
+\begin{lstlisting}[style=lstsmall]
+int x = -6;
+asm
+(
+  "cmpl $0, %[X]\n"
+  "movl $0, %[X]\n"
+  "setgeb %[X]\n"
+  : [X]"=m"(x)
+  :"[X]" (x)
+  : "cc"
+);
+\end{lstlisting}
 \end{frame}
 
 
-
-\section{Сравнение вещественных чисел}
-
-
-\subsection{Флаги сопроцессора}
-\begin{frame}[fragile]{\insertsubsection}
-C3, C2 и C0
-\end{frame}
-
-\subsection{Команды сравнения вещественных чисел}
-\begin{frame}[fragile]{\insertsubsection}
-fcom, fcomi, fucom
-\end{frame}
 
 
 
