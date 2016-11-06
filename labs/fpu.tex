@@ -193,7 +193,7 @@ asm(
 
 Мнемоническое обозначение команд сопроцессора характеризует особенности их работы:
 
-Все мнемонические обозначения начинаются с~символа F (Float).
+Все мнемонические обозначения начинаются с~символа f (Float).
 
 Вторая буква мнемонического обозначения определяет тип операнда в~памяти, с~которым работает команда:
 \begin{itemize}
@@ -366,9 +366,106 @@ asm(
 );	// y = a*cos(x) + sin(x)
 \end{lstlisting}
 
+\section{Сравнение вещественных чисел}
+\begingroup
+
+\subsection{Флаги сопроцессора}
+\colorlet{csControl}{green!50}
+\colorlet{csExceptionStatus}{green!7!yellow!7!white}
+\colorlet{csSystem}{blue!20!red!10}
 
 
+\begin{tabularx}{1\linewidth}{@{}c@{~}|l@{~}|L@{~}|c@{~}|l@{~}|l@{~}}
+% № 	& 	&Название 	\\\hline
+\multicolumn{3}{c}{\Reg{SW}}\\\hhline{---~~~}
+\rowcolor{csExceptionStatus}0 	&IE 	& Недействительная операция %(#I)	
+&\multicolumn{3}{c}{\cellcolor{white}}\\\hhline{---~~~}
+\rowcolor{csExceptionStatus}1 	&DE 	& Денормализованный операнд %(#D)	
+&\multicolumn{3}{c}{\cellcolor{white}}\\\hhline{---~~~}
+\rowcolor{csExceptionStatus}2 	&ZE 	& Деление на нуль %(#Z)	
+&\multicolumn{3}{c}{\cellcolor{white}}\\\hhline{---~~~}
+\rowcolor{csExceptionStatus}3 	&ОЕ 	& Переполнение %(#O)	
+&\multicolumn{3}{c}{\cellcolor{white}}\\\hhline{---~~~}
+\rowcolor{csExceptionStatus}4 	&UE 	& Антипереполнение %(#U)	
+&\multicolumn{3}{c}{\cellcolor{white}}\\\hhline{---~~~}
+\rowcolor{csExceptionStatus}5 	&РЕ 	& Неточный результат %(#P)	
+&\multicolumn{3}{c}{\cellcolor{white}}\\\hhline{---~~~}
+\rowcolor{csExceptionStatus}6 	&SF 	& Стековая ошибка	&\multicolumn{3}{c}{\cellcolor{white}}\\\hhline{---~~~}
+\rowcolor{csExceptionStatus}7 	&ES 	& Бит суммарной ошибки&\multicolumn{3}{c}{\cellcolor{white}\Reg{eflags}, f(n)stsw + sahf} %&&\multirow{-8}{*}{f(n)stsw/sahf}&
+\\\hline
+\rowcolor{csMarker}8 	&C0 	&&0 	&CF 	&Carry Flag\\\hline
+\rowcolor{csMarker}9 	&C1 	&&\multicolumn{3}{c}{{\cellcolor{white}}игнорируется}\\\hline
+\rowcolor{csMarker}10 	&C2 	&&2 	&PF 	&Parity Flag\\\hline
+\rowcolor{csSystem}11 	& 	&&\multicolumn{3}{c}{{\cellcolor{white}}игнорируется}\\%\hhline{-~~---}
+\rowcolor{csSystem}12 	& 	&&\cellcolor{csMarker}4 	&\cellcolor{csMarker}AF 	&\cellcolor{csMarker}Auxiliary Carry Flag\\
+\rowcolor{csSystem}13 	&\multirow{-3}{*}{TOP} 	&\multirow{-3}{*}{}&\multicolumn{3}{c}{{\cellcolor{white}}игнорируется}\\\hline
+\rowcolor{csMarker}14 	&C3 	& 	&6 	&ZF 	&Zero Flag\\\hline
+\rowcolor{csExceptionStatus}15 	&В 	&Дублирует ES	&7 	&SF 	&Sign Flag \\\hline
+\end{tabularx}
 
 
+\subsection{Команды сравнения}
+
+\newcommand{\farg}[1]{\textbf{\textcolor{green!30!black}{#1}}}
+
+$\left.
+\begin{tabular}{l@{}l}
+$src$ "--- st(i) или в~памяти & 
+$\left\{\begin{tabular}{@{}r@{}}
+\termin{fcom[p[p]]} \farg{[src]}\\
+\termin{fucom[p[p]]} \farg{[src]}
+\end{tabular}\right.$\\
+$src$ "--- целое в~памяти & \termin{ficom[p]} \farg{src}\\
+$src = 0$ & \termin{ftst}
+\end{tabular}
+\right\}$
+% 
+\begin{tabular}{c|@{~}c@{~}c@{~}c}
+Условие & C3 & C0 &C2\\\hline
+$st(0)>src$ & 0 & 0 & 0 \\
+$st(0)<src$ & 0 & 1 & 0 \\
+$st(0)=src$ & 1 & 0 & 0 \\
+несравнимы& 1 & 1 & 1
+\end{tabular}
+
+{
+\termin{f[n]stsw + sahf:} C3, C0, C2 $\to$ ZF, CF, PF.
+\centering
+
+}
+
+% \vspace{-\baselineskip}
+\hrulefill
+
+
+\begin{tabular}{r}
+\termin{fcomi[p]} \farg{src, \%st(0)}\\
+\termin{fucomi[p]} \farg{src, \%st(0)}\\
+% $src$ "--- st(i)\hfill \strut сравнивают вершину стека с операндом-источником, который может быть регистром или операндом в памяти (коротким или длинным вещественным).
+\end{tabular}
+% 
+% 
+\begin{tabular}{c|c@{~}c@{~}c|c@{~}c@{~}c|c}
+Условие & ZF & CF &PF	&OF& SF & AF & C2\\\hline
+$st(0)>src$ & 0 & 0 & 0 &\multirow{4}{*}{0} &\multirow{4}{*}{0}  &\multirow{4}{*}{0} &\multirow{4}{*}{0}\\
+$st(0)<src$ & 0 & 1 & 0 &&&&\\
+$st(0)=src$ & 1 & 0 & 0 &&&&\\
+несравнимы& 1 & 1 & 1&&&&
+\end{tabular}
+\endgroup
+
+
+\section{Вопросы}
+
+
+\begin{enumerate}
+
+\item Какие регистры используются в~сопроцессоре для хранения операндов?
+
+\item Какие команды используются для выполнения арифметических операций над вещественными числами?
+
+\item Какие команды используются для выполнения тригонометрических операций?
+
+\end{enumerate}
 
 
