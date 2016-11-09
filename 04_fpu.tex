@@ -607,15 +607,21 @@ $st(0)=src$ & 1 & 0 & 0 \\
 % $src$ "--- st(i)\hfill \strut сравнивают вершину стека с операндом-источником, который может быть регистром или операндом в памяти (коротким или длинным вещественным).
 \end{tabular}
 % 
-% 
-\begin{tabular}{c|c@{~}c@{~}c|c@{~}c@{~}c|c}
-Условие & ZF & CF &PF	&OF& SF & AF & C2\\\hline
-$st(0)>src$ & 0 & 0 & 0 &\multirow{4}{*}{0} &\multirow{4}{*}{0}  &\multirow{4}{*}{0} &\multirow{4}{*}{0}\\
-$st(0)<src$ & 0 & 1 & 0 &&&&\\
-$st(0)=src$ & 1 & 0 & 0 &&&&\\
-несравнимы& 1 & 1 & 1&&&&
+% C2 = 0 "--- ошибка? не могу найти источник
+% \begin{tabular}{c|c@{~}c@{~}c|c@{~}c@{~}c|c}
+% Условие & ZF & CF &PF	&OF& SF & AF & C2\\\hline
+% $st(0)>src$ & 0 & 0 & 0 &\multirow{4}{*}{0} &\multirow{4}{*}{0}  &\multirow{4}{*}{0} &\multirow{4}{*}{0}\\
+% $st(0)<src$ & 0 & 1 & 0 &&&&\\
+% $st(0)=src$ & 1 & 0 & 0 &&&&\\
+% несравнимы& 1 & 1 & 1&&&&
+% \end{tabular}
+\begin{tabular}{c|c@{~}c@{~}c|c@{~}c@{~}c}
+Условие & ZF & CF &PF	&OF& SF & AF \\\hline
+$st(0)>src$ & 0 & 0 & 0 &\multirow{4}{*}{0} &\multirow{4}{*}{0}  &\multirow{4}{*}{0} \\
+$st(0)<src$ & 0 & 1 & 0 &&&\\
+$st(0)=src$ & 1 & 0 & 0 &&&\\
+несравнимы& 1 & 1 & 1&&&
 \end{tabular}
-
 \end{adjustwidth}
 \end{frame}
 
