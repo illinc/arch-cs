@@ -270,9 +270,8 @@ asm
 
 \node[asm] at (end.south-|asm_coord) (asm-end) {
 \begin{lstlisting}
-  : [X]"=rm"(x)
-  :"[X]" (x)   
-  : "cc"
+  : [X]"+rm"(x)
+  : : "cc"
 );
 \end{lstlisting}
 };
@@ -296,8 +295,8 @@ asm
 (
   "cmpl $0, %[X]\n"
   "cmovngel %[Zero], %[X]\n"
-  : [X]"=r"(x)
-  :"[X]" (x),[Zero]"rm"(0)
+  : [X]"+r"(x)
+  : [Zero]"rm"(0)
   : "cc"
 );
 \end{lstlisting}
@@ -484,14 +483,15 @@ asm
   "cmpl $0, %[X]\n"
   "movl $1, %[Y]\n"
   "cmovll %[Zero], %[Y]\n"
-  : [Y]"=r"(y)
-  : [X]"rm"(x),"[Y]"(y),[Zero]"rm"(0)
+  : [Y]"+r"(y)
+  : [X]"rm"(x), [Zero]"rm"(0)
   : "cc"
 );
 \end{lstlisting}
-Здесь параметр \lstinline![Y]! объявлен как входной и~выходной одновременно, хотя, казалось бы, по сути он является только выходным.
+Здесь параметр \lstinline![Y]! объявлен как выходной с~начальным значением, хотя, казалось бы, его исходное значение нам не требуется.
 Это сделано, чтобы компилятор не совместил его с~входным параметром  \lstinline![Zero]! (совмещение с~входным параметром \lstinline![X]! не повредит выполнению, так как значение \lstinline![X]! используется только для сравнения с~литералом \lstinline!$0!, до первого присваивания \lstinline![Y]!).
-Если не указать \lstinline![Y]! в~списке входных и~он будет совмещён с~\lstinline![Zero]!, мы всегда получим на выходе $y=1$.
+Если %не указать \lstinline![Y]! в~списке входных и~он 
+\lstinline![Y]! будет совмещён с~\lstinline![Zero]!, мы всегда получим на выходе $y=1$.
 
 \pagebreak[3]
 
@@ -504,7 +504,7 @@ asm
   "movl $0, %[Y]\n"
   "setgeb %[Y]\n"
   :[Y]"=m"(y)
-  :[X]"rm" (x), "[Y]" (y)
+  :[X]"rm"(x)
   : "cc"
 );
 \end{lstlisting}
@@ -642,9 +642,8 @@ asm
 
 \node[asm] at (end-|asm_coord) (asm-end) {
 \begin{lstlisting}
-  :[Count]"=rm"(count),[X]"=rm"(x)
-  :"[X]" (x) 
-  : "cc"
+:[Count]"=rm"(count),[X]"+rm"(x)
+: : "cc"
 );
 \end{lstlisting}
 };

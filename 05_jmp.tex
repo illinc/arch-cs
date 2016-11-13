@@ -525,8 +525,8 @@ asm
 (
   "cmpl $0, %[X]\n"
   "cmovngel %[Zero], %[X]\n"
-  : [X]"=r"(x)
-  :"[X]" (x),[Zero]"r"(0)
+  : [X]"+r"(x)
+  : [Zero]"r"(0)
   : "cc"
 );
 \end{lstlisting}
@@ -550,9 +550,8 @@ asm
   "cmpl $0, %[X]\n"
   "movl $0, %[X]\n"
   "setgeb %[X]\n"
-  : [X]"=m"(x)
-  :"[X]" (x)
-  : "cc"
+  : [X]"+m"(x)
+  : : "cc"
 );
 \end{lstlisting}
 \end{frame}
@@ -636,9 +635,8 @@ asm
 
 \node[asm] at (end.south-|asm_coord) (asm-end) {
 \begin{lstlisting}
-  : [X]"=rm"(x)
-  :"[X]" (x)   
-  : "cc"
+  : [X]"+rm"(x)
+  : : "cc"
 );
 \end{lstlisting}
 };
@@ -954,9 +952,8 @@ asm
 
 \node[asm] at (end-|asm_coord) (asm-end) {
 \begin{lstlisting}
-  :[Count]"=rm"(count),[X]"=rm"(x)
-  :"[X]" (x) 
-  : "cc"
+:[Count]"=rm"(count),[X]"+rm"(x)
+: : "cc"
 );
 \end{lstlisting}
 };

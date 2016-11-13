@@ -1,5 +1,4 @@
-\input{common/0pres}
-\input{common/4archcompsys}
+\input{commonpres}
 
 
 % \setbeamertemplate{itemize/enumerate body begin}{\footnotesize}
@@ -9,31 +8,8 @@
 % \addtobeamertemplate{footnote}{}{\vspace{-30ex}}
 
 \title{Массивы и~структуры}
-\graphicspath{{fig/}{fig/fpu/}}
+\graphicspath{{fig/}}
 
-
-% \lstset{language={[x86masm]Assembler}}
-% \lstset{commentline={\/}}
-\lstset{xleftmargin=0mm}
-% \lstset{language={[Motorola68k]Assembler}}
-% alsolanguage=[
-% h
-% dialect
-% i
-% ]
-% h
-% language
-% \lstset{language=C++, alsolanguage=[x86masm]Assembler}
-% \lstset{language=C++, alsolanguage=[Motorola68k]Assembler}
-
-\makeatletter
-\newcommand{\setlistspacing}[2]{\def\@ld{#1}\expandafter\def\csname
-@list\romannumeral\@ld \endcsname{\leftmargin\csname
-leftmargin\romannumeral\@ld \endcsname
-              \topsep    #2
-              \parsep    0\p@   \@plus\p@
-              \itemsep   #2}}
-\makeatother
 
 
 \begin{document}
@@ -87,7 +63,8 @@ $$
 
 \subsection{Обращение к~элементу структуры}
 \begin{frame}[fragile]{\insertsubsection}
-\footnotesize
+% \footnotesize
+\small
 \begin{columns}
 \begin{column}{0.50\linewidth}
 \begin{lstlisting}
@@ -100,7 +77,6 @@ asm
 (
 "movb $'a', (%[S])\n"
 "movl $13, 4(%[S])\n"
-
 :
 :[S]"r"(&s)
 : "memory"
@@ -127,45 +103,77 @@ a 13
 \begin{adjustwidth}{-1em}{-2em}
 \footnotesize
 \scriptsize
+% \tiny
 
 % \hfill
 % \parbox{0.5\linewidth}{
-\begin{lstlisting}[numbers=none,xleftmargin=24em]
-
-
-0 4
-
-
-0 1
-
-
-0 4
-\end{lstlisting}
-\vspace{-10\baselineskip}
+% \begin{lstlisting}[numbers=none,xleftmargin=24em]
+% 
+% 
+% 0 4
+% 
+% 
+% 0 1
+% 
+% 
+% 0 4
+% \end{lstlisting}
+% \vspace{-10\baselineskip}
+% 
+% \begin{lstlisting}[numbers=none,xleftmargin=-1em]
+% struct TSomeStruct{
+%     char Tag;    int  Val;
+% } s1;
+% #pragma pack (push, 1)
+% struct TSqueezedStruct{
+%     char Tag;    int  Val;
+% } s2;
+% #pragma pack (pop)
+% struct TAnotherStruct{
+%     char Tag;    int  Val;
+% } s3;
+% 
+% cout << reinterpret_cast<char *>(&s1.Tag) - reinterpret_cast<char *>(&s1) << " ";
+% cout << reinterpret_cast<char *>(&s1.Val) - reinterpret_cast<char *>(&s1) << endl;
+% 
+% cout << reinterpret_cast<char *>(&s2.Tag) - reinterpret_cast<char *>(&s2) << " ";
+% cout << reinterpret_cast<char *>(&s2.Val) - reinterpret_cast<char *>(&s2) << endl;
+% 
+% cout << reinterpret_cast<char *>(&s3.Tag) - reinterpret_cast<char *>(&s3) << " ";
+% cout << reinterpret_cast<char *>(&s3.Val) - reinterpret_cast<char *>(&s3) << endl;
+% \end{lstlisting}
+\lstset{language=C++}
 
 \begin{lstlisting}
+const int N = 10;
 struct TSomeStruct{
     char Tag;    int  Val;
-} s1;
+} s1, a1[N];
 #pragma pack (push, 1)
 struct TSqueezedStruct{
     char Tag;    int  Val;
-} s2;
+} s2, a2[N];
 #pragma pack (pop)
 struct TAnotherStruct{
     char Tag;    int  Val;
-} s3;
-cout << reinterpret_cast<char *>(&s1.Tag) - reinterpret_cast<char *>(&s1) << " ";
-cout << reinterpret_cast<char *>(&s1.Val) - reinterpret_cast<char *>(&s1) << endl;
+} s3, a3[N];
+TSqueezedStruct s20, a20[N];
 
-cout << reinterpret_cast<char *>(&s2.Tag) - reinterpret_cast<char *>(&s2) << " ";
-cout << reinterpret_cast<char *>(&s2.Val) - reinterpret_cast<char *>(&s2) << endl;
-
-cout << reinterpret_cast<char *>(&s3.Tag) - reinterpret_cast<char *>(&s3) << " ";
-cout << reinterpret_cast<char *>(&s3.Val) - reinterpret_cast<char *>(&s3) << endl;
+#define PRINT(I) cout << reinterpret_cast<char *>(&s##I.Tag) - reinterpret_cast<char *>(&s##I) << " " \
+ << reinterpret_cast<char *>(&s##I.Val) - reinterpret_cast<char *>(&s##I) \
+ << " "<< sizeof(s##I) << " " << sizeof(a##I) << endl;
 \end{lstlisting}
-
-
+\vspace{-13\baselineskip}
+\begin{lstlisting}[firstnumber=last,xleftmargin=24em]
+PRINT(1)	// 0 4 8 80
+PRINT(2)	// 0 1 5 50
+PRINT(3)	// 0 4 8 80
+PRINT(20)	// 0 1 5 50
+\end{lstlisting}
+\vspace{+8\baselineskip}
+% \vfill
+% 
+% \strut
 
 \end{adjustwidth}
 \end{frame}
@@ -215,8 +223,10 @@ asm
 "movl $13,  %c[val_disp](%[S])\n"
 :
 :[S]"r"(&s),
- [tag_disp]"i"(reinterpret_cast<char *>(&s.Tag) - reinterpret_cast<char *>(&s)),
- [val_disp]"i"(reinterpret_cast<char *>(&s.Val) - reinterpret_cast<char *>(&s))
+ [tag_disp]"i"(reinterpret_cast<char *>(&s.Tag) 
+    - reinterpret_cast<char *>(&s)),
+ [val_disp]"i"(reinterpret_cast<char *>(&s.Val) 
+    - reinterpret_cast<char *>(&s))
 : "memory"
 );
 \end{lstlisting}
@@ -310,8 +320,8 @@ asm
 \end{column}
 \begin{column}{0.499\linewidth}
 \begin{lstlisting}[firstnumber=last]
-:[I]"=r"(i), [X]"=q"(x)
-:[M_len]"i"(N), [M]"r"(M), "[I]"(i), "[X]"(x)
+:[I]"=&r"(i), [X]"=&q"(x)
+:[M_len]"i"(N), [M]"r"(M)
 : "cc","memory"
 );
 
@@ -351,8 +361,8 @@ asm
 \end{column}
 \begin{column}{0.499\linewidth}
 \begin{lstlisting}[firstnumber=last]
-:[I]"=r"(i)
-:[M_len]"i"(N), [M]"r"(M), "[I]"(i), [el_size]"i"(sizeof(M[0]))
+:[I]"=&r"(i)
+:[M_len]"i"(N), [M]"r"(M), [el_size]"i"(sizeof(M[0]))
 : "cc","memory"
 );
 
@@ -392,7 +402,8 @@ cout << endl;
   
 \subsection{Элемент произвольного размера}
 \begin{frame}[fragile]{\insertsubsection}
-\footnotesize
+% \footnotesize
+\scriptsize
 \begin{columns}
 \begin{column}{0.50\linewidth}
 \begin{lstlisting}
@@ -409,13 +420,12 @@ asm
 "addl %[el_size], %[el_addr]\n"
 "decl %[rev_idx]\n"
 "jnz begin_iteration\n"
-
 \end{lstlisting}
 \end{column}
 \begin{column}{0.499\linewidth}
 \begin{lstlisting}[firstnumber=last]
-:[rev_idx]"=r"(i), [el_addr]"=r"(p)
-:[M_len]"i"(N), [M]"r"(M), "[rev_idx]"(i), "[el_addr]"(p), [el_size]"i"(sizeof(M[0]))
+:[rev_idx]"=&r"(i), [el_addr]"=&r"(p)
+:[M_len]"i"(N), [M]"r"(M), [el_size]"i"(sizeof(M[0]))
 : "cc","memory"
 );
 
