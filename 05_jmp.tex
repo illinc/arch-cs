@@ -866,27 +866,28 @@ node distance=2ex and 3em
 \tikzset{every join/.style=blockarrow}
 \node[decision,on chain=alg_start] (is_zero) {$x=0$};
 \tikzset{every join/.style=blockline}
-\node[block,on chain=alg_start] (shift) {
+\node[block,on chain=alg_start, join={node[right]{нет}}] (shift) {
 $CF = x \& 1$,
 $x = (x>>1)$
 };
 
-\node[decision,on chain=alg_start, join={node[right]{нет}}] (is_last_bit) {$CF=1$};
+\node[decision,on chain=alg_start] (is_last_bit) {$CF=1$};
 \node[block,on chain=alg_start, join={node[right]{да}}] (inc) {$count = count+1$};
-\tikzset{every join/.style=blockarrow}
+\coordinate[on chain=alg_start] (from_no_to_next_iter);
 \coordinate[on chain=alg_start] (to_next_iter);
+\tikzset{every join/.style=blockarrow}
 \coordinate[left = of current bounding box] (to_next_iter_middle);
 \path[blockarrow] (to_next_iter) -| (to_next_iter_middle) |- (to_shift);
 
 \tikzset{every join/.style=nodraw}
-\coordinate[on chain=alg_start] (non-used);
+% \coordinate[on chain=alg_start] (non-used);
 \coordinate[on chain=alg_start] (to_end);
 
 \node[terminator, on chain=alg_start] (end) {Конец};
 
 
 \coordinate[right= of is_last_bit] (is_no_last_bit);
-\path[blockline] (is_last_bit) -- node[auto] {нет} (is_no_last_bit) |- (to_next_iter);
+\path[blockarrow] (is_last_bit) -- node[auto] {нет} (is_no_last_bit) |- (from_no_to_next_iter);
 
 
 
@@ -937,7 +938,7 @@ asm
 \end{lstlisting}
 };
 
-\node[asm] at (to_next_iter-|asm_coord) {
+\node[asm] at (from_no_to_next_iter-|asm_coord) {
 \begin{lstlisting}
 "end_iteration:\n"
   "jmp begin_iteration\n"
@@ -958,9 +959,9 @@ asm
 \end{lstlisting}
 };
 
-\coordinate[below = of current bounding box] (lettersline);
-\node at (end|-lettersline) {а)};
-\node at (asm-end|-lettersline) {б)};
+% \coordinate[below = of current bounding box] (lettersline);
+% \node at (end|-lettersline) {а)};
+% \node at (asm-end|-lettersline) {б)};
 
 
 \end{tikzpicture}

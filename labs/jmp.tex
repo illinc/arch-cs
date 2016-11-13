@@ -523,7 +523,15 @@ asm
 Пусть необходимо найти сумму двоичных цифр беззнакового числа $x$.
 
 
-Построим схему алгоритма для решения этой задачи, не используя парный блок цикла и~выстроив блоки линейно вдоль одной вертикали (рис.~\reflocal{ris:if-else}, а), реализован цикл с~предусловием) и~сопоставим каждому блоку одну или несколько команд ассемблера (рис.~\reflocal{ris:if-else}, б).
+% Построим схему алгоритма для решения этой задачи, не используя парный блок цикла и~выстроив блоки линейно вдоль одной вертикали (рис.~\reflocal{ris:if-else}, а), реализован цикл с~предусловием) и~сопоставим каждому блоку одну или несколько команд ассемблера (рис.~\reflocal{ris:if-else}, б).
+
+Построим схему алгоритма для решения этой задачи, не используя парный блок цикла и~выстроив блоки линейно вдоль одной вертикали (рис.~\reflocal{ris:while}, а), реализован цикл с~предусловием). 
+При соединении блоков немного отступим от требований ЕСПД 
+(стандарт предписывает минимизировать количество изломов и~не удлинять линии потоков без необходимости)
+и~отделим точку, где боковой поток случая $CF\neq 0$ входит в~основную вертикаль, от~точки, где поток отходит от вертикали, чтобы перейти назад к~началу итерации.
+Расположение этих точек выберем так, чтобы поток основной вертикали на каждом её участке шёл в~естественном направлении "--- сверху вниз (это не только позволяет не~рисовать стрелку для обозначения направления, но и~соответствует выполнению %программы 
+кода, не включающего команд передачи управления).
+
 
 
 \begin{illustration}
@@ -555,28 +563,28 @@ node distance=3ex and 2em
 \tikzset{every join/.style=blockarrow}
 \node[decision,on chain=alg_start] (is_zero) {$x=0$};
 \tikzset{every join/.style=blockline}
-\node[block,on chain=alg_start] (shift) {
+\node[block,on chain=alg_start, join={node[right]{нет}}] (shift) {
 $CF = x \& 1$
 
 $x = (x>>1)$
 };
 
-\node[decision,on chain=alg_start, join={node[right]{нет}}] (is_last_bit) {$CF=1$};
+\node[decision,on chain=alg_start] (is_last_bit) {$CF=1$};
 \node[block,on chain=alg_start, join={node[right]{да}}] (inc) {$count = count+1$};
-\tikzset{every join/.style=blockarrow}
+\coordinate[on chain=alg_start] (from_no_to_next_iter);
 \coordinate[on chain=alg_start] (to_next_iter);
+\tikzset{every join/.style=blockarrow}
 \coordinate[left = of current bounding box] (to_next_iter_middle);
 \path[blockarrow] (to_next_iter) -| (to_next_iter_middle) |- (to_shift);
 
 \tikzset{every join/.style=nodraw}
-\coordinate[on chain=alg_start] (non-used);
+% \coordinate[on chain=alg_start] (non-used);
 \coordinate[on chain=alg_start] (to_end);
-
 \node[terminator, on chain=alg_start] (end) {Конец};
 
 
 \coordinate[right= of is_last_bit] (is_no_last_bit);
-\path[blockline] (is_last_bit) -- node[auto] {нет} (is_no_last_bit) |- (to_next_iter);
+\path[blockarrow] (is_last_bit) -- node[auto] {нет} (is_no_last_bit) |- (from_no_to_next_iter);
 
 
 
@@ -627,7 +635,7 @@ asm
 \end{lstlisting}
 };
 
-\node[asm] at (to_next_iter-|asm_coord) {
+\node[asm] at (from_no_to_next_iter-|asm_coord) {
 \begin{lstlisting}
 "end_iteration:\n"
   "jmp begin_iteration\n"
@@ -659,6 +667,10 @@ asm
 \caption{Алгоритм и~реализация цикла}
 \labellocal{ris:while}
 \end{illustration}
+
+Теперь сопоставим каждому блоку одну или несколько команд ассемблера.
+Отход потока от базовой вертикали будет соответствовать команде перехода, точки входа боковых потоков в~основной вертикальный  "--- меткам 
+(рис.~\reflocal{ris:while}, б).
 
 Цикл с~постусловием будет отличаться только на этапе построения схемы алгоритма.
 
