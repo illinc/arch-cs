@@ -52,6 +52,12 @@
 \def\chaptername{Лабораторная~работа [черновик]}
 \input{labs/array}
 
-\bibliography{common/links}
-\bibliographystyle{gost705s}
+% \bibliography{common/links}
+% \bibliographystyle{gost705s}
+
+% Makeindex[intoc] % needs imakeidx
+\newpage
+\phantomsection
+\addcontentsline{toc}{chapter}{Предметный указатель}
+\printindex % печать предметного указателя здесь
 \end{document}
