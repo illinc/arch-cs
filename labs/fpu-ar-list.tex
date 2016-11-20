@@ -6,34 +6,69 @@
 add
 &	
 
-Сложение
+Сложение (Intel\&GAS)
 \hfill $dest := dest + src$
 \\\hline
 sub
 &	
 Вычитание
-\hfill $dest := dest - src$
+\hfill \onlyIntel{$dest := dest - src$}
+
+% \strut\hfill \onlyGas{$dest :=  src - dest$}
+% не всегда
+
+\strut\hfill \onlyGas{Если $src$ и~$dest$ "--- %оба 
+регистры, то $dest :=  st(0) - st(i)$}
+
+Intel\&GAS: 
+
+если $src$ в~памяти, то $dest$ "--- обязательно $st(0)$: \hfill$st(0) :=  st(0) - src$
 \\\hline
 subr
 &	
 Обратное вычитание, уменьшаемое и вычитаемое меняются местами
 
-\strut\hfill $dest := src - dest$
+\strut\hfill \onlyIntel{$dest := src - dest$}
+
+% не всегда
+% \strut\hfill \onlyGas{$dest :=  dest -src$}
+\strut\hfill \onlyGas{Если $src$ и~$dest$ "--- регистры, то $dest :=  st(i) - st(0)$}
+
+Intel\&GAS: 
+
+если $src$ в~памяти, то $dest$ "--- обязательно $st(0)$: \hfill$st(0) :=  src - st(0)$
 \\\hline
 mul
 &	
-Умножение
+Умножение (Intel\&GAS)
 \hfill $dest := dest \cdot src$
 \\\hline
 div
 &	
 Деление
-\hfill $dest := dest / src$
+\hfill \onlyIntel{$dest := dest / src$}
+
+% не всегда
+% \hfill \onlyGas{$dest := src / dest$}
+\strut\hfill \onlyGas{Если $src$ и~$dest$ "--- регистры, то $dest :=  st(0) / st(i)$}
+
+Intel\&GAS: 
+
+ если $src$ в~памяти, то $dest$ "--- обязательно $st(0)$: \hfill$st(0) :=  st(0) / src$
 \\\hline
 divr
 &
 Обратное деление, делимое и делитель меняются местами
-\hfill $dest := src / dest$
+
+\strut\hfill \onlyIntel{$dest := src / dest$}
+
+% не всегда
+% \strut\hfill \onlyGas{$dest := dest / src$}
+\strut\hfill \onlyGas{Если $src$ и~$dest$ "--- регистры, то $dest :=  st(i) / st(0)$}
+
+Intel\&GAS: 
+
+ если $src$ в~памяти, то $dest$ "--- обязательно $st(0)$: \hfill$st(0) :=  src / st(0)$
 \\\hline
 
 \end{longtable}
