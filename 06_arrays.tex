@@ -16,8 +16,94 @@
 \maketitle
 
 
+\begin{frame}{FPU: вычитание и~деление}
+\begin{adjustwidth}{-1em}{-1em}
+
+\def\normalsize{\footnotesize}
+\def\theadfont{\scriptsize\bfseries}
+\normalsize
+
+\begin{tabularx}{\linewidth}{|l|L|}
+% {|K{5em}|L|}
+\hline
+\thead{Команда} & \thead{Действие}  %& \thead{Флаги} 
+\\\hline
+add
+&	
+
+Сложение (Intel\&GAS)
+\hfill $dest := dest + src$
+\\\hline
+sub
+&	
+Вычитание
+\hfill \onlyIntel{$dest := dest - src$}
+
+% \strut\hfill \onlyGas{$dest :=  src - dest$}
+% не всегда
+
+\strut\hfill \onlyGas{Если $src$ и~$dest$ "--- %оба 
+регистры, то $dest :=  st(0) - st(i)$}
+% 
+% Intel\&GAS: 
+% 
+% если $src$ в~памяти, то $dest$ "--- обязательно $st(0)$: \hfill$st(0) :=  st(0) - src$
+\\\hline
+subr
+&	
+Обратное вычитание, уменьшаемое и вычитаемое меняются местами
+% 
+\strut\hfill \onlyIntel{$dest := src - dest$}
+
+% не всегда
+% \strut\hfill \onlyGas{$dest :=  dest -src$}
+\strut\hfill \onlyGas{Если $src$ и~$dest$ "--- регистры, то $dest :=  st(i) - st(0)$}
+% 
+% Intel\&GAS: 
+% 
+% если $src$ в~памяти, то $dest$ "--- обязательно $st(0)$: \hfill$st(0) :=  src - st(0)$
+\\\hline
+mul
+&	
+Умножение (Intel\&GAS)
+\hfill $dest := dest \cdot src$
+\\\hline
+div
+&	
+Деление
+\hfill \onlyIntel{$dest := dest / src$}
+
+% не всегда
+% \hfill \onlyGas{$dest := src / dest$}
+\strut\hfill \onlyGas{Если $src$ и~$dest$ "--- регистры, то $dest :=  st(0) / st(i)$}
+% 
+% Intel\&GAS: 
+% 
+%  если $src$ в~памяти, то $dest$ "--- обязательно $st(0)$: \hfill$st(0) :=  st(0) / src$
+\\\hline
+divr
+&
+Обратное деление, делимое и делитель меняются местами
+
+\strut\hfill \onlyIntel{$dest := src / dest$}
+
+% не всегда
+% \strut\hfill \onlyGas{$dest := dest / src$}
+\strut\hfill \onlyGas{Если $src$ и~$dest$ "--- регистры, то $dest :=  st(i) / st(0)$}
+% 
+% Intel\&GAS: 
+% 
+%  если $src$ в~памяти, то $dest$ "--- обязательно $st(0)$: \hfill$st(0) :=  src / st(0)$
+\\\hline
+
+\end{tabularx}
+\end{adjustwidth}
+\end{frame}
+
+
 
 \section{Адресация}
+
 
 
 \subsection{Формирование адреса}
@@ -28,16 +114,16 @@
 формируется из четырёх компонент
 $$
 \text{Адрес} = \text{баз%овый регистр
-а} + \alpha \cdot \text{смещение} + \beta
+а} + \alpha \cdot \text{индекс} + \beta
 $$
-где  база и~смещение "--- регистры, $\alpha$ и~$\beta$ "--- числа, $\alpha = 2^{A}$ (не более $8$)
+где  база и~индекс "--- регистры, $\alpha$ и~$\beta$ "--- числа, $\alpha = 2^{A}$ (не более $8$)
 
 % \lstinline![base_reg + displacement + offset_reg*scalar_multiplier]! Intel
 % \lstinline!displacement(base_reg, offset_reg, scalar_multiplier)!  At&T
 GNU Assembler:
 $
 \beta(\text{баз%овый регистр
-а}, \text{смещение}, \alpha)
+а}, \text{индекс}, \alpha)
 $
 \end{frame}
 
@@ -353,7 +439,7 @@ asm
 "begin_iteration:\n"
 "cmpl %[M_len], %[I]\n"
 "jge end_loop\n"
-"movl $0, (%[M],%[I],%c[el_size])\n"
+"movl $0, (%[M],%[I],4)\n"
 "incl %[I]\n"
 "jmp begin_iteration\n"
 "end_loop:\n"
@@ -362,10 +448,54 @@ asm
 \begin{column}{0.499\linewidth}
 \begin{lstlisting}[firstnumber=last]
 :[I]"=&r"(i)
-:[M_len]"i"(N), [M]"r"(M), [el_size]"i"(sizeof(M[0]))
+:[M_len]"i"(N), [M]"r"(M)
 : "cc","memory"
 );
 
+for(i = 0; i < N; ++i)
+{
+    cout << M[i] << " ";
+}
+cout << endl;
+\end{lstlisting}
+
+\begin{lstlisting}[numbers=none]
+0 0 0 0 0 0 0 0 
+\end{lstlisting}
+
+\end{column}
+\end{columns}
+\end{frame}
+
+\subsection{Элемент размера 1, 2, 4 или 8 байт (изменяемый)}
+\begin{frame}[fragile]{\insertsubsection}
+\footnotesize
+\begin{columns}
+\begin{column}{0.50\linewidth}
+\begin{lstlisting}
+const int N = 8;
+short M[N];
+int i;
+asm
+(
+"xorl %[I], %[I]\n"
+"begin_iteration:\n"
+"cmpl %[M_len], %[I]\n"
+"jge end_loop\n"
+"mov%z[el_type] $0, (%[M],%[I],%c[el_size])\n"
+"incl %[I]\n"
+"jmp begin_iteration\n"
+"end_loop:\n"
+\end{lstlisting}
+\end{column}
+\begin{column}{0.499\linewidth}
+\begin{lstlisting}[firstnumber=last]
+:[I]"=&r"(i)
+:[M_len]"i"(N), [M]"r"(M), 
+[el_size]"i"(sizeof(M[0])), 
+[el_type]"m"(M[0])
+: "cc","memory"
+);
 for(i = 0; i < N; ++i)
 {
     cout << M[i] << " ";

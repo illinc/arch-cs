@@ -1,5 +1,4 @@
-\input{common/0pres}
-\input{common/4archcompsys}
+\input{commonpres}
 
 
 % \setbeamertemplate{itemize/enumerate body begin}{\footnotesize}
@@ -9,24 +8,7 @@
 % \addtobeamertemplate{footnote}{}{\vspace{-30ex}}
 
 \title{Прерывания. Обращение к~операционной системе}
-\graphicspath{{fig/}{fig/fpu/}}
-
-
-% \lstset{language={[x86masm]Assembler}}
-% \lstset{commentline={\/}}
-\lstset{xleftmargin=0mm}
-
-% \lstset{language=C++, alsolanguage=[x86masm]Assembler}
-% \lstset{language=C++, alsolanguage=[Motorola68k]Assembler}
-
-\makeatletter
-\newcommand{\setlistspacing}[2]{\def\@ld{#1}\expandafter\def\csname
-@list\romannumeral\@ld \endcsname{\leftmargin\csname
-leftmargin\romannumeral\@ld \endcsname
-              \topsep    #2
-              \parsep    0\p@   \@plus\p@
-              \itemsep   #2}}
-\makeatother
+\graphicspath{{fig/}}
 
 
 \begin{document}
@@ -104,11 +86,11 @@ leftmargin\romannumeral\@ld \endcsname
 
 \item BSD (x86) "--- int 0x80, параметры в~стеке;
 
-\item MS DOS "--- int 0x21, int 0x20 (завершение программы), int 0x29 (печать символа), \mbox{int 0x2E} (выполнение команды);
+\item MS DOS "--- int 0x21, \textcolor{clFadedText}{int 0x20 (завершение программы), int 0x29 (печать символа), \mbox{int 0x2E} (выполнение команды);}
 
 \item Windows NT/2000/XP/2003/Vista  "--- int 0x2E;
 
-\item Windows XP  "--- sysenter/sysexit (syscall  в~64-битной).
+\item Windows XP/7/8  "--- sysenter/sysexit \mbox{(syscall  в~64-битной).}
 
 \end{itemize}
 \end{frame}
@@ -119,10 +101,13 @@ leftmargin\romannumeral\@ld \endcsname
 \subsection{Параметры}
 \begin{frame}[fragile]{\insertsection%. \insertsubsection
 }
+\small
+\setlength{\parskip}{0.7\parskip}
+
 int 0x80, \lstinline!%eax! "--- номер функции
 
 1 "--- 
-exit \hfill
+exit, %\hfill
 \lstinline!%ebx! "--- код завершения
 
 2 "--- fork
@@ -130,8 +115,14 @@ exit \hfill
 3 "--- read
 
 4 "--- write
-
+\\
 ...
+
+до 6 аргументов: \lstinline!%ebx!, \lstinline!%ecx!, \lstinline!%edx!, \lstinline!%esi!, \lstinline!%edi! и~\lstinline!%ebp!
+\\
+от 7 "--- структура, адрес в~\lstinline!%ebx!
+
+результат в~\lstinline!%eax!
 
 \end{frame}
 
@@ -168,7 +159,7 @@ main:
 \begin{lstlisting}
 .globl _start
 _start: // точка входа 
-    movl $1, %eax // системный вызов № 1 — sys_exit
+    movl $1, %eax // системный вызов №1 — sys_exit
     xorl %ebx, %ebx // выход с кодом 0
     int $0x80 // вызов ядра
 \end{lstlisting}
@@ -193,6 +184,7 @@ _start: // точка входа
 \lstset{basicstyle=\ttfamily\footnotesize}
 \lstset{basicstyle=\ttfamily\scriptsize}
 \lstset{basicstyle=\ttfamily\tiny}
+\lstset{numberstyle=\tiny}
 \setlength{\parskip}{0.\parskip}
 
 \begin{lstlisting}
@@ -202,8 +194,8 @@ _start: // точка входа
 .global main // точка входа в программу
 main:
     pushl $msg	// Адрес строки в стек
-    call printf
-    popl %eax	// Вычищаем параметр из стека
+    call puts
+    addl $4, %esp	// Вычищаем параметр из стека
     movl $0,%eax
     ret
 \end{lstlisting}
@@ -215,12 +207,12 @@ main:
     len = . - msg // символу len присваивается длина строки
 .global _start // точка входа в программу
 _start:
-    movl $4, %eax // системный вызов № 4 — sys_write
-    movl $1, %ebx // поток № 1 — stdout
+    movl $4, %eax // системный вызов №4 — sys_write
+    movl $1, %ebx // поток №1 — stdout
     movl $msg, %ecx // указатель на выводимую строку
     movl $len, %edx // длина строки
     int $0x80 // вызов ядра
-    movl $1, %eax // системный вызов № 1 — sys_exit
+    movl $1, %eax // системный вызов №1 — sys_exit
     xorl %ebx, %ebx // выход с кодом 0
     int $0x80 // вызов ядра
 \end{lstlisting}
@@ -248,41 +240,24 @@ _start:
 \subsection{Контрольные сроки}
 \begin{frame}{\insertsubsection}
 
-21--31 декабря "--- консультации
+22--31 декабря "--- консультации
 
-9, 10 и 11 января "--- зачётная неделя
+% 9, 10 и 11 января "--- зачётная неделя
 
-12--31 января "--- сессия
+9--29 января "--- сессия
+% \\
+(24, 25 "--- дежурства)
 
-1--14 февраля "--- каникулы
+31 января--12 февраля "--- каникулы
 
 
 \end{frame}  
 
 \subsection{Регламент}
 \begin{frame}{Регламент{}}
-\small
-\setlength{\parskip}{0\parskip}
+% \small
+% \setlength{\parskip}{0\parskip}
 
-Баллы (максимум):
-% \begin{adjustwidth}{-1.5em}{-1.5em}\vspace{-1\baselineskip}
-$$
-\begin{array}{c}
-7\cdot9(\text{л/р})+2\cdot5(\text{к/р})+4\cdot4(\text{а/п})+
-\\
-+11(\text{бонус/зачёт}) = 100
-\end{array}
-$$
-Допустимый минимум:
-$$
-\begin{array}{c}
-7\cdot5(\text{л/р})+2\cdot3(\text{к/р})+4\cdot1(\text{а/п})+
-\\
-+5(\text{бонус/зачёт}) = 50
-\end{array}
-$$
-% \end{adjustwidth}
-% \bigskip
 
 % Оценки%\vspace{-0.5\baselineskip}
 Дифзачёт (оценка):\\\hfill
@@ -314,7 +289,7 @@ $$
 
 Часов/ЗЕТ "--- 144/4
 
-Дата "--- 9.01.2016--11.01.2016
+Дата %"--- 9.01.2016--11.01.2016
 
 Кононова А.\,И.
 
