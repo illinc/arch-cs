@@ -1,0 +1,123 @@
+\chapter{Модули и~функции на ассемблере}
+\setlablabel{func}
+
+
+\purpose{
+изучить процесс компиляции программы на C++; научиться включать в~проекты на языке C++ ассемблерные модули; научиться описывать функции и~вызывать из программы на языке C++.}
+
+
+
+
+\begin{tasks}
+
+\item
+Разработайте ассемблерную функцию, вычисляющую целое выражение от целого аргумента (в~соответствии с~вариантом), а~также головную программу на языке C++, использующую разработанную функцию.
+\labellocal{var}
+\begin{variants}
+$y(x) = 1 + x/2$
+\next
+$y(x) = x\%4 - x$
+\next
+$y(x) = 3x+1$
+\next
+$y(x) = x^3$
+\next
+$y(x) = 4 - 4x$
+\end{variants}
+
+\item
+Разработайте программу, целиком написанную на ассемблере, вычисляющую значение $y(x)$ для $x =13$ и~выводящую полученное значение на стандартный вывод с~использованием библиотеки stdlib (в~частности, функции printf).
+
+\item 
+%%
+\bonus{+2 балла}  %о%
+Опишите функцию на произвольном языке высокого уровня (включая C/C++) и~вызовите её из ассемблерной функции.
+
+
+\item \bonus{+2 балла}  Опишите функцию на ассемблере и~вызовите её из ассемблерной функции.
+
+\end{tasks}
+
+% \section{Варианты заданий}
+% \labellocal{var}
+% \begin{variants}
+% $y(x) = 1 + x/2$
+% \next
+% $y(x) = x\%4 - x$
+% \next
+% $y(x) = 3x+1$
+% \next
+% $y(x) = x^3$
+% \next
+% $y(x) = 4 - 4x$
+% \end{variants}
+
+\theoryrefs
+\theoryref{sec:cpp-compile}
+\theoryref{sec:asm-func}
+\theoryref{sec:asm-calling-conventions}
+\theoryref{sec:gas-extern}
+
+
+\section{Вопросы}
+\begin{enumerate}
+\item Какие вы знаете соглашения о~вызове?
+\item Какая команда передаёт управление подпрограмме?
+\item Какая команда возвращает управление вызывающей программе?
+\item Что такое адрес возврата?
+
+\item Какие вы знаете регистры общего назначения?
+\item Какие вы знаете команды ассемблера x86?
+\item Какие вы знаете флаги?
+
+\end{enumerate}
+
+
+
+\section{Справочные материалы}
+\begingroup
+% \lstset{language=Lisp}
+% \lstset{language=[Motorola68k]Assembler}
+\lstset{keywordstyle=}
+
+
+\begin{enumerate}
+\item Соглашения о вызовах для различных компиляторов C++ и~операционных систем "---
+Agner Fog.
+Calling conventions
+for different C++ compilers and operating systems.
+\lstinline!calling_conventions.pdf!
+
+\item
+Атрибуты функций GCC "---
+\lstinline!Function Attributes - Using the GNU Compiler Collection (GCC).html!
+
+\item
+Расширения файлов GCC "---
+C\'{e}dric Musso. Development with GNU/Linux.
+\lstinline!GCC and File Extensions - Development with GNU_Linux - labor-liber.html!
+
+
+\item Список основных команд архитектур x86 и x86-64 "---
+\lstinline!Команды архитектур x86 и x86-64.htm!
+
+
+\item Черновик стандарта C
+% (latest publically available version of the C11 standard) 
+(последняя общедоступная версия C11)
+"---
+\lstinline!n1570.pdf!
+
+\item
+Черновик стандарта C++ 
+% (C++14 standard plus minor editorial changes) 
+(C++14 с~незначительными редакторскими правками)
+"---
+November 2014 working draft.
+\lstinline!n4296.pdf!
+
+\end{enumerate}
+\endgroup
+
+
+

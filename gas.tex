@@ -1,0 +1,243 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 
+%  Сборка:
+% 
+%  bash makebook
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\input{commonpath}
+\input{\COMMONPATH/1disser}
+\input{\COMMONPATH/3subj-book}
+\input{4archcompsys}
+\graphicspath{{fig/}{fig/digits/}{fig/fpu/}}
+
+\geometry{margin=20mm}
+
+\newcommand\stdOs{GNU/Linux}
+\newcommand\stdDist{Ubuntu}
+% \newcommand\stdArch{amd64}
+% \newcommand\stdArch{x86\_64}
+\newcommand\stdArch{x86}
+\newcommand\stdCompiler{GCC}
+
+\newcommand\stdenv{\stdOs{} \stdDist{}, архитектура \stdArch{} (компилятор \stdCompiler{})}
+
+% \usepackage{datetime}	%DEBUGONLY
+% \setdatetoday
+% Отладочная печать
+\makeatletter	%DEBUGONLY
+\renewcommand\footfont{\rlap{\footnotesize{\emph{Сборка:~\today~\thistime}}}\reset@font}	%DEBUGONLY
+\renewcommand\headfont{\footfont}	%DEBUGONLY
+\makeatother	%DEBUGONLY
+% \lstset{keywordstyle=}
+
+\begin{document}
+
+\title{Основы архитектуры вычислительных систем и~Ассемблера}
+
+\maketitle
+
+% \begingroup
+% \let\cleardoublepage\relax
+% \let\clearpage\relax
+
+% \vfill
+\setcounter{tocdepth}{2}
+
+\tableofcontents
+
+
+
+Аннотация
+
+Данное учебное пособие предназначено для студентов бакалавриата направлений 09.03.04 Программная инженерия и~01.03.04 Прикладная математика
+
+\nchapter{Введение}
+\epigraph{
+\begin{stanza}
+Красота "--- это страшная сила \\
+И~нет слов, чтобы это сказать.\\
+Красота "--- это страшная сила, \\
+Но мне больше не страшно, я~хочу знать.
+\end{stanza}
+}{\Aquarium}
+
+Программирование на языке Ассемблера в~этой книге описано на примере наиболее известной и~доступной для экспериментов архитектуры "--- линейки x86.
+
+Исторически сложилось так, что разработчик данной архитектуры "--- компания Intel "--- использует один синтаксис языка Ассемблера (он так и~называется "--- синтаксис Intel), а~большая часть операционных систем, происходя от больших Unix'ов, предпочитает другой, так называемый синтаксис \Att.
+
+Большая часть литературы на русском языке, посвящённой Ассемблеру x86, описывает синтаксис Intel.
+Данное пособие призвано 
+% исправить этот перекос и~продемонстрировать красоту 
+заполнить этот пробел.
+
+
+\input{book/intro}
+\input{book/levels}
+\input{book/digits}
+
+\input{book/asm}
+\input{book/gas}
+
+
+\input{book/disasm}
+
+\input{book/cpp}
+
+
+\chapter{Лабораторный практикум GNU Assembler}
+\begingroup
+\input{\COMMONPATH/3subj-lab}
+
+\let\nchapter\nsection
+\let\nsection\nsubsection
+% \let\chapter\section
+\let\oldsection\section
+\let\section\subsection
+% \let\subsection\subsubsection
+\let\subsection\paragraph
+\renewcommand\thechapter{Л}
+  \makeatletter
+  \renewcommand\thesection{%
+  \ifnum\c@chapter > \z@
+    \thechapter\@arabic\c@section%
+  \else\@arabic\c@section\fi}
+  \makeatother
+
+\renewcommand{\thefigure}{\thesection.\arabic{figure}}
+\renewcommand{\thetable}{\thesection.\arabic{table}}
+
+% \newcommand{\beforelab}{Лабораторная работа }
+\renewcommand{\chaptername}{Лабораторная работа}
+
+
+\makeatletter
+
+\def\@chapter[#1]#2{{
+  \ifnum \c@secnumdepth >\m@ne
+    \refstepcounter{section}%
+    {\addcontentsline{toc}{section}{\@tocseccntformat{section} #1}}%
+  \else
+    {\addcontentsline{toc}{section}{#1}}%
+  \fi
+%   \chaptermark{#1}%
+%   \addtocontents{lof}{\protect\addvspace{10\p@}}%
+%   \addtocontents{lot}{\protect\addvspace{10\p@}}%
+  \if@twocolumn
+    \@topnewpage[\@makechapterhead{#2}]%
+  \else
+  \renewcommand\thechapter{\arabic{section}}
+    \@makechapterhead{#2}%
+    \@afterheading
+  \fi
+}}
+% \def\@makechapterhead#1{{%
+%   \parindent\z@
+%   \normalfont\hskip\chapterindent%
+%   \ifnum \c@secnumdepth >\m@ne
+%     {\thechapterfont\thechapteralign\@seccntformat{section}}
+%   \fi
+%   \interlinepenalty\@M
+%   \chapterfont\chapteralign\beforechapter #1\afterchapter
+% }}
+
+% \renewcommand\chapter{%
+%   \if@openright
+%     \cleardoublepage
+%   \else
+%     \clearpage
+%   \fi
+%   \thispagestyle{\@chapterpagestyle}%
+%   \global\@topnum\z@
+%   \@afterindentfalse
+%   \secdef\@section\@schapter
+% %   \@startsection{section}{1}
+% }   
+
+
+\makeatother
+
+
+% \renewcommand{\chapter}[1]{{
+%   \makeatletter
+%   \renewcommand\thesection{%
+%     \beforelab\@arabic\c@section%
+%     }
+%   \if@openright
+%     \cleardoublepage
+%   \else
+%     \clearpage
+%   \fi
+%   \thispagestyle{\@chapterpagestyle}%
+%   \global\@topnum\z@
+%   \@afterindentfalse
+%   \makeatother
+%    \oldsection{#1}
+% 
+% }}
+\renewcommand\beforesubsection{\beforesection}
+
+\newcommand{\theoryrefs}{
+\section{Теоретические сведения}
+Для выполнения данной лабораторной работы необходимо изучить следующие разделы:
+
+}
+
+\newcommand{\theoryref}[1]{
+\ref{#1} \nameref{#1}
+
+}
+
+\input{book/labs/reglament}
+\input{book/labs/digits}
+\input{book/labs/disasm}
+\input{book/labs/func}
+\input{book/labs/inline}
+\input{book/labs/fpu}
+\input{book/labs/jmp}
+\input{book/labs/array}
+
+\endgroup
+
+
+
+\nchapter{Заключение}
+\epigraph{\begin{limerick}
+Жил великий мыслитель в~Италии, \\
+Его мучил вопрос: что же далее?\\
+Он не ведал покою\\
+И, махая рукою,\\
+Бегал взад и~вперёд по Италии.
+\\
+\end{limerick}
+}
+{\Lear}
+
+
+
+\appendix
+
+\chapter{Коды ASCII}
+\label{sec:ascii}
+\bigskip
+
+\input{book/ascii}
+
+
+
+% \nchapter{Библиография}
+
+
+
+% \bibliography{common/links}
+\bibliography{links}
+
+\bibliographystyle{gost705s}
+
+% Makeindex[intoc] % needs imakeidx
+\newpage
+\phantomsection
+\addcontentsline{toc}{chapter}{Предметный указатель}
+\printindex % печать предметного указателя здесь
+\end{document}

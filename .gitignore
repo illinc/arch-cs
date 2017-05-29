@@ -184,4 +184,7 @@ TSWLatexianTemp*
 
 $*
 
-labs-fragments.tex
+​*~
+*.tex~
+
+*-fragments.tex

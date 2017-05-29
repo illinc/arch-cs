@@ -1,0 +1,466 @@
+
+\chapter{Понятие вычислительной системы (ВС)}
+\epigraph{\begin{stanza}
+<<Вот где водится Снарк!>> "--- возгласил Балабон\\
+Указав на вершину горы;\\
+И~матросов на берег вытаскивал он,\\
+Их подтягивал за вихры.\end{stanza}}
+{\Snark}
+
+\section{Терминология}
+\epigraph{\begin{stanza}Так внемлите, друзья! Вам поведаю я\\Пять бесспорных и~точных примет,\\
+По которым поймёте "--- если только найдёте, "---\\Кто попался вам "--- Снарк или нет.\end{stanza}}
+{\Snark}
+
+% Базовы
+ 
+% http://infosys2006.narod.ru/struct/architec.htm
+\termin{Архитектура системы}  в~стандарте ANSI/IEEE Std 1471-2000 (IEEE Recommended Practice for Architectural Description of Software-Intensive Systems) 
+определяется как 
+фундаментальная организация системы, реализованная в~её~компонентах, их~взаимоотношениях друг с~другом и~средой \\и~принципах, определяющих её~конструкцию (проектирование, дизайн) и~развитие~\cite{infosys2006.narod.ru}. 
+
+
+\termin{Вычислительная система}, согласно Воройскому~\cite{voroiskij}, определяется двояко:
+\begin{enumerate}
+\item Совокупность ЭВМ и~средств программного обеспечения, предназначенная для выполнения вычислительных процессов.
+
+\item Любая автоматизированная система, основанная на использовании ЭВМ.
+\end{enumerate}
+
+
+\termin{Автоматизированная система (АС) [automated system]}
+% \termin{\insertsubsection{} \rlap{[automated system]}}
+
+1.    Совокупность управляемого объекта и~автоматических управляющих устройств, в~которых часть функций управления выполняет человек-оператор.
+
+2.    Комплекс технических, программных, др. средств и~персонала, предназначенный для автоматизации различных процессов. \\В отличие от автоматической системы не может функционировать без~участия человека.
+
+\textterminblue{
+Информатика. Новый систематизированный толковый словарь.    
+\\
+Воройский Ф.\,С.
+}
+\medskip
+
+% Документация на \termin{автоматизированные системы (АС).}
+
+% Согласно ГОСТ 34.003-90 Комплекс стандартов на автоматизированные системы. Автоматизированные системы. Термины и~определения,
+% \termin{Автоматизированная система (АС)}
+\termin{АС}
+ "--- система, состоящая из персонала и~комплекса средств автоматизации его деятельности, реализующая информационную технологию выполнения установленных функций. \textterminblue{
+ГОСТ 34.003-90}
+ 
+% АС  \termin{не является ПО} в~чистом виде.
+
+
+
+\section{Структурная декомпозиция ВС}
+\epigraph{\begin{stanza}[0mm]
+Кура \\
+дура \\
+процедура \\
+\hspace{\stanzaoddindent}состоит из трёх частей: \\
+карбюратор \\
+вентилятор \\
+\hspace{\stanzaoddindent}и~коробка скоростей!\\
+\end{stanza}}{Надпись на парте}
+
+
+
+\subsection{%Микроархитектура %процессора 
+Структура
+Intel 8008
+и~Core2}
+
+\begin{tabularx}{1\linewidth}{@{}l@{\,}l@{}}
+% \includegraphics[width=0.7\linewidth,valign=c]{data-path}
+
+
+\includegraphics[width=0.595\linewidth,keepaspectratio,valign=c]{Intel_8008_arch}\centering
+&
+
+\includegraphics[width=0.395\linewidth,keepaspectratio,valign=c]{Intel_Core2_arch}
+\end{tabularx}
+
+\subsection{Регистры x86}
+
+Чем более объёмно запоминающее устройство, тем, как правило, медленнее оно работает.
+
+Оперативная память обладает меньшей скоростью, чем процессор.
+Хотя частоты работы как оперативной памяти, так и~процессора непрерывно растут, это соотношение сохраняется.
+
+Соответственно, использование только данных, расположенных в памяти, сильно замедлило бы работу.
+
+Частично обмен данными ускоряется при помощи кеширования.
+
+Без задержек данные можно считать или сохранить из регистров.
+
+
+ 
+
+\includegraphics[width=0.5\linewidth,keepaspectratio,valign=t]{Registers}
+
+\begin{itemize}
+\item {Регистры общего назначения} 
+ \begin{itemize}
+\item   \Reg{a, b, c, d;}  
+\item    \Reg{si, di, bp;}
+\item   {указатель стека} \Reg{sp}.
+ \end{itemize}    
+   
+\item Сегментные %регистры 
+  \Reg{cs, ds, ss, es, fs, gs.}
+
+\item  Регистры состояния и~управления:
+\begin{itemize}
+\item   регистр флагов \Reg{eflags/flags};
+
+\item       указатель команды \Reg{eip/ip}.
+\end{itemize}   
+
+\item   Регистры сопроцессора x87 \Reg{st(0)...st(7)}/расширения MMX \rlap{\Reg{mm0...mm7}}
+
+\item        Регистры расширения XMM \rlap{(128-разрядные \Reg{xmm0...xmm7})}
+\end{itemize}
+
+
+
+
+
+
+\subsection{Расположение программ и~данных}
+% \begin{frame}{\insertsubsection}
+% \footnotesize
+% {
+% \includegraphics[width=0.8\linewidth,valign=t]{Harvard-vonNeumann}\centering
+% 
+% }
+% 
+% Общая шина для памяти программ и~данных "--- узкое место архитектуры фон Неймана (принстонской)
+% 
+% \end{frame}
+
+% \begingroup
+% \tikzstyle{strokednode}	= [text badly centered, draw=black, thick, minimum height=4ex]
+% \tikzstyle{block}	= [strokednode, text width=12ex]
+% \newcommand{\UuAluBlock}[1]
+% {
+%   \tikzset{node distance=4ex}
+%   \node[block] (#1Output)  at (#1) {Вывод};
+%   \node[block, minimum height=8ex, above = of #1Output] (#1Alu) {АЛУ};
+%   \node[block, above = of #1Alu] (#1Input) {Ввод};
+% 
+%   \node[strokednode, left = of #1Input, rotate=90, anchor=south] (#1Uu) {Управляющее устройство};
+%   
+%   \tikzset{node distance=0.5ex}
+% }
+\newcommand{\DoublearrowYRight}[2]
+{
+  \path[blockarrow] (#2) ++(0,0.5ex) coordinate(tmpUp) -- (tmpUp-|#1);
+  \path[blockarrow] (#2-|#1)   ++(0,-0.5ex) coordinate(tmpDown) -- (tmpDown-|#2) ;
+}
+
+\resizebox{0.8\linewidth}{!}{
+\begin{tikzpicture}[
+node distance=2ex and 4ex,
+baseline=(current bounding box.north)
+]
+\tikzstyle{strokednode}	= [text badly centered, draw=black, thick, minimum height=4ex]
+\tikzstyle{block}	= [strokednode, text width=16ex]
+\tikzstyle{blockarrow}	= [-latex', draw]
+\tikzstyle{hiblock}	= [block, minimum height=8ex]
+
+\coordinate (Pr);
+% \UuAluBlock{Pr}
+
+\coordinate[right = 40ex of Pr] (Gv);
+% \UuAluBlock{Gv}
+
+\foreach \i/\s in {Pr/Фон-неймановская (принстонская) архитектура, Gv/Гарвардская архитектура}
+{
+%   \tikzset{node distance=4ex}
+  \node[block] ({\i}Output)  at (\i) {Вывод};
+  \node[hiblock, above = of {\i}Output] ({\i}Alu) {АЛУ};
+  \node[block, above = of {\i}Alu] ({\i}Input) {Ввод};
+
+  \node[strokednode, left = of {\i}Input, rotate=90, anchor=south, inner xsep=1.5ex] ({\i}Uu) {Управляющее устройство};
+  
+  \path[blockarrow] ({\i}Input) -- ({\i}Alu);
+  \path[blockarrow] ({\i}Alu) -- ({\i}Output);
+  
+  
+  
+%   \tikzset{node distance=0.5ex}
+%   
+%   \coordinate ({\i}UuLeft) at ({\i}Uu.south);
+%   \path[blockarrow] ({\i}Alu.west) ++(0,0.5ex) coordinate({\i}AluUp) -- ({\i}AluUp-|{\i}UuLeft);
+%   \path[blockarrow] ({\i}AluUp-|{\i}UuLeft)   ++(0,-1ex) coordinate({\i}AluDown) -- ({\i}AluDown-|{\i}Alu.west) ;
+  \DoublearrowYRight{{\i}Uu.south}{{\i}Alu.west}
+  
+  \node[text width=40ex, text badly centered, below = of {\i}Output)] {\s};
+}
+  \node[hiblock, above = of {Pr}Input] (PrMemory) {Общая память};
+  \DoublearrowYRight{{Pr}Uu.south}{PrMemory.west}
+  \path[blockarrow] (PrMemory) -- ({Pr}Input);
+  \path[blockarrow] ({Pr}Output.east) -- ++(4ex,0) |- (PrMemory);
+  
+\tikzstyle{narrowblock}	= [strokednode, text width=8ex]
+%   \node[narrowblock, above = of {Gv}Input.north east] (GvDataMemory) {Память данных};
+% %   \node[narrowblock, above = of {Gv}Input.north west|-GvDataMemory.north] (GvProgMemory) {Память команд};
+%   \node[narrowblock, above = of {Gv}Input.north west|-GvDataMemory.north, anchor=west] (GvProgMemory) {Память команд};
+
+  \coordinate[right= 5.5ex of {Gv}Input.north] (GvInputFromData);
+  \coordinate[left= 5.5ex of {Gv}Input.north] (GvInputFromProg);
+  \node[narrowblock, above = of GvInputFromData] (GvDataMemory) {Память данных};
+  \node[narrowblock, above = of GvInputFromProg|-GvDataMemory] (GvProgMemory) {Память команд};
+
+  \DoublearrowYRight{{Gv}Uu.south}{GvProgMemory.west}
+  \DoublearrowYRight{{Gv}Uu.south}{GvDataMemory.west}
+  \path[blockarrow] (GvProgMemory) -- (GvInputFromProg);
+  \path[blockarrow] (GvDataMemory) -- (GvInputFromData);
+  \path[blockarrow] ({Gv}Output.east) -- ++(4ex,0) |- (GvDataMemory);
+
+\end{tikzpicture}
+}
+
+
+Общая шина для памяти программ и~данных "--- узкое место архитектуры фон Неймана
+
+
+
+
+
+
+\subsection{Магистрали}
+% \subsection{Макроархитектура}
+% \subsection{Функциональная схема компьютера}
+% \begin{frame}{\insertsubsection}
+% \footnotesize
+% {
+% \includegraphics[height=\slideheigth,valign=t]{func-comp}\centering
+% 
+% }
+% 
+% \end{frame}
+
+
+\resizebox{0.8\linewidth}{!}{
+% \tikzstyle{blockarrow}	= [-latex',thick,draw]
+\begin{tikzpicture}[
+start chain=uvv going right,
+start chain=bus_south going right,
+% start chain=bus_north going below,
+start chain=bus_comment going above,
+% every on chain/.style=join,
+% every on chain/.style=solidchaincell,
+% every join/.style=blockarrow,
+node distance=2ex and 2ex,
+baseline=(current bounding box.north)
+]
+\tikzstyle{strokednode}	= [text badly centered, draw=black, thick]
+\tikzstyle{block}	= [strokednode, text width=18ex, minimum height=6ex]
+
+
+\tikzstyle{bus}	= [ultra thick, draw=black!80!green]
+
+\node[block, on chain=uvv] (hdd) {Долговременная память};
+\node[block, on chain=uvv] (prn) {Принтер};
+\node[block, on chain=uvv] (kbd) {Клавиатура};
+\node[block, on chain=uvv] (mon)  {Монитор};
+\node[fit=(hdd) (mon), inner sep=0ex] (uvv_box) {};
+
+\node[strokednode, text width=50ex, above=4ex of uvv_box] (uvv_common) {Устройства ввода-вывода};
+
+\foreach \i in {hdd, prn, kbd, mon}
+{
+  \draw[] (\i.north) -- (uvv_common);
+}
+
+
+\coordinate[on chain=bus_south] (addr_south) at (uvv_common.120);
+\coordinate[on chain=bus_south] (data_south);
+\coordinate[on chain=bus_south] (ctrl_south);
+\coordinate[on chain=bus_south] (power_south);
+
+\tikzstyle{block}	= [strokednode, text width=18ex, minimum height=10ex]
+
+\coordinate[above=12ex of addr_south] (addr_ram);
+\node[block, left = 4ex of addr_ram] (ram)  {Оперативная память};
+
+\coordinate[below = of addr_ram] (data_ram);
+\coordinate[above = of addr_ram] (ctrl_ram);
+\coordinate[above = of ctrl_ram] (power_ram);
+
+\node[strokednode, text width=33ex, text badly ragged, right =4ex of addr_ram-|power_south] (cpu)  {
+Центральный процессор
+\setlength{\leftmargini}{4ex}
+\begin{itemize}
+\item регистр команд; 
+\item устройство управления;
+\item АЛУ;
+\item адресный регистр; 
+\item указатель команды.
+\end{itemize}
+};
+
+\tikzstyle{powerline}	= [draw=green]
+
+\foreach \i/\s in {addr/, data/, ctrl/, power/powerline}
+{
+  \draw[bus, \s] (ram.east|-\i_ram) -- (cpu.west|-\i_ram);
+}
+
+
+
+\node[block, above = 20ex of ram] (bios)  {Постоянное запоминающее устройство};
+\node[block, right =4ex of bios-|power_south] (clock)  {Тактовый генератор};
+
+\coordinate[above = of bios.east-|ctrl_south] (ctrl_north);
+\coordinate (data_north) at (bios.east);
+\coordinate[below = of data_north] (addr_north);
+
+\coordinate[above = of ctrl_north-|power_south] (power_north);
+
+\foreach \i/\s in {ctrl/, power/powerline}
+{
+  \draw[bus, \s] (\i_south) -- (\i_north);
+  \draw[bus, \s] (bios.east|-\i_north) -- (clock.west|-\i_north);
+}
+
+\draw[bus] (data_south) |- (data_north);
+\draw[bus] (addr_south) |- (addr_north);
+
+
+\tikzset{node distance=3ex}
+\tikzset{draw=blue,thin}
+
+\coordinate[above =  of cpu.north-|addr_south, on chain=bus_comment] (addr_comment);
+\coordinate[on chain=bus_comment] (data_comment);
+\coordinate[on chain=bus_comment] (ctrl_comment);
+\coordinate[on chain=bus_comment] (power_comment);
+
+\coordinate (end_comment) at (cpu.east);
+
+
+\foreach \i/\s in {addr/адреса, data/данных, ctrl/управления, power/\vphantom{у}питания}
+{
+  \draw[draw=blue](\i_comment-|\i_south) -- node[above=-1ex, text=blue, at end, anchor=south east, text badly ragged] {шина \s} (\i_comment-|end_comment);
+}
+
+% \draw (bios) -- coordinate () (clock);
+
+\end{tikzpicture}
+}
+\subsection{Схема системной платы}
+
+\includegraphics[width=\approvedImageWidth,valign=c]{Motherboard_diagram_ru}
+
+\termin{Северный мост} "--- обмен между процессором и~скоростными устройствами,
+частота шины, вид и~объём ОЗУ, тип шины видеоадаптера.
+% \begin{itemize}
+% \item память;
+% \item шина PCI Express или AGP. 
+% \end{itemize}
+
+\termin{Южный мост} "--- часы, память CMOS,
+работа с~низкоскоростными интерфейсами:
+\begin{itemize} 
+\item SATA, 
+\item IDE, 
+\item контроллер прерываний, 
+\item USB, 
+\item контроллер прямого доступа.
+\end{itemize}
+
+
+\section{Иерархическая декомпозиция ВС}
+% \epigraph{\begin{stanza}[0mm]
+% Вот опять линяет краска,\\
+% И~опять спадает маска,\\
+% А~под ней "--- ещё одна,\\
+% А~под ней "--- ещё одна,\\
+% А~потом "--- ещё, ещё, ещё, ещё, ещё...\\
+% \end{stanza}}{Юлий Ким}
+
+\epigraph{
+Вертикальная структура мирового древа складывалась из трёх частей, или уровней: нижнего (корни), среднего (ствол) и~верхнего (ветви)%.
+...\\ 
+% Так сформировались в~воображении древних основные космические зоны, а~с~ними и~сдвоенные противоположности: Земля "--- Небо, Земля "--- Преисподняя, огонь (сухое) "--- влага (мокрое), прошлое "--- настоящее, настоящее "--- будущее, день "--- ночь. Эти пары перемещались в~структуре древа с~троичными единствами: прошлое "--- настоящее "--- будущее; предки "--- современники "--- потомки; три части тела: голова "--- туловище "--- ноги; три стихии: огонь "--- вода "--- земля. Пары и~тройки обнимали самые разнообразные формы жизни. 
+Люди постигали взаимосвязь противоположностей, суть всякого развития.
+}{Г.\,Белякова}
+
+% В~соответствии 
+
+Согласно Таненбауму~\cite{tanenbaum-arch}, вычислительную систему можно представить в~виде ряда уровней абстракции.
+
+
+\includegraphics[width=\approvedImageWidth,valign=c]{multi-level-asm}
+
+
+\includegraphics[width=\approvedImageWidth,valign=c]{Layered_computer_structure}
+
+
+\section{История} 
+\epigraph{\begin{stanza}[0mm]Действительность "--- не бред собачий.\\
+Она сложнее и~богаче.\end{stanza}}
+{Валентин Берестов}
+
+Современные ВС: 6 уровней; как отрастали эти шесть уровней, начиная от одноуровневых счётов и~одно?двух?уровневого жаккардова станка
+
+
+
+
+
+
+
+\colorlet{csArch}{orange!70!black}
+\newcommand{\terminModel}[1]{{\textcolor{csArch}{#1}}}
+\newcommand{\terminComment}[1]{{\textcolor{gray}{#1}}}
+
+\subsection{Поколения процессоров Intel}
+
+\begin{tabularx}{1\linewidth}{@{}l@{~}L@{}}
+
+\termin{4-битные:}& 4004, 4040\\
+
+\termin{8-битные:}& 8008, 8080 \terminComment{(адрес "--- %16 или 
+14),} 8085 \terminComment{(частота "--- 5 МГц)}\\
+
+\termin{16-битные:}& \termin{8086} \terminComment{(адрес "--- 20, \termin{слово "--- 16 бит}, %отдельный 
+FPU 8087),} 8088 \rlap{\terminComment{(8 бит),}}\\
+&80186, 80188,\\
+&80286 \terminComment{(адрес "--- 24)}\\
+\termin{32-битные:}& \textcolor{colorRegister}{
+iAPX 432 %, 80960, 80860, 
+"--- не x86-совместим
+}
+\\
+&80386DX, 80386SX\\
+&80486DX \terminComment{(встроенный FPU),} 80486SX\\
+\end{tabularx}
+
+\begin{tabularx}{1\linewidth}{@{}l@{}L@{}}
+&Pentium (P5, P54, P54C, \terminComment{данные "--- 64}), Pentium MMX\\
+&Pentium Pro, Pentium II \terminModel{(Klamath, Deschutes)}, Celeron \terminModel{(Covington, Mendocino)},\\
+&Pentium III (SSE, \terminModel{Katmai, Coppermine, Tualatin}), Celeron \terminModel{(Coppermine, Tualatin)}...\\
+\end{tabularx}
+\\
+\includegraphics[width=1\linewidth,keepaspectratio,valign=t]{IntelProcessorRoadmap}
+
+
+
+
+
+
+
+
+\section{Связь уровней}
+
+
+\epigraph{
+Вертикальная структура древа больше связана с~космологией, а~горизонтальная "--- с~магическими ритуалами. Чаще всего древо изображалось с~восемью ветвями, по четыре с~каждой стороны. Имело оно и~четыре главных цвета: красный, черный, белый, синий.}{Г.\,Белякова}
+
+в~том числе компиляция и~интерпретация
+
+\nsection{Контрольные вопросы}
+

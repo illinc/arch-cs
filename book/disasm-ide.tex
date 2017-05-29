@@ -1,0 +1,128 @@
+
+Различные IDE для отладки программ используют собственные инструменты или (чаще) предоставляют графический интерфейс к~внешним отладчикам.
+Обычно используется отладчик gdb (GNU Symbolic Debugger).
+% Для отладки в~различных IDE чаще всего используется отладчик gdb (GNU Symbolic Debugger), графический интерфейс к~которому предоставляет среда.
+
+Базовые инструменты различных отладчиков схожи.
+Рассмотрим инструменты отладки на примере  среды Qt Creator (рис.~\reflocal{ris:qtc}).
+\footnote{Использованы материалы 
+% http://doc.crossplatform.ru/qtcreator/1.3.0/creator-debugging.html
+руководства по Qt Creator
+}
+\begin{illustration}
+\includegraphics[width=\linewidth]{qtc}
+\caption{Отладка с~помощью Qt Creator}
+\labellocal{ris:qtc}
+\end{illustration}
+
+\subsection{Точки останова}
+
+Точки останова представляют место или набор мест в коде, которые при выполнении прервут отлаживаемую программу и передадут управление пользователю. Пользователь может просмотреть состояние прерванной программы или продолжить выполнение построчно или непрерывно.
+
+Обычно точки останова связаны с файлом исходных кодов и строкой или началом функции (рис.~\reflocal{ris:qtc-breakpoint}).
+\begin{illustration}
+\includegraphics[width=\wideImageWidth]{qtc-breakpoint}
+
+\caption{Точка останова в~коде}
+\labellocal{ris:qtc-breakpoint}
+\end{illustration}
+
+Если выполнение не останавливается в~точке останова, проверьте конфигурацию сборки.
+В~большинстве сред разработки отладка возможна только для отладочной (Debug), но не для оптимизированной (Release) сборки.
+В~Qt~Creator возможна пошаговая отладка Release-сборки с~использованием окон дизассемблера, регистров и~памяти, но точки останова в~исходном коде C++ в~этом режиме игнорируются.
+
+% Большинство возможностей отладчика доступно только для отладочной (Debug), но не для оптимизированной (Release) сборки.
+
+\subsection{Окна отладчика}
+
+\subsubsection{Локальные и~наблюдаемые переменные}
+Окно «\insertsubsubsection» отображает информацию о верхнем кадре стека (параметры функции и~локальные переменные), а~также о~заданных выражениях.
+Окно «\insertsubsubsection»  может быть использовано для изменения содержимого переменной простого типа данных (такого как int или float) во время останова программы (рис.~\reflocal{ris:qtc-watches}).
+\begin{illustration}
+\includegraphics[width=\wideImageWidth]{qtc-watches}
+\caption{\insertsubsubsection{} Qt Creator}
+\labellocal{ris:qtc-watches}
+\end{illustration}
+
+В~среде Code::Blocks окно просмотра переменных можно открыть, используя меню $Debug \to Debugging~windows \to Watches$.
+В~TheIDE для просмотра переменных используются  вкладки $Autos$, $Locals$ и~$Watches$ панели $Debug$ (доступна во~время отладки внизу экрана, скрывается/показывается по Esc).
+
+
+\subsubsection{Обозреватель и~редактор памяти}
+\insertsubsubsection{} отображают содержимое памяти.
+Как обозреватель, так и~редактор памяти можно открыть для просмотра конкретной переменной, используя контекстное меню переменной в~окне «Локальные и~наблюдаемые переменные» (рис.~\reflocal{ris:qtc-memory}), при этом подсвечивается не только начало, но и~размер объекта.
+\begin{illustration}
+\includegraphics[width=\linewidth]{qtc-memory}
+\caption{\insertsubsubsection{} Qt Creator}
+\labellocal{ris:qtc-memory}
+\end{illustration}
+
+В~среде Code::Blocks окно просмотра содержимого фрагмента памяти можно открыть, используя меню $Debug \to Debugging~windows \to Memory~dump$ (рис.~\ref{ris:codeblocks-digits-debugmemory}).
+
+\begin{illustration}
+\includegraphics[width=\linewidth]{cb-memory-watches}
+
+\caption{Отладочные окна Memory и~Watches в~Code::Blocks}
+\label{ris:codeblocks-digits-debugmemory}
+\end{illustration}
+
+Начало фрагмента может быть не только конкретным адресом в~памяти (как \lstinline!0x401060!) или адресом переменной (\lstinline!&x!), но и~выражением C++.
+Например, \lstinline!(char*)(&x)-4! "--- адрес на 4~байта меньше, чем начало переменной~\lstinline!x!.
+
+В~текущей версии TheIDE нет инструмента для просмотра дампа памяти.
+
+\subsubsection{Дизассемблер}
+
+Окно «\insertsubsubsection»  отображает дизассемблированный код для текущей функции (рис.~\reflocal{ris:qtc-disasm}).
+В~Qt Creator по умолчанию спрятано, перейти в~режим работы на уровне инструкций процессора возможно во время отладки.
+\begin{illustration}
+\includegraphics[width=\linewidth]{qtc-disasm}
+\caption{\insertsubsubsection{} (Qt Creator)}
+\labellocal{ris:qtc-disasm}
+\end{illustration}
+
+В~среде Code::Blocks окно дизассемблера можно открыть, используя меню $Debug \to Debugging~windows \to Disassembly$ (для редактирования кода и для отладки используются разные наборы окон, поэтому открывать дизассемблер необходимо уже в~процессе отладки).  Опция $Mixed~mode$ в~этом окне включает отображение строки C++ перед соответствующей ей группой команд. Кнопка $Adjust$ позволяет перемотать дизассемблированный код к~текущей команде. Кнопка $Save~to~text~file$ "--- сохранить его.
+
+Иногда при внесении изменений в~программу и~включённой опции  $Mixed~mode$ ассемблерный код и~операторы высокого уровня в~окне дизассемблера не изменяются даже после пересборки проекта. В~этом случае необходимо выключить и~снова включить $Mixed~mode$ (останавливать отладку и~пересобирать проект между этими действиями не надо).
+
+В~TheIDE панель дизассемблера всегда доступна во~время отладки (справа). Её содержимое можно скопировать в~буфер обмена, используя пункт меню $Debug \to Copy~disassembly$.
+
+
+Содержимое окна дизассемблера в любой среде разработки "--- именно читабельное представление машинного кода отлаживаемой программы, а~не промежуточная стадия компиляции модуля в~машинный код, формируемая командой \lstinline!g++ -S! (промежуточный результат компиляции можно увидеть, запустив команду \lstinline!g++ -S <путь к cpp-файлу>! в~консоли; в~TheIDE можно использовать пункт меню $Build \to Show~assembler~code~for~...$). 
+
+\paragraph{Настройка синтаксиса ассемблерного кода}
+% В~частности, в
+В~зависимости от используемого отладчика и~его настроек может различаться используемый синтаксис.
+Настроить вид дизассемблированного кода можно в~настройках отладчика среды (для Code::Blocks $Settings \to Debugger \to GDB/CDB~debugger : default \to Choose~disassembly~flavor$).
+
+Рис.~\reflocal{ris:cb-disasm} показывает окно дизассемблера среды Code::Blocks  с~включённой опцией $Mixed~mode$ (синтаксис AT\&T).
+\begin{illustration}
+\includegraphics[width=\linewidth]{cb-disasm}
+\caption{\insertsubsubsection{} (Code::Blocks)}
+\labellocal{ris:cb-disasm}
+\end{illustration}
+
+
+
+% \FloatBarrier
+\subsubsection{Регистры}
+
+\begin{illustration}
+\includegraphics[width=\approvedImageWidth]{qtc-reg}
+\caption{\insertsubsubsection{} (Qt Creator)}
+\labellocal{ris:qtc-reg}
+\end{illustration}
+
+
+
+Окно «\insertsubsubsection»  отображает текущее содержимое регистров (рис.~\reflocal{ris:qtc-reg}).
+В~Qt~Creator по умолчанию спрятано, включается через контекстное меню или меню «Окно».
+
+{
+В~среде Code::Blocks содержимое основных регистров можно увидеть, используя окно CPU registers (меню $Debug \to Debugging~windows \to CPU~registers$).
+Регистры сопроцессора отображаются в~окне FPU~status (меню $Debug \to Information \to FPU~status$)
+\sloppy
+
+}
+
+В~TheIDE содержимое основных регистров показывается под  панелью дизассемблера и~всегда доступно во~время отладки (справа). 

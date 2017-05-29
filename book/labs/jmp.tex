@@ -1,0 +1,138 @@
+\chapter{Программирование ветвящихся и~циклических алгоритмов}
+\setlablabel{jmp}
+\purpose{
+ознакомиться с~командами условного и~безусловного перехода; 
+научиться использовать их~для реализации  ветвящихся и~циклических алгоритмов.
+}
+
+
+\begin{tasks}
+
+\item Вычислите для заданных целых $x, y$
+\begin{variants}[if-else-int]
+$f(x) = \left\{\begin{array}{ll}
+ x/2, & x\%2 = 0 \\
+3x+1, & x\%2 \neq 0 \\
+\end{array}\right.$
+\next
+$f(x,y) = \left\{\begin{array}{ll}
+x & x + y < 4 \\
+y+2, & x+y \geqslant 4 \\
+\end{array}\right.$
+\next
+$f(x,y) = \left\{\begin{array}{ll}
+y/x &  y\%x = 0 \\
+y\cdot x, & y\%x \neq 0 \\
+\end{array}\right.$
+\end{variants}
+
+\item
+Вычислите для заданного вещественного $x$
+\input{labs/if-else-variants.tex}
+
+\item 
+\labellocal{progression}
+Задайте с~клавиатуры~$N$ и~напечатайте первые $N$ членов последовательности (целой).
+
+% Последовательности:
+\begin{variants}[varint]
+Числа Фибоначчи:
+$\varphi_0 = \varphi_1 = 1, \varphi_{i+1} = \varphi_{i} + \varphi_{i-1}$
+\next
+Арифметическая прогрессия
+$a_0 = 0, a_{i+1} = a_i + x$, ~~$x$ ввести с~клавиатуры
+\end{variants}
+
+\item \bonus{+2 балла)} 
+Найдите с~заданной точностью~$\varepsilon$ сумму ряда (если это возможно).
+Если ряд расходится, выведите сообщение об этом.
+
+\begin{variantsThree}[varfloat]{МП-30}{МП-34}{МП-35}
+$$S = \sum\limits_{i=1}^\infty (-1)^i \frac{1}{i}$$ 
+&	$$S = \sum\limits_{i=2}^\infty (-1)^i \frac{i+1}{i^3 - 1}$$ 
+&	$$S = \sum\limits_{i=1}^\infty e^{-i}$$
+\next
+	$$S = \sum\limits_{i=0}^\infty (-1)^i \frac{1}{2^i}$$
+&	$$S = \sum\limits_{i=1}^\infty (-1)^i \frac{1}{i^2}$$
+&	$$S = \sum\limits_{i=1}^\infty (-1)^i \frac{1}{\sqrt{i}}$$ 
+\next
+$$S = \sum\limits_{i=1}^\infty  \frac{1}{i}$$ 
+&	$$S = \sum\limits_{i=2}^\infty  \frac{i-1}{i^3 + 1}$$ 
+&	$$S = \sum\limits_{i=1}^\infty (-1)^i e^{-i}$$
+\next
+	$$S = \sum\limits_{i=0}^\infty  \frac{1}{2^i}$$
+&	$$S = \sum\limits_{i=1}^\infty \frac{1}{i^2}$$
+&	$$S = \sum\limits_{i=1}^\infty \frac{1}{\sqrt{i}}$$
+\next
+	$$S = \sum\limits_{i=0}^\infty (-1)^{2i} \frac{1}{2^i}$$
+&	$$S = \sum\limits_{i=1}^\infty \frac{\sin(i)}{i}$$
+&	$$S = \sum\limits_{i=1}^\infty \frac{\sin(i)}{i^2}$$ 
+\end{variantsThree}
+
+\item \termin{Бонус (+2 балла):} Реализуйте умножение двух целых чисел без знака ($x\cdot y$) «в~столбик» (то есть не как сумму $\underbrace{x+\ldots+x}_{\text{$y$ раз}}$), не используя mul/imul и~команды сопроцессора.
+
+\end{tasks}
+\section{Дополнительные бонусные и~штрафные баллы}
+
+$-2$ балла за \emph{каждое} использование команд \lstinline!loop*!, \lstinline!jcx*! или  \lstinline!jecx*!.
+% http://mar.ugatu.su/assets/files/Arc/lab/asm.pdf
+% На  современных  процессорах  организация  цикла  с  помощью  команд  DEC/ JNZ/JZ предпочтительна с 
+% точки  зрения  производительности;  в  сумме  они  будут  работать  в  два  раза  быстрее,  нежели  одна 
+% инструкция  LOOP.
+
+Хотя команды  \lstinline!loop*! занимают меньше места, чем комбинация команды \lstinline!dec! с~условным переходом \lstinline!jz/jnz!, но последняя выполняется вдвое быстрее, чем \lstinline!loop*!.
+% 
+Кроме того, организация цикла при помощи явной модификации счётчика и~условных переходов более гибка и,~в~частности, позволяет организовать вложенный цикл.
+
+
+% \input{flags}
+
+
+\section{Вопросы}
+
+
+\begin{enumerate}
+
+\item Какие вы знаете флаги?
+\item Какие вы знаете команды передачи управления?
+\item Какие вы знаете команды условной пересылки?
+
+\item Как, согласно ЕСПД, изображается блок «терминатор»?
+\item Как, согласно ЕСПД, изображается блок «процесс»?
+\item Как, согласно ЕСПД, изображается блок «решение»?
+
+
+\end{enumerate}
+
+\section{Справочные материалы}
+
+% \subsection{Статьи}
+\begingroup
+\lstset{keywordstyle=}
+
+
+\begin{enumerate}
+
+{
+\item ГОСТ 19.701-90 Схемы алгоритмов, программ, данных и~систем. Обозначения условные и~правила выполнения (часть единой системы программной документации "--- ЕСПД)
+ "--- \lstinline!ГОСТ 19.701-90 Схемы алгоритмов, программ, данных и систем.pdf!
+ \sloppy
+ 
+ }
+
+
+\item Список основных команд архитектур x86 и x86-64 "---
+\lstinline!Команды архитектур x86 и x86-64.htm!
+
+
+\item
+Черновик стандарта C++ 
+% (C++14 standard plus minor editorial changes) 
+(C++14 с~незначительными редакторскими правками)
+"---
+November 2014 working draft.
+\lstinline!n4296.pdf!
+
+
+\end{enumerate}
+\endgroup
