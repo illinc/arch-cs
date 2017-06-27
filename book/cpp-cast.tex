@@ -1,0 +1,133 @@
+
+
+\section{Преобразование типов\footnote{Использована статья 
+Е.\,Сагалаевой «Приведение типов в C++»
+% «Приведение типов»% (\url{http://habrahabr.ru/post/106294/})
+}}
+\label{sec:cpp-cast}
+\epigraph{\begin{stanza}
+При встрече с~медвежьим капканом\\
+Пойди объясни, что ты не медведь.
+\end{stanza}}
+{\Aquarium}
+
+
+В~С++ есть четыре оператора явного преобразования (приведения) типов: \lstinline!const_cast!, \lstinline!static_cast!, \lstinline!dynamic_cast! и~\lstinline!reinterpret_cast!. 
+Кроме того, для совместимости поддерживается приведение в~стиле C.
+
+\begin{description}
+
+\item[const\_cast] убирает (или добавляет, но это редко используется) так называемые cv-спецификаторы (cv qualifiers), то есть const и volatile. volatile встречается не очень часто, так что  \lstinline!const_cast! более известен как приведение типов, предназначенное для убирания const. Если приведение типов не удалось, выдается ошибка на этапе компиляции.
+При использовании остальных приведений типов cv-спецификаторы останутся как были.
+\begin{lstlisting}[style=lstsmall]
+int i;
+const int * pi = &i;
+// *pi имеет тип const int,
+// но pi указывает на int, который константным не является
+int* j = const_cast<int *> (pi);
+\end{lstlisting}
+
+% http://rsdn.ru/article/cpp/static_cast.xml
+\item[static\_cast]
+% Синтаксис:
+% TYPE static_cast<TYPE> (object);
+преобразует выражения одного статического типа в объекты и значения другого статического типа. 
+% Самый популярный вид преобразования.
+Может быть использован везде, где допустимо неявное преобразование типов (в~частности, преобразования чисел вроде \lstinline!int i = 1.3;! или указателя произвольного типа в~нетипизированный \lstinline!void *up = &i;!), а~также для преобразования:
+\begin{itemize}
+\item    любого типа к типу void (допустимое, но обычно ненужное на практике преобразование);
+\item указателя \lstinline!void *! в~указатель произвольного типа;
+\item    базового класса к ссылке на производный класс (допустимо, но опасно, если объект на самом деле не того производного класса; в~этих случаях часто лучше использовать  \lstinline!dynamic_cast!);
+\item указателя на базовый класс  в~указатель на производный класс (аналогично, надёжнее использовать \lstinline!dynamic_cast!, если это возможно);
+% \item    инверсия некоторых стандартных преобразований, в~частности:
+% \begin{itemize}
+\item    интегральных типов в перечисляемые%;
+% \item    (возможно cv-квалифицированный) Base * в (с не меньшей cv-квалификацией) Derived *
+% \item    (возможно cv-квалифицированный) T Base:: * в (с не меньшей cv-квалификацией) T Derived:: *
+% \item    (возможно cv-квалифицированный) void * в любой T *
+% \end{itemize}
+.
+\end{itemize}
+Если приведение типов не удалось, выдается ошибка на этапе компиляции.
+
+\item[dynamic\_cast]
+"--- безопасное приведение по иерархии наследования, в том числе виртуального.
+Используется для преобразования
+\begin{itemize}
+\item указателя на базовый класс  в~указатель на производный класс:
+\begin{lstlisting}[style=lstsmall]
+dynamic_cast<derv_class *>(base_class_ptr_expr)
+\end{lstlisting}
+если приведение невозможно, будет возвращён NULL;
+
+\item    базового класса к ссылке на производный класс:
+\begin{lstlisting}[style=lstsmall]
+dynamic_cast<derv_class &>(base_class_ref_expr)
+\end{lstlisting}
+если приведение невозможно, 
+% Работа со ссылками происходит аналогично, но в случае ошибки во время выполнения 
+будет выброшено исключение \lstinline!bad_cast!.
+\end{itemize}
+% Используется RTTI (Runtime Type Information), чтобы привести один указатель на объект класса к другому указателю на объект класса. 
+Для корректного преобразования классы должны быть полиморфными, то есть в базовом классе должна быть хотя бы одна виртуальная функция. Если это условие не соблюдено, ошибка возникнет на этапе компиляции.
+ Если приведение невозможно, это станет ясно только на этапе выполнения программы.
+
+\item[reinterpret\_cast]
+"--- приведение без проверок. Не может быть приведено одно значение к другому значению. Обычно используется, чтобы привести указатель к указателю, указатель к целому, целое к указателю. Умеет также работать со ссылками.
+
+Возможные варианты использования
+\begin{lstlisting}[style=lstsmall]
+reinterpret_cast<whatever *>(some *)
+reinterpret_cast<integer_expression>(some *)
+reinterpret_cast<whatever *>(integer_expression)
+\end{lstlisting}
+Например, допустимо:
+\begin{lstlisting}[style=lstsmall]
+double x = 1;
+int i = -1;
+char *pc = reinterpret_cast<char *>(&x);
+
+// refu -- ссылка на то же место в памяти, где расположена переменная i,
+// но интерпретируется этот фрагмент памяти уже как unsigned
+unsigned &refu = reinterpret_cast<unsigned &>(i);
+
+// pu указывает на то же место в памяти, где расположена переменная i (аналогично)
+unsigned *pu = reinterpret_cast<unsigned *>(&i);
+
+// u -- новая переменная, инициализированная текущим значением i в беззнаковой интерпретации (0xFFFFFFFF)
+unsigned u = reinterpret_cast<unsigned &>(i);
+
+// lox ссылается на первые (в x86 -- младшие) 4 байта x и интерпретирует их как беззнаковое целое
+unsigned &lox = reinterpret_cast<unsigned &>(x);
+unsigned &hix = *(&lox + 4);
+\end{lstlisting}
+% используя пару разнотипных переменных 
+% 
+Но нельзя выполнить
+\begin{lstlisting}[style=lstsmall]
+int i;
+unsigned u = reinterpret_cast<unsigned>(i);
+\end{lstlisting}
+
+\item[Приведение в~стиле C](C-style cast) "--- самое медленное преобразование, так как  последовательно перебираются следующие вызовы:
+\begin{enumerate}
+\item    \lstinline!const_cast!
+\item    \lstinline!static_cast!
+\item    \lstinline!static_cast + const_cast!
+\item    \lstinline!reinterpret_cast!
+\item    \lstinline!reinterpret_cast + const_cast!
+\end{enumerate}
+Допустимо во всех случаях, но не рекомендуется из-за внешнего вида.
+
+Примеры:
+\begin{lstlisting}[style=lstsmall]
+double x = 1;
+int i = -1;
+char *pc = (char *)(&x);
+unsigned &refu = (unsigned &)i;
+unsigned *pu = (unsigned *)&i;
+unsigned u = (unsigned)i;
+\end{lstlisting}
+
+
+\end{description}

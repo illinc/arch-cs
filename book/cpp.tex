@@ -33,403 +33,81 @@
 }
 {\Snark}
 
-\section{Процесс компиляции}
+\newcommand{\Old}[1]{{%
+  \renewcommand{\terminblue}{\color{blue!20!gray!60}}
+  \color{blue!20!gray!70}
+  #1%
+}}
+\newcommand{\UnderConstruction}[1]{\Old{%
+  #1%
+}}
+
+\begin{itemize}
+\item C
+\begin{itemize}
+\Old{
+\item \termin{C89 (ANSI C)} ANSI X3.159-1989
+\item \termin{C90} ISO/IEC 9899:1990
+
+\item \termin{C99} ISO/IEC 9899:1999 %от 2007-11-15
+}
+\item \termin{C11} {ISO/IEC 9899:2011} %от 2011-12-19 
+% 
+% Последний бесплатный черновик "--- \termin{n1570} %от 2011-04-12
+(последний черновик "--- \termin{n1570})
+
+\end{itemize}
+
+% https://isocpp.org/std/the-standard
+\item C++
+\begin{itemize}
+\Old{
+\item \termin{C++98} ISO/IEC 14882:1998 
+\item \termin{C++11} ISO/IEC 14882:2011
+}
+\item \termin{C++14} ISO/IEC 14882:2014
+% 
+% Последний бесплатный черновик "--- \termin{n4296} %от 2014-11-19
+\rlap{(последний черновик "--- \termin{n4296})}
+
+\UnderConstruction{
+\item \termin{C++17} Черновик \termin{n4595}
+}
+\end{itemize}
+\end{itemize}
+
+
+
+
+
+
+\section{Структура программы} 
 \epigraph{\begin{stanza}
-Вскипятите его, остудите во льду\\
-И~немножко припудрите мелом,\\
-Но одно безусловно имейте в~виду:\\
-Не нарушить симметрию в~целом!\\
-\end{stanza}
-}
-{\Snark}
+Я родился уже помня тебя, просто не знал, как тебя звать\\
+Дох от жажды в твоих родниках "--- я не знал, как тебя знать\\
+\end{stanza}}
+{\Aquarium}
 
+Точка входа
 
+main
 
+Вызов программы с~параметрами, конвейер.
+Щелчок мыши по файлу эквивалентен запуску программы с~параметром.
 
+параметры
 
+возвращаемое значение
 
 
-\index{Компиляция!этапы}
 
-\subsection{Компиляция программы на языке C++\footnote{%http://faculty.cs.niu.edu/~mcmahon/CS241/Notes/compile.html
-Использованы материалы CSCI 241
-Intermediate Programming in C++
-Spring 2015
-(The C++ compilation process)
-% http://knzsoft.ru/cpp-bgr-ls1/
-и~А.\,А.\,Князев. Руководство по C++ для начинающих}
-}
-\label{sec:cpp-compile}
 
-Компиляция программы на языке C++ включает четыре этапа (рис.~\ref{ris:c++compile}):
-\newlength{\slideheigth}
-\setlength{\slideheigth}{0.5\textheight}
 
-% \begin{illustration}[p]
-% \includegraphics[width=\linewidth]{compile}
-% 
-% % \includegraphics[width=\linewidth,height=\slideheigth-1\baselineskip,keepaspectratio,valign=t]{halfcompilecpp}
-% % \hfill
-% % \includegraphics[width=\linewidth,height=\slideheigth-1\baselineskip,keepaspectratio,valign=t]{halfcompileS}
-% 
-% \caption{Этапы компиляции программы на C++}
-% \label{ris:c++compile}
-% \end{illustration}
 
-\begin{illustration}
-\resizebox{\linewidth}{!}{
-\tikzstyle{blockarrow}	= [-latex',thick,draw=blue]
-\footnotesize\singlespacing
-\lstset{basicstyle=\ttfamily\footnotesize\singlespacing}
-
-\begin{tikzpicture}[start chain=cpp going below,start chain=S going below,
-every on chain/.style=join,every join/.style=blockarrow,
-node distance=2ex and 4ex
-]
-\tikzstyle{invisblock}	= [text width=16ex,text badly centered, minimum height=3ex]
-\tikzstyle{block}	= [invisblock, draw=black]
-\tikzstyle{file}	= [block,  fill=yellow!40!white]
-\tikzstyle{stage}	= [block, fill=blue,text=white]
-\tikzstyle{stagenum}	= [stage, text width=2ex, circle, node distance=28ex]
-\tikzstyle{filecomment}	= [invisblock,text width=20ex]
-
-% \node (cpp) {\includegraphics[width=\linewidth,height=\slideheigth-1\baselineskip,keepaspectratio,valign=t]{halfcompilecpp}};
-\node[file,on chain=cpp] (prog1_cpp) {prog1.cpp};
-\node[stage,on chain=cpp] (cpp_preprocess) {Препроцессор};
-\node[file, on chain=cpp] (prog1_pp) {Временный файл (stdout)};
-\node[stage,on chain=cpp] (compiler) {Компилятор};
-\node[file,on chain=cpp] (prog1_s) {prog1.s};
-\node[stage,on chain=cpp] (cpp_asm) {Ассемблер};
-\node[file,on chain=cpp] (prog1_o) {prog1.o};
-\node[stage,on chain=cpp] (cpp_linker) {Компоновщик};
-% \coordinate[on chain=cpp] (cpp_linker);
-
-\node[stagenum, left= of cpp_preprocess] {1};
-\node[stagenum, left= of compiler] {2};
-\node[stagenum, left= of cpp_asm] {3};
-\node[stagenum, left= of cpp_linker] {4};
-
-\node[file, right= of cpp_preprocess,text width=20ex] (cpp_headers) {Заголовочные файлы (\#include)};
-\path[blockarrow] (cpp_headers) -- (cpp_preprocess);
-
-
-% \node[right= of compiler] (mangling) {Декорирование};
-\node[text width=18ex] at (compiler-|cpp_headers) (mangling) {Декорирование \lstinline!int foo(int x)! $\to$ \lstinline!_Z3fooi!};
-
-\node[fit=(prog1_cpp) (cpp_headers), inner sep=0ex] (cpp_box) {};
-\coordinate[right=0ex of cpp_box] (cpp_egde);
-
-
-% % \node[right= of cpp] (S) {\includegraphics[width=\linewidth,height=\slideheigth-1\baselineskip,keepaspectratio,valign=t]{halfcompileS}};
-% \node[file,right= of prog1_cpp-|cpp_egde,on chain=S] (prog2_S) {prog2.S};
-% \node[stage,on chain=S] (S_preprocess) {Препроцессор};
-% \node[file, on chain=S] (prog2_pp) {Временный файл (stdout)};
-% \node[stage,on chain=S,right= of cpp_asm-|cpp_egde]  (S_asm) {Ассемблер};
-% \node[file,on chain=S] (prog2_o) {prog2.o};
-% \node[stage,on chain=S] (S_linker) {Компоновщик};
-% % \coordinate[on chain=S] (S_linker);
-% 
-% % \node[file, right= of S_preprocess,text width=20ex] (S_headers) {Заголовочные файлы (\#include)};
-% % \path[blockarrow] (S_headers) -- (S_preprocess);
-% \path[blockarrow] (cpp_headers) -- (S_preprocess);
-% 
-% % \path[blockarrow] (cpp_asm) -- (S_asm);
-
-% \path (cpp_linker)
-\node[stage,fit=(cpp_linker)% (S_linker)
-, inner sep=0ex,align=center] (linker) {\strut
-
-  \vspace{-0.5\baselineskip}Компоновщик};
-  
-\node[file, right= of linker,text width=20ex] (obj_lib) {Объектные файлы библиотек};
-\path[blockarrow] (obj_lib) -- (linker);
-
-\node[file,below= of linker] (prog) {prog};
-\path[blockarrow] (linker) -- (prog);
-
-\node[filecomment, left= of prog1_cpp] {Файл исходного кода};
-\node[filecomment, left= of prog1_pp] {Дополненный файл исходного кода};
-\node[filecomment, left= of prog1_s] {Файл команд ассемблера};
-\node[filecomment, left= of prog1_o] {Объектный файл};
-\node[filecomment, left= of prog] {Исполняемый файл};
-
-% \node[below= of prog-|cpp_linker]  {extern};
-
-% \node[below= of prog-|S_linker]  {.globl};
-
-
-% \coordinate[above=6ex of cpp.south] (linking_start);
-
-\begin{pgfonlayer}{background}
-% %   \coordinate[left=0ex of cpp.south west] (cpp_egde);
-% %   \coordinate[right=0ex of S.south east] (S_egde);
-%   \node[rectangle,fit=(cpp.south west) (S.south east) (linking_start), inner sep=0ex, minimum height=11.8mm,fill=yellow] (linking) {};
-\node[rectangle,fit=(compiler) (mangling), fill=blue!20!white]  {};
-
-\end{pgfonlayer} 
-
-\end{tikzpicture}
-}
-\caption{Этапы компиляции программы на C++}
-\label{ris:c++compile}
-\end{illustration}
-
-
-
-\begin{enumerate}[wide=\parindent]
-{
-\item Препроцессор копирует содержимое включённых  директивой \lstinline!#include! заголовочных файлов в~исходный код модуля, раскрывает макросы и,~в~том числе, выполняет текстовые замены «констант», определённых с~помощью директивы \lstinline!#define!, на их значения, а~также отрабатывает директивы условной компиляции, выбрасывая из кода те или иные фрагменты.\fussy
-
-}
-\begingroup
-\lstset{language=Bash}
-
-При использовании компилятора из коллекции GCC
-увидеть результат препроцессинга можно, воспользовавшись опцией \lstinline!-E!% компилятора g++
-. Результат будет выведен в стандартный поток вывода (в~представленном %ниже 
-примере %стандартный поток вывода 
-перенаправлен в~файл main.E).
-
-\begin{lstlisting}
-$ g++ -E main.cpp > main.E
-\end{lstlisting}
-Здесь и далее, знак доллара (\lstinline!$!) обозначает стандартное приглашение %к вводу команды в 
-консоли *nix. Писать знак доллара не требуется.
-Регистр важен.
-
-
-\item Код, обработанный препроцессором, транслируется компилятором в~ассемблерный код для соответствующей платформы.
-
-Для остановки компиляции после этого этапа для компилятора g++ следует воспользоваться ключом \lstinline!-S!:
-\begin{lstlisting}
-$ g++ -S main.cpp
-\end{lstlisting}
-
-На этапе компиляции выполняется \termin{декорирование} имён функций; таким образом, если остановить ключом \lstinline!-S! сборку после этого этапа, то в~полученном ассемблерном файле имена будут изменены компилятором.
-% Имена 
-% C++ искорёжены почти до неузнаваемости, C — у меня сохранены, а у вас, если статья Фога не ошибатеся, к ним приписывается префикс _: _Sqr вместо Sqr (и было бы __Sqr вместо _Sqr, но такой функции в C++-программе нет).
-В~декорированное имя C++-функции включается информация о~всех её параметрах (явных и~неявных).
-Имена C-функций изменяются более предсказуемо, так как для них не поддерживается перегрузка %(может быть добавлен префикс, суффикс или )
-(в~большинстве случаев имена не изменяются; на некоторых платформах к~ним может добавиться фиксированный префикс или суффикс).
-
-Конкретный алгоритм декорирования зависит от компилятора, платформы и~указанного соглашения о~вызове.
-В~статье Агнера Фога 
-«Calling conventions for different C++ compilers and operating systems»
-приведено, в~числе прочего, описание алгоритмов декорирования наиболее популярных компиляторов.
-В~частности, имена C-функций при компиляции gcc на платформах GNU/Linux и~BSD не изменяются вообще. 
-На 32-разрядной платформе Microsoft Windows имена C-функций при компиляции приобретают дополнительное ведущее подчёркивание (то есть \lstinline!printf! преобразуется  в~\lstinline!_printf!).
-
-
-\item Ассемблерный код, созданный компилятором, транслируется в~объектный код для соответствующей платформы.
-Останов компиляции файла после этапа ассемблирования  обеспечивается ключом \lstinline!-c!:
-
-\begin{lstlisting}
-$ g++ -c main.cpp
-\end{lstlisting}
-При ассемблировании  имена функций сохраняются.
-
-
-
-\item Объектные файлы% различных модулей и~библиотек
-, созданные ассемблером, объединяются компоновщиком (линкером, редактором связей) в~исполняемый файл.
-
-На данном этапе компоновщик ищет реализации для всех внешних (\lstinline!extern!) функций по именам.
-Соответственно, имена, которые в~разных модулях носит одна и~та же функция, на этапе компоновки должны совпадать.
-
-
-\end{enumerate}
-\FloatBarrier
-Интегрированные среды разработки (IDE) выполняют все этапы автоматически.
-
-\subsection{Расширения файлов исходного кода}
-
-
-Чтобы начать сборку не с~начала, достаточно задать для файла расширение, отличное от~\lstinline!.cpp! или ~\lstinline!.c!.
-Вообще, компилятор "--- одна из немногих программ, которые учитывают расширение файла при его обработке.
-
-Расширение  \programname{.s} соответствует ассемблерному файлу. 
-Таким образом, команды
-\mbox{\lstinline!$ g++ main.s!} и~\mbox{\lstinline!$ gcc main.s!}
-эквивалентны и~выполняют ассемблирование и~компоновку ассемблерного файла~\lstinline!main.s!%.
-, минуя этапы препроцессинга и~компиляции с~ЯВУ.
-
-{
-
-Расширение \programname{.o} соответствует объектному файлу, и~команды
-\mbox{\lstinline!$ g++ main.o!} и~\mbox{\lstinline!$ gcc main.o!}
-выполняют только компоновку файла~\lstinline!main.o!.
-\fussy
-
-}
-
-В~случае, когда необходимо выполнить препроцессинг, ассемблирование и~компоновку, выбросив только этап компиляции с~ЯВУ (именно такая последовательность оптимальна при сборке модулей, вручную написанных на ассемблере), используется
-расширение \programname{.S}.
-\begin{lstlisting}
-$ g++ main.S
-\end{lstlisting}
-Большинство современных файловых систем чувствительны к~регистру имён, а~современные ОС, такие как GNU/Linux и~BSD, различают регистр при обработке.
- 
-\subsection{Изменение имени выходного файла}
-
-
-Имя исполняемого файла по умолчанию (\lstinline!a.out!) можно изменить, используя ключ~\lstinline!-o!:
-\begin{lstlisting}
-$ g++ main.cpp -o prog
-\end{lstlisting}
-Таким образом исполняемый файл, полученный после сборки main.cpp (отсутствие ключей остановки сборки соответствует выполнению всех этапов), получит имя~\lstinline!prog!.
-
-\subsection{Компиляция проекта, состоящего из нескольких модулей}
-\index{Компиляция!модули}
-
-
-\lstset{language=Bash}
-
-При компиляции проекта, включающего несколько модулей, шаги препроцессинга, компиляции и~ассемблирования повторяются для каждого файла исходного кода.
-Затем из полученных объектных файлов линкер собирает единый исполняемый файл (рис.~\ref{ris:c++asmcompile}).
-Это можно выполнить одним запуском %любого 
-компилятора из коллекции GCC:
-\begin{lstlisting}
-g++ -o prog prog1.cpp prog3.cpp 
-\end{lstlisting}
-
-Если попытаться собрать каждый из модулей отдельно, мы получим ошибки компоновки (так как во всех модулях, кроме главного, отсутствует точка входа "--- функция \lstinline!main!, а~в~главном "--- нет функций, описанных в~остальных).
-
-
-\begin{illustration}
-\resizebox{\linewidth}{!}{
-\tikzstyle{blockarrow}	= [-latex',thick,draw=blue]
-\footnotesize\singlespacing
-\lstset{basicstyle=\ttfamily\footnotesize\singlespacing}
-\begin{tikzpicture}[start chain=cpp going below,start chain=S going below,
-every on chain/.style=join,every join/.style=blockarrow,
-node distance=2ex and 4ex
-]
-\tikzstyle{block}	= [text width=16ex,text badly centered, minimum height=3ex, draw=black]
-\tikzstyle{file}	= [block,  fill=yellow!40!white]
-\tikzstyle{stage}	= [block, fill=blue,text=white]
-
-% \node (cpp) {\includegraphics[width=\linewidth,height=\slideheigth-1\baselineskip,keepaspectratio,valign=t]{halfcompilecpp}};
-\node[file,on chain=cpp] (prog1_cpp) {prog1.cpp};
-\node[stage,on chain=cpp] (cpp_preprocess) {Препроцессор};
-\node[file, on chain=cpp] (prog1_pp) {Временный файл (stdout)};
-\node[stage,on chain=cpp] (compiler) {Компилятор};
-\node[file,on chain=cpp] (prog1_s) {prog1.s};
-\node[stage,on chain=cpp] (cpp_asm) {Ассемблер};
-\node[file,on chain=cpp] (prog1_o) {prog1.o};
-\node[stage,on chain=cpp] (cpp_linker) {Компоновщик};
-% \coordinate[on chain=cpp] (cpp_linker);
-
-\node[file, right= of cpp_preprocess,text width=20ex] (cpp_headers) {Заголовочные файлы (\#include)};
-\path[blockarrow] (cpp_headers) -- (cpp_preprocess);
-
-
-% \node[right= of compiler] (mangling) {Декорирование};
-\node[text width=18ex] at (compiler-|cpp_headers) (mangling) {Декорирование \lstinline!int foo(int x)! $\to$ \lstinline!_Z3fooi!};
-
-\node[fit=(prog1_cpp) (cpp_headers), inner sep=0ex] (cpp_box) {};
-\coordinate[right=0ex of cpp_box] (cpp_egde);
-
-
-% \node[right= of cpp] (S) {\includegraphics[width=\linewidth,height=\slideheigth-1\baselineskip,keepaspectratio,valign=t]{halfcompileS}};
-\node[file,right= of prog1_cpp-|cpp_egde,on chain=S] (prog2_S) {prog2.S};
-\node[stage,on chain=S] (S_preprocess) {Препроцессор};
-\node[file, on chain=S] (prog2_pp) {Временный файл (stdout)};
-\node[stage,on chain=S,right= of cpp_asm-|cpp_egde]  (S_asm) {Ассемблер};
-\node[file,on chain=S] (prog2_o) {prog2.o};
-\node[stage,on chain=S] (S_linker) {Компоновщик};
-% \coordinate[on chain=S] (S_linker);
-
-% \node[file, right= of S_preprocess,text width=20ex] (S_headers) {Заголовочные файлы (\#include)};
-% \path[blockarrow] (S_headers) -- (S_preprocess);
-\path[blockarrow] (cpp_headers) -- (S_preprocess);
-
-% \path[blockarrow] (cpp_asm) -- (S_asm);
-
-% \path (cpp_linker)
-\node[stage,fit=(cpp_linker) (S_linker), inner sep=0ex,align=center] (linker) {\strut
-
-  \vspace{-0.5\baselineskip}Компоновщик};
-  
-\node[file, right= of linker,text width=20ex] (obj_lib) {Объектные файлы библиотек};
-\path[blockarrow] (obj_lib) -- (linker);
-
-\node[file,below= of linker] (prog) {prog};
-\path[blockarrow] (linker) -- (prog);
-
-\node[below= of prog-|cpp_linker]  {extern};
-
-\node[below= of prog-|S_linker]  {.globl};
-
-
-% \coordinate[above=6ex of cpp.south] (linking_start);
-
-\begin{pgfonlayer}{background}
-% %   \coordinate[left=0ex of cpp.south west] (cpp_egde);
-% %   \coordinate[right=0ex of S.south east] (S_egde);
-%   \node[rectangle,fit=(cpp.south west) (S.south east) (linking_start), inner sep=0ex, minimum height=11.8mm,fill=yellow] (linking) {};
-\node[rectangle,fit=(compiler) (mangling), fill=blue!20!white]  {};
-
-\end{pgfonlayer} 
-
-\end{tikzpicture}
-}
-\caption{Этапы компиляции программы}
-\label{ris:c++asmcompile}
-\end{illustration}
-
-
-Можно остановить сборку после этапа компиляции модулей:
-\begin{lstlisting}
-g++ -с prog1.cpp prog3.cpp 
-g++ -с prog3.cpp 
-\end{lstlisting}
-
-Затем из полученных объектных файлов одним запуском линкера можно получить исполняемый файл:
-\begin{lstlisting}
-g++ -o prog prog1.o prog3.o 
-\end{lstlisting}
-Ручная сборка небольших проектов обычно выполняется одной командой, в~интегрированных средах разработки этапы, как правило, разделяются.
-
-
-\endgroup
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-\section{Компиляция и~отладка в~IDE} 
-\label{sec:cpp-ide}
-\epigraph{\begin{limerick}
-Одному господину в~Версале \\
-Так внезапно глаза отказали,\\
-Что он видеть не мог\\
-Даже собственных ног "---\\
-И~просил, чтоб ему показали.\\
-\end{limerick}
-}
-{\Lear}
-
-watch'и, memory, дизассемблер
-
-
-\input{book/cpp-ide}
 
 
 \section{Типы данных} 
+\label{sec:cpp-types}
 \epigraph{\begin{stanza}
 Тридцать восемь тюков он на пристань привез,\\
 И~на каждом "--- свой номер и~вес;\\
@@ -443,19 +121,59 @@ watch'и, memory, дизассемблер
 
 
 \input{book/cpp-basictypes}
+\input{book/cpp-cast}
+\input{book/cpp-literals}
+
+\section{Ввод-вывод} 
+\epigraph{\begin{stanza}
+
+На обыденных картах "--- слова, острова,\\
+   Все сплелось, перепуталось "--- жуть!\\
+А на нашей, как в море, одна синева,\\
+  Вот так карта "--- приятно взглянуть!\\
+\end{stanza}
+}
+{\Snark}
+
+\subsection{Ввод-вывод в~поток}
+
+<iomanip>
+
+Система счисления (префикс не добавляется):
+\begin{itemize}
+\item манипуляторы \lstinline!hex, oct, dec!
+\item манипулятор \lstinline!setbase(int base)! (фактически "--- 8, 10 и~16).
+\end{itemize}
+
+Регистр цифр \lstinline!A..F! и~символа \lstinline!E! в~экспоненциальной форме "--- манипуляторы \lstinline!uppercase! и~\lstinline!lowercase!.
+
+Ширина "---  \lstinline!setw(int w)! (только для следующего выводимого значения).
+
+Символ заполнения "--- \lstinline!setfill(int ch)!.
+
+\subsection{Ввод-вывод с~помощью стандартной библиотеки C}
+
+printf
+
+scanf
+
+
 
 \section{Адресация и~указатели}
+
+
 \epigraph{\begin{limerick}
-Некий франт, хоть уже пожилой,\\
-подравнивал ногти пилой.\\
-Срезав пальцы, чудак \\
-говорил потом так:\\
-«Не подравнивай ногти пилой!»
+Старовер-маловер из Шанхая\\
+Жил, сомнениям всё подвергая.\\
+Он был просто сражён\\
+Тем, что он "--- это он,\\
+А «Шанхай» "--- лишь названье Шанхая.
 \end{limerick}
 }
 {\Lear}
 
 \section{Исследование памяти в~C++} 
+\label{sec:cpp-memorydump}
 \epigraph{\begin{limerick}
 Злополучную даму в~Байраме\\
 Много раз прищемляло дверями.\\
@@ -485,7 +203,6 @@ watch'и, memory, дизассемблер
 
 
 \begin{enumerate}
-\item Уметь пользоваться окнами просмотра переменных и~содержимого памяти в~отладчике используемой вами IDE.
 \item Для чего служит  модификатор volatile в~C++?
 \item Для чего служит спецификатор register в~C++?
 \item Чем различается размещение в~памяти локальных, глобальных и~статических переменных?

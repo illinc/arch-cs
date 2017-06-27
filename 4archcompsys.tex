@@ -43,6 +43,7 @@
  keywords=[1]{\%, \$},
  keywordstyle=[1]\color{olive}
     ,morekeywords=[2]{.file,.section,.string,.text,.globl,.cfi_startproc,.cfi_def_cfa_offset,.cfi_endproc,.size,.ident}%
+    ,morekeywords={subr,divr}%
 %     ,morekeywords={mov,movq,movl,xorl,imull,popq}%
 %     ,morecomment=[s][\color{olive}]{\%}{x}%
 %     ,morecomment=[s][\color{olive}]{\%}{l}%
@@ -95,12 +96,59 @@
 
 \newcommand{\onlyGas}[1]{{\color{colorGas}{GAS: #1}}}
 
+\newcommand{\RN}[1]{\ensuremath{\mathrm{#1}}}
+\newcounter{romannumberx}
+\def\ToRomanEmpire#1{\setcounter{romannumberx}{#1}\Roman{romannumberx}}
 
 
 
 
+% \DeclareMathOperator{\And}{and}
+\DeclareMathOperator{\Or}{or}
+\DeclareMathOperator{\Xor}{xor}
+\DeclareMathOperator{\Not}{not}
+\DeclareMathOperator{\Neg}{neg}
 
 
 
+% Рисование регистров
 
+\tikzmath{real \bitwidthex, \halfbitex; 
+  \bitwidthex=6; 
+  \halfbitex = \bitwidthex/2;}
+  
+\tikzstyle{bitlabel}	= []
+\tikzstyle{block}	= [text badly centered, minimum height=\bitwidthex ex, draw=black]
+\tikzstyle{reg}	= [block,  fill=colorRegisterLight]
+\tikzstyle{bit}	= [reg, solidchaincell, minimum width=\bitwidthex ex]
+
+\newcommand{\onebit}[3][]
+{
+  \node[bit, on chain, label=below:$#2$, #1] (#2) {$#3$};
+}
+
+\newcommand{\bitfield}[4][]
+{
+  \tikzmath{int \bits, \wdex; \bits = #3 - #2 + 1;
+    \wdex = \bits * \bitwidthex;}
+  \node[bit, minimum width= \wdex ex, on chain, #1] (#2)  {$#4$};
+  \coordinate[right = \halfbitex ex of #2.south west, label=below:$#3$] (be#3);
+  \coordinate[left = \halfbitex ex of #2.south east, label=below:$#2$] (bs#2);
+}
+
+\newcommand{\regfloat}[4][]
+{
+\begin{tikzpicture}[
+baseline=(mant0.base)
+]
+  \tikzmath{  \bitwidthex=4; }
+  \node[reg, solidchaincell, minimum width=32ex, #1]  (mant0) {$#4$};
+  \node[reg, solidchaincell, minimum width=10ex, left = of mant0, #1]  (exp0) {$#3$};
+  \node[bit, solidchaincell, left = of exp0, #1]  (sign0) {$#2$};
+\tikzstyle{bitlabel}	= [scale=0.7]  
+\node[above = 0ex of exp0, bitlabel]  (exp) {Порядок};
+\node[anchor=base, bitlabel] at (exp.base-|sign0) (sign) {Знак};
+\node[bitlabel] at (exp-|mant0)  {Мантисса};  
+\end{tikzpicture}
+}
 

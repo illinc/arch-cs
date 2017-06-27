@@ -1,5 +1,46 @@
 
 \subsection{Шаблоны C++}
+
+
+
+
+
+\begin{lstlisting}
+template<typename T>
+int foo(T x)
+{
+...
+}
+\end{lstlisting}
+
+\begin{lstlisting}
+template<typename T>
+T bar(T x)
+{
+  T y = x + 12;
+  ....
+}
+\end{lstlisting}
+
+\begin{lstlisting}
+int i = 0, j, k, n;
+double x = 1, y;
+
+j = foo(i);
+k = foo(x);
+
+n = bar(i);
+y = bar(x);
+\end{lstlisting}
+
+
+
+
+
+
+
+\subsubsection{Отладочная печать с~помощью шаблонов}
+
 % Для автоматизации отладочной печати можно воспользоваться  шаблонами. 
 % Эта возможность C++ позволяет определить семейство функций, которые могут работать с различными типами данных.
 

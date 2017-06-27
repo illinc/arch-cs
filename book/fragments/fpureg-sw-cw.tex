@@ -1,0 +1,113 @@
+% \scriptsize
+\tikzstyle{blockarrow}	= [-latex',draw]
+% % \footnotesize
+\scriptsize
+\singlespacing
+
+
+% \tikzmath{real \bitwidthex, \halfbitex; 
+%   \bitwidthex=6; 
+%   \halfbitex = \bitwidthex/2;}
+%   
+% \tikzstyle{bitlabel}	= []
+% \tikzstyle{block}	= [text badly centered, minimum height=\bitwidthex ex, draw=black]
+% \tikzstyle{reg}	= [block,  fill=colorRegisterLight]
+% \tikzstyle{bit}	= [reg, solidchaincell, minimum width=\bitwidthex ex]
+% 
+% 
+% % \newcommand{\bitfield}[5][]
+% % {
+% %   \tikzmath{int \bits, \wdex; \bits = #4 - #3 + 1;
+% %     \wdex = \bits * \bitwidthex;}
+% %   \node[bit, minimum width= \wdex ex, on chain=#2, #1] (#2#5)  {$#5$};
+% %   \node[bitlabel, below =  of #2#5.south west, anchor = north west]   {$#4$};
+% %   \node[bitlabel, below =  of #2#5.south east, anchor = north east]   {$#3$};
+% % }
+% 
+% 
+% \newcommand{\onebit}[3][]
+% {
+%   \node[bit, on chain, label=below:$#2$, #1] (#2) {$#3$};
+% }
+% 
+% \newcommand{\bitfield}[4][]
+% {
+%   \tikzmath{int \bits, \wdex; \bits = #3 - #2 + 1;
+%     \wdex = \bits * \bitwidthex;}
+%   \node[bit, minimum width= \wdex ex, on chain, #1] (#2)  {$#4$};
+% %   \node[bitlabel, below =  of #2#4.south west, anchor = north west]   {$#3$};
+% %   \node[bitlabel, below =  of #2#4.south east, anchor = north east]   {$#2$};
+%   \coordinate[right = \halfbitex ex of #2.south west, label=below:$#3$] (b#3#4);
+%   \coordinate[left = \halfbitex ex of #2.south east, label=below:$#2$] (b#2#4);
+% }
+
+\begin{tikzpicture}[
+% start chain=sw going left,
+% start chain=cw going left,
+start chain=going left,
+% every on chain/.style=join,
+% every on chain/.style=solidchaincell,
+% every join/.style=blockarrow,
+every label/.style={bitlabel},
+node distance=0ex,
+baseline=(current bounding box.north)
+]
+
+% \tikzstyle{reglabel}	= [block,  draw=none, node distance=0ex and 8ex, text=colorRegister]
+
+% \node[bit, on chain, label=below:0] (sw0) {$IE$};
+% \node[bit, on chain, label=below:1]       {$DE$};
+% \node[bit, on chain, label=below:2]       {$ZE$};
+% \node[bit, on chain, label=below:3]       {$OE$};
+% \node[bit, on chain, label=below:4]       {$UE$};
+% \node[bit, on chain, label=below:5]       {$PE$};
+% \node[bit, on chain, label=below:6]       {$SF$};
+% \node[bit, on chain, label=below:7]       {$ES$};
+% \node[bit, on chain, label=below:8]       {$C0$};
+% \node[bit, on chain, label=below:9]       {$C1$};
+% \node[bit, on chain, label=below:10]       {$C2$};
+% \bitfield{11}{13}{top}
+% \node[bit, on chain, label=below:14]       {$C3$};
+% \node[bit, on chain, label=below:15]       {$B$};
+% 
+% \node[bit, on chain, label=below:0, below=8ex of sw0] {$IM$};
+% \node[bit, on chain, label=below:1]       {$DM$};
+% \node[bit, on chain, label=below:2]       {$ZM$};
+% \node[bit, on chain, label=below:3]       {$OM$};
+% \node[bit, on chain, label=below:4]       {$UM$};
+% \node[bit, on chain, label=below:5]       {$PM$};
+% \bitfield[fill=none]{6}{7}{}
+% \bitfield{8}{9}{PC}
+% \bitfield{10}{11}{RC}
+% \bitfield[fill=none]{12}{15}{}
+
+
+\onebit{0}{IE}
+\onebit{1}{DE}
+\onebit{2}{ZE}
+\onebit{3}{OE}
+\onebit{4}{UE}
+\onebit{5}{PE}
+\onebit{6}{SF}
+\onebit{7}{ES}
+\onebit{8}{C0}
+\onebit{9}{C1}
+\onebit{10}{C2}
+\bitfield{11}{13}{top}
+\onebit{14}{C3}
+\onebit[fill=none]{15}{B}
+\node[above=of 8.north east] {—лово состо€ни€ $sw$};
+
+\onebit[below=8ex of 0]{0}{IM}
+\onebit{1}{DM}
+\onebit{2}{ZM}
+\onebit{3}{OM}
+\onebit{4}{UM}
+\onebit{5}{PM}
+\bitfield[fill=none]{6}{7}{}
+\bitfield{8}{9}{PC}
+\bitfield{10}{11}{RC}
+\bitfield[fill=none]{12}{15}{}
+\node[above=of 8.north east] {”правл€ющее слово $cw$};
+
+\end{tikzpicture}

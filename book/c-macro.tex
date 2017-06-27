@@ -89,3 +89,38 @@ cout <<  QUOTES(1+2) << " " << QUOTES(x) << " " << QUOTES(м€у) << " " << QUOTES(
 \end{lstlisting}
 % «десь, в~отличие от шаблонов
     
+% \begin{lstlisting}
+% #include <iostream>
+% #include "myheader.h"
+% 
+% #define N 13
+% #define MAX(x, y) ((x) > (y) ? (x) : (y))
+% #define INTEGER short
+% 
+% // так делать плохо
+% #define true 0
+% 
+% #define FLAG
+% #ifdef FLAG
+% ...
+% #else
+% ...
+% #endif
+% 
+% \end{lstlisting}
+
+
+\begin{lstlisting}
+#define INTEGER short
+\end{lstlisting}
+
+
+\begin{lstlisting}
+#define FLAG
+#ifdef FLAG
+...
+#else
+...
+#endif
+
+\end{lstlisting}

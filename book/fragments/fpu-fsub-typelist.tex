@@ -1,0 +1,39 @@
+\begin{longtable}{|K{8em}|L|}
+\hline
+\thead{Команда} & \thead{Действие}  %& \thead{Флаги} 
+\\\hline
+fsubp
+
+fsub
+&	
+$st(1) := st(0) - st(1)$ и~выталкивание  st(0) из стека, 
+
+так что после этой операции результат оказывается в~st(0)
+
+(эквивалент \lstinline!fsubp %st(0), %st(1)!)
+\\\hline
+f[i]sub src
+&	
+$st(0) := st(0) - src$
+\\\hline
+fsub st(i), st(0)
+&	
+$st(0) := st(0) - st(i)$
+\\\hline
+fsub st(0), st(i)
+&	
+$st(i) := st(0) - st(i)$
+\\\hline
+
+fsubp st(0), st(i)
+&	
+$st(i) := st(0) - st(i)$ и~выталкивание  st(0) из стека, 
+
+так что после этой операции результат оказывается в~$st(i-1)$
+\\\hline
+
+\end{longtable}
+
+
+
+

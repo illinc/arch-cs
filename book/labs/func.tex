@@ -13,7 +13,8 @@
 \item
 Разработайте ассемблерную функцию, вычисляющую целое выражение от целого аргумента (в~соответствии с~вариантом), а~также головную программу на языке C++, использующую разработанную функцию.
 \labellocal{var}
-\begin{variants}
+
+\begin{variants}[asm2c]
 $y(x) = 1 + x/2$
 \next
 $y(x) = x\%4 - x$
@@ -30,27 +31,34 @@ $y(x) = 4 - 4x$
 
 \item 
 %%
-\bonus{+2 балла}  %о%
+% \bonus{+2 балла}  %о%
 Опишите функцию на произвольном языке высокого уровня (включая C/C++) и~вызовите её из ассемблерной функции.
 
+\begin{variants}[c2asm]
+Вывод двух параметров на экран с~пояснениями
+\next
+Ввод результата с~клавиатуры
+\next
+Случайный результат в~заданном диапазоне
+\end{variants}
 
 \item \bonus{+2 балла}  Опишите функцию на ассемблере и~вызовите её из ассемблерной функции.
 
+\begin{variants}[asm2asm]
+$\left\{\begin{array}{ll}
+x = a + c\cdot b\\
+y = a - c\cdot b\\
+\end{array}\right.$
+\next
+$\left\{\begin{array}{ll}
+x = a^2 - b^2\\
+y = 2 a b\\
+\end{array}\right.$
+\end{variants}
+
+
 \end{tasks}
 
-% \section{Варианты заданий}
-% \labellocal{var}
-% \begin{variants}
-% $y(x) = 1 + x/2$
-% \next
-% $y(x) = x\%4 - x$
-% \next
-% $y(x) = 3x+1$
-% \next
-% $y(x) = x^3$
-% \next
-% $y(x) = 4 - 4x$
-% \end{variants}
 
 \theoryrefs
 \theoryref{sec:cpp-compile}

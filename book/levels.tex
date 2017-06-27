@@ -230,6 +230,8 @@ PDP-11&0B&0A&0D&0C\\
 
 
 
+
+
 \section{Уровень операционной системы}
 \epigraph{
 \begin{stanza}
@@ -241,7 +243,25 @@ PDP-11&0B&0A&0D&0C\\
 }{\Aquarium}
 
 управление памятью, загрузка и~выполнение программ, системные вызовы, доступ к~устройствам
+% Виртуальная память
+% 
+% Страничная организация памяти
+% 
+% % Реализация виртуальных команд ввода-вывода
+% Файловая система
+% 
+% % Виртуальные команды для параллельной работы 
+% Процессы
 
+\begin{itemize}
+\item    управление памятью (распределение между процессами, организация виртуальной памяти);
+\item    загрузка программ в~оперативную память и~их~выполнение;
+\item    исполнение запросов программ (системные вызовы);
+\item    стандартизованный доступ к~периферийным устройствам (устройства ввода-вывода).
+% \item    управление доступом к данным на энергонезависимых носителях (таких как жёсткий диск, оптические диски и др.), организованным в той или иной файловой системе.
+% \item    обеспечение пользовательского интерфейса.
+% \item    сохранение информации об ошибках системы.
+\end{itemize}
 
 \section{Уровень ассемблера}
 \epigraph{
@@ -259,6 +279,88 @@ PDP-11&0B&0A&0D&0C\\
 
 Разные компиляторы также поддерживают разный синтаксис.
 
+Мнемоники "--- символическое представление машинных команд.
+
+ \lstinline!B9 CC CC CC CC! $\to$ \lstinline!movl $0xCCCCCCCC, %ecx!
+
+
+Реализуется путем трансляции (ассемблирования), а~не интерпретации.
+
+
+\resizebox{0.8\linewidth}{!}{
+\tikzstyle{blockarrow}	= [-latex',thick,draw=blue]
+\footnotesize
+\begin{tikzpicture}[start chain=cpp going below,start chain=S going below,
+every on chain/.style=join,every join/.style=blockarrow,
+node distance=2ex and 4ex
+]
+\tikzstyle{block}	= [text width=16ex,text badly centered, minimum height=3ex, draw=black]
+\tikzstyle{file}	= [block,  fill=yellow!40!white]
+\tikzstyle{stage}	= [block, fill=blue,text=white]
+
+
+\node[file,on chain=cpp] (prog1_s) {prog.s};
+\node[stage,on chain=cpp] (cpp_asm) {Ассемблер};
+\node[file,on chain=cpp] (prog1_o) {prog.o};
+\node[stage,on chain=cpp] (linker) {Компоновщик};
+
+  
+\node[file, right= of linker,text width=20ex] (obj_lib) {Объектные файлы библиотек};
+\path[blockarrow] (obj_lib) -- (linker);
+
+\node[file,below= of linker] (prog) {prog};
+\path[blockarrow] (linker) -- (prog);
+
+
+\end{tikzpicture}
+}
+
+\begin{itemize}
+\item \termin{GNU Assembler (GCC)} "--- более 45 платформ, большинство ОС, лицензия GNU GPL 3+ 
+\item \termin{Flat Assembler (FASM)} "--- x86, DOS, MS Windows, UNIX-подобные (GNU/Linux, OpenBSD и др.), MenuetOS, KolibriOS, DexOS,  лицензия BSD 
+\item \termin{NASM/Yasm} "--- x86, x86-64, GNU/Linux, DOS, MS Windows, UNIX,  лицензия BSD 
+% \item HLASM "--- z/Architecture IBM
+\item \termin{Turbo Assembler (TASM)/Lazy Assembler} "--- x86, DOS, MS~Windows
+\item \termin{MASM} "--- x86, DOS, MS Windows
+
+\end{itemize}
+
+{} \termin{AT\&T}
+
+\begin{lstlisting}[numbers=none]
+movl $42, %eax
+
+movl $0x10, %ebx
+
+
+lea  -0x30(%rcx,%rax,8), %eax
+movl (%ebx), %eax
+
+movl $0xCCCCCCCC, %ecx
+
+
+movl 0xCCCCCCCC, %ecx
+\end{lstlisting}
+
+
+% -4(%ebp), Intel:  [ebp - 4]
+{} \termin{Intel}
+
+\begin{lstlisting}[numbers=none]
+mov eax, 42
+
+mov ebx, 10h
+mov ebx, 0x10 ; masm
+
+lea eax, [rcx+rax*8-0x30]
+mov eax, dword ptr [ebx]
+
+mov ecx, 0xCCCCCCCC   
+/*@\textcolor{red}{mov ecx, dword ptr [0xCCCCCCCC] ; masm}@*/
+mov ecx, ds:[0xCCCCCCCC]
+/*@\textcolor{red}{mov ecx, dword ptr [0xCCCCCCCC] ; nasm}@*/
+\end{lstlisting}
+
 \section{Языки высокого уровня}
 \epigraph{
 \begin{stanza}
@@ -271,5 +373,104 @@ PDP-11&0B&0A&0D&0C\\
 
 языки, компиляторы, GCC
 
+\termin{Прикладное программирование}
+% \bigskip
+
+\begin{tabularx}{1\linewidth}{@{}Lp{0.4\linewidth}@{}}
+Трансляция
+\begin{itemize}
+\item Фортран;
+% \item Алгол;
+\item C/Objective-C/C++;
+\item Pascal/Object Pascal/Delphi.
+\end{itemize}
+&
+Интерпретация
+\begin{itemize}
+\item sh/bash;
+\item Python;
+\item PHP.
+\end{itemize}
+\end{tabularx}
+Уровень виртуальной машины  Java.
+% \begin{itemize}
+% \item Java.
+% \end{itemize}
+
+\termin{Сверхвысокоуровневые языки программирования}
+\begin{itemize}
+\item  Python;
+\item Ruby;
+\item AWK/Perl.
+\end{itemize}
+
+
+\subsection{Компиляторы C++ (x86)}
+
+\begin{itemize}
+\item \termin{GNU Compiler Collection (GCC)} "--- более 45 платформ, большинство ОС (порт под MS Windows "---  \termin{MinGW}), %7 языков (в~том числе C и~C++, стандарт), 
+лицензия GNU GPL 3+ 
+\item \termin{Portable C Compiler (PCC)} "--- Unix-подобные ОС, %GNU/Linux, 
+MS Windows; лицензия BSD
+
+
+\item \termin{TenDRA} "--- x86, x86-64, IA-64; POSIX-совместимые ОС; лицензия BSD
+
+\item \termin{Oracle Solaris Studio} "--- x86, x86-64, SPARC; Solaris, OpenSolaris, GNU/Linux; собственническая лицензия
+
+\item \termin{Intel C++ compiler} "--- x86, x86-64,  IA-64 (Itanium), GNU/Linux, MacOS X, MS Windows, коммерческая собственническая лицензия
+
+\item \termin{Open Watcom} "--- DOS, OS/2 и MS Windows; лицензия  	
+Sybase Open Watcom Public License version 1.0, 
+%не полностью поддерживает стандарт С++
+неполная поддержка стандарта
+
+\item \termin{MS Visual C++} "--- x86, x86-64, IA-64 и~.NET, только MS Windows, коммерческая собственническая лицензия, %грубые 
+нарушения стандарта
+
+% \item \termin{Norcroft C Сompiler} "--- Intel Pentium для GNU/Linux, коммерческая собственническая лицензия
+% 
+% 
+% \hrulefill
+% \item \termin{Clang} "--- виртуальная RISC-машина LLVM
+
+\end{itemize}
+
+Коллекция GCC:
+
+\termin{gcc} "---  компилятор~C;
+
+\termin{g++} "---  компилятор~C++.
+
+\subsection{Компиляция}
+
+main.cpp
+\begin{lstlisting}
+int x = 13;
+int main()
+{
+    int y = 2*x + 123;
+...
+}
+\end{lstlisting}
+
+g++ -S main.cpp $\to$
+
+main.s
+\begin{lstlisting}
+...
+.globl	x
+	.data
+	.align 4
+	.type	x, @object
+	.size	x, 4
+x:
+	.long	13
+...
+	movl	x, %eax
+	addl	%eax, %eax
+	addl	$123, %eax
+	movl	%eax, -12(%ebp)
+\end{lstlisting}
 
 \nsection{Контрольные вопросы}

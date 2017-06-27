@@ -52,7 +52,22 @@
  
 % АС  \termin{не является ПО} в~чистом виде.
 
+Таким образом, вычислительная система глобально может быть представлена как совокупность человека (оператора или программиста), технических средств (вычислительной машины, или компьютера% "--- computer, вычислитель
+)
+и~связывающих их программных средств.
 
+Соответственно, архитектура вычислительной системы может быть описана двояко:
+\begin{itemize}
+\item структурная декомпозиция позволяет выделить компоненты 
+% вычислительной системы, %(её программной и~аппаратной частей, а~также человека)
+% и~описать их взаимодействие;
+% в~том числе аппаратную составляющую "--- вычислительную машину, или компьютер, программную составляющую и~взаимодействующего с~ними человека;
+вычислительной машины, в~том числе компоненты, предназначенные для хранения и~обработки программ
+и~компоненты, взаимодействующие с~пользователем;
+\item иерархическая декомпозиция описывает %взаимодействие вычислительной машины (компьютера) с~программным обеспечением и~с~человеком.
+языки  взаимодействия программиста с~программ%ами и, опосредованно
+ными и~техническими средствами системы. %, а~также .
+\end{itemize}
 
 \section{Структурная декомпозиция ВС}
 \epigraph{\begin{stanza}[0mm]
@@ -65,7 +80,12 @@
 \hspace{\stanzaoddindent}и~коробка скоростей!\\
 \end{stanza}}{Надпись на парте}
 
+\begin{illustration}
+\includegraphics[width=\approvedImageWidth]{arch-comp-struct}
 
+\caption{Устройство компьютера}
+\label{ris:arch-comp-struct}
+\end{illustration}
 
 \subsection{%Микроархитектура %процессора 
 Структура
@@ -81,47 +101,6 @@ Intel 8008
 
 \includegraphics[width=0.395\linewidth,keepaspectratio,valign=c]{Intel_Core2_arch}
 \end{tabularx}
-
-\subsection{Регистры x86}
-
-Чем более объёмно запоминающее устройство, тем, как правило, медленнее оно работает.
-
-Оперативная память обладает меньшей скоростью, чем процессор.
-Хотя частоты работы как оперативной памяти, так и~процессора непрерывно растут, это соотношение сохраняется.
-
-Соответственно, использование только данных, расположенных в памяти, сильно замедлило бы работу.
-
-Частично обмен данными ускоряется при помощи кеширования.
-
-Без задержек данные можно считать или сохранить из регистров.
-
-
- 
-
-\includegraphics[width=0.5\linewidth,keepaspectratio,valign=t]{Registers}
-
-\begin{itemize}
-\item {Регистры общего назначения} 
- \begin{itemize}
-\item   \Reg{a, b, c, d;}  
-\item    \Reg{si, di, bp;}
-\item   {указатель стека} \Reg{sp}.
- \end{itemize}    
-   
-\item Сегментные %регистры 
-  \Reg{cs, ds, ss, es, fs, gs.}
-
-\item  Регистры состояния и~управления:
-\begin{itemize}
-\item   регистр флагов \Reg{eflags/flags};
-
-\item       указатель команды \Reg{eip/ip}.
-\end{itemize}   
-
-\item   Регистры сопроцессора x87 \Reg{st(0)...st(7)}/расширения MMX \rlap{\Reg{mm0...mm7}}
-
-\item        Регистры расширения XMM \rlap{(128-разрядные \Reg{xmm0...xmm7})}
-\end{itemize}
 
 
 
@@ -245,111 +224,7 @@ baseline=(current bounding box.north)
 
 
 \resizebox{0.8\linewidth}{!}{
-% \tikzstyle{blockarrow}	= [-latex',thick,draw]
-\begin{tikzpicture}[
-start chain=uvv going right,
-start chain=bus_south going right,
-% start chain=bus_north going below,
-start chain=bus_comment going above,
-% every on chain/.style=join,
-% every on chain/.style=solidchaincell,
-% every join/.style=blockarrow,
-node distance=2ex and 2ex,
-baseline=(current bounding box.north)
-]
-\tikzstyle{strokednode}	= [text badly centered, draw=black, thick]
-\tikzstyle{block}	= [strokednode, text width=18ex, minimum height=6ex]
-
-
-\tikzstyle{bus}	= [ultra thick, draw=black!80!green]
-
-\node[block, on chain=uvv] (hdd) {Долговременная память};
-\node[block, on chain=uvv] (prn) {Принтер};
-\node[block, on chain=uvv] (kbd) {Клавиатура};
-\node[block, on chain=uvv] (mon)  {Монитор};
-\node[fit=(hdd) (mon), inner sep=0ex] (uvv_box) {};
-
-\node[strokednode, text width=50ex, above=4ex of uvv_box] (uvv_common) {Устройства ввода-вывода};
-
-\foreach \i in {hdd, prn, kbd, mon}
-{
-  \draw[] (\i.north) -- (uvv_common);
-}
-
-
-\coordinate[on chain=bus_south] (addr_south) at (uvv_common.120);
-\coordinate[on chain=bus_south] (data_south);
-\coordinate[on chain=bus_south] (ctrl_south);
-\coordinate[on chain=bus_south] (power_south);
-
-\tikzstyle{block}	= [strokednode, text width=18ex, minimum height=10ex]
-
-\coordinate[above=12ex of addr_south] (addr_ram);
-\node[block, left = 4ex of addr_ram] (ram)  {Оперативная память};
-
-\coordinate[below = of addr_ram] (data_ram);
-\coordinate[above = of addr_ram] (ctrl_ram);
-\coordinate[above = of ctrl_ram] (power_ram);
-
-\node[strokednode, text width=33ex, text badly ragged, right =4ex of addr_ram-|power_south] (cpu)  {
-Центральный процессор
-\setlength{\leftmargini}{4ex}
-\begin{itemize}
-\item регистр команд; 
-\item устройство управления;
-\item АЛУ;
-\item адресный регистр; 
-\item указатель команды.
-\end{itemize}
-};
-
-\tikzstyle{powerline}	= [draw=green]
-
-\foreach \i/\s in {addr/, data/, ctrl/, power/powerline}
-{
-  \draw[bus, \s] (ram.east|-\i_ram) -- (cpu.west|-\i_ram);
-}
-
-
-
-\node[block, above = 20ex of ram] (bios)  {Постоянное запоминающее устройство};
-\node[block, right =4ex of bios-|power_south] (clock)  {Тактовый генератор};
-
-\coordinate[above = of bios.east-|ctrl_south] (ctrl_north);
-\coordinate (data_north) at (bios.east);
-\coordinate[below = of data_north] (addr_north);
-
-\coordinate[above = of ctrl_north-|power_south] (power_north);
-
-\foreach \i/\s in {ctrl/, power/powerline}
-{
-  \draw[bus, \s] (\i_south) -- (\i_north);
-  \draw[bus, \s] (bios.east|-\i_north) -- (clock.west|-\i_north);
-}
-
-\draw[bus] (data_south) |- (data_north);
-\draw[bus] (addr_south) |- (addr_north);
-
-
-\tikzset{node distance=3ex}
-\tikzset{draw=blue,thin}
-
-\coordinate[above =  of cpu.north-|addr_south, on chain=bus_comment] (addr_comment);
-\coordinate[on chain=bus_comment] (data_comment);
-\coordinate[on chain=bus_comment] (ctrl_comment);
-\coordinate[on chain=bus_comment] (power_comment);
-
-\coordinate (end_comment) at (cpu.east);
-
-
-\foreach \i/\s in {addr/адреса, data/данных, ctrl/управления, power/\vphantom{у}питания}
-{
-  \draw[draw=blue](\i_comment-|\i_south) -- node[above=-1ex, text=blue, at end, anchor=south east, text badly ragged] {шина \s} (\i_comment-|end_comment);
-}
-
-% \draw (bios) -- coordinate () (clock);
-
-\end{tikzpicture}
+\input{book/fragments/arch-bus-controllers}
 }
 \subsection{Схема системной платы}
 
@@ -372,6 +247,105 @@ baseline=(current bounding box.north)
 \item контроллер прямого доступа.
 \end{itemize}
 
+\subsection{Разделы памяти}
+
+\begin{tabularx}{1\linewidth}{@{}LL@{}}
+% \setlength{\parskip}{2ex}
+
+\termin{.text} 
+
+Код выполняемой программы
+\bigskip
+
+\termin{.data} 
+
+Глобальные переменные программы
+\bigskip
+
+\termin{.bss}
+
+Неинициализированные глобальные переменные
+\bigskip
+% .noinit 	Данные переменных программы 
+
+Куча
+(динамическая память)
+\bigskip
+
+Стек 
+% Локальные переменные подпрограмм
+
+&
+Распределение памяти GNU/Linux
+
+\includegraphics[width=\linewidth,keepaspectratio,valign=t]{linuxmem}\centering
+
+\end{tabularx}
+
+\subsection{Регистры x86}
+
+Чем более объёмно запоминающее устройство, тем, как правило, медленнее оно работает.
+
+Оперативная память обладает меньшей скоростью, чем процессор.
+Хотя частоты работы как оперативной памяти, так и~процессора непрерывно растут, это соотношение сохраняется.
+
+Соответственно, использование только данных, расположенных в памяти, сильно замедлило бы работу.
+
+Частично обмен данными ускоряется при помощи кеширования.
+
+Без задержек данные можно считать или сохранить из регистров.
+
+
+ 
+
+\includegraphics[width=0.5\linewidth,keepaspectratio,valign=t]{Registers}
+
+\begin{itemize}
+\item {Регистры общего назначения} 
+ \begin{itemize}
+\item   \Reg{a, b, c, d;}  
+\item    \Reg{si, di, bp;}
+\item   {указатель стека} \Reg{sp}.
+ \end{itemize}    
+   
+\item Сегментные %регистры 
+  \Reg{cs, ds, ss, es, fs, gs.}
+
+\item  Регистры состояния и~управления:
+\begin{itemize}
+\item   регистр флагов \Reg{eflags/flags};
+
+\item       указатель команды \Reg{eip/ip}.
+\end{itemize}   
+
+\item   Регистры сопроцессора x87 \Reg{st(0)...st(7)}/расширения MMX \rlap{\Reg{mm0...mm7}}
+
+\item        Регистры расширения XMM \rlap{(128-разрядные \Reg{xmm0...xmm7})}
+\end{itemize}
+
+% Также в~состав 
+
+Регистры, специфичные для модели~\cite{intelModelSpecificRegisters}.
+
+
+\subsection{Цикл выполнения команды}
+
+
+\resizebox{0.7\linewidth}{!}{
+\input{book/fragments/command-cycle}
+
+}
+
+\termin{Конвейер:}
+\begin{itemize}
+\item выборка и~декодирование инструкции
+\item    загрузка данных
+\item    выполнение инструкции
+\item   запись результатов
+\end{itemize}
+
+
+
 
 \section{Иерархическая декомпозиция ВС}
 % \epigraph{\begin{stanza}[0mm]
@@ -393,6 +367,9 @@ baseline=(current bounding box.north)
 
 Согласно Таненбауму~\cite{tanenbaum-arch}, вычислительную систему можно представить в~виде ряда уровней абстракции.
 
+\includegraphics[width=\approvedImageWidth,valign=t]{multi-level-abstract}
+
+
 
 \includegraphics[width=\approvedImageWidth,valign=c]{multi-level-asm}
 
@@ -407,9 +384,28 @@ baseline=(current bounding box.north)
 
 Современные ВС: 6 уровней; как отрастали эти шесть уровней, начиная от одноуровневых счётов и~одно?двух?уровневого жаккардова станка
 
+\subsection{Развитие вычислительной техники}
+
+1938 "--- механическая счётная машина Z1 Конрада Цузе, Германия, была использована уже двоичная система счисления.
+Для ввода-вывода данные преобразовывались в~десятичный вид.
+
+1939 "--- усовершенствованный вариант вычислителя Цузе, Z2 на основе телеграфных реле.
+
+1941 "--- Z3
+
+% http://wiki.livid.pp.ru/students/cs/lectures/1.html
+% В~механической счётной машине Z1 Конрада Цузе (1938 г.) была использована уже двоичная система счисления.
+% Это позволило существенно уменьшить размеры устройства.
+% Усовершенствованный вариант вычислителя Цузе, Z2 на основе телеграфных реле (1939),  закрепил использование двоичной логики.
 
 
 
+1943 "--- ЭНИАК (ENIAC, Electronic Numerical Integrator and Computer) на  вакуумных лампах и десятичной СС
+% 
+% Реле может находиться только в~двух состояниях "--- оно открыто либо закрыто.
+% Именно в~электромеханическом реле в~Mark II (1946), согласно легенде, был обнаружен первый баг.
+
+1943--1950 "--- Z4 на реле, первый ЯВУ
 
 
 
@@ -464,3 +460,28 @@ iAPX 432 %, 80960, 80860,
 
 \nsection{Контрольные вопросы}
 
+\begin{enumerate}
+% \item Какова цель курса?
+
+\item Что включает архитектура системы?
+\item Что такое вычислительная система?
+
+\item Какие вы знаете единицы измерения информации?
+
+
+% \item Какие способы представления знаковых чисел используются в~ЭВМ?
+% \item Какие логические и~битовые операции вы~знаете?
+
+\item Какие вы знаете компоненты ЭВМ?
+
+
+\item Чем отличаются фон-Неймановская и~гарвардская архитектуры?
+
+\item Из чего состоит системная шина (магистраль)?
+
+\item Какие вы знаете основные виды регистров \rlap{x86?}
+
+\item Как используется регистр ip?
+
+\item Как используется регистр sp?
+\end{enumerate}
