@@ -99,16 +99,22 @@
 \newcommand{\RN}[1]{\ensuremath{\mathrm{#1}}}
 \newcounter{romannumberx}
 \def\ToRomanEmpire#1{\setcounter{romannumberx}{#1}\Roman{romannumberx}}
+\newcommand{\hex}[1]{\ensuremath{\mathtt{#1}}}
 
 
 
 
-% \DeclareMathOperator{\And}{and}
-\DeclareMathOperator{\Or}{or}
-\DeclareMathOperator{\Xor}{xor}
-\DeclareMathOperator{\Not}{not}
+% \DeclareMathOperator{\And}{and} уже определён как & (не в common!)
+\DeclareMathOperator{\Or}{|}
+\DeclareMathOperator{\Xor}{\hat{~}}
+\DeclareMathOperator{\Not}{!}
 \DeclareMathOperator{\Neg}{neg}
 
+\DeclareMathOperator{\AND}{and}
+\DeclareMathOperator{\OR}{or}
+\DeclareMathOperator{\XOR}{xor}
+\DeclareMathOperator{\NOT}{not}
+\DeclareMathOperator{\NEG}{neg}
 
 
 % Рисование регистров
