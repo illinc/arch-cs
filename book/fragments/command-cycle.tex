@@ -67,7 +67,8 @@ baseline=(current bounding box.north)
 \node[memlabel,above= of O1]   {Память};
 
 \path[blockarrow] (C1) -- (C1_to_C) -| node[near start, above, sloped] {выборка} (C);
-\path[blockarrow] (C) |- node[near start,above, sloped] {декодирование} (alu);
+\path[blockarrow] (C) |- node[%near start,
+pos=0.3, above, sloped] {декодирование} (alu);
 \path[blockarrow] (O1) -- node[near start,above, sloped] {загрузка} (mem_to_B1) -- (B1);
 
 \path[blockarrow] (An) -- (An|-alu.north);

@@ -1,20 +1,31 @@
+\newlength{\ndist}
+\setlength{\ndist}{2ex}
+
 % \tikzstyle{blockarrow}	= [-latex',thick,draw]
 \begin{tikzpicture}[
 start chain=uvv going right,
 start chain=bus_south going right,
 % start chain=bus_north going below,
 start chain=bus_comment going above,
+start chain=bus_vdown going below,
+start chain=bus_vup going above,
 % every on chain/.style=join,
 % every on chain/.style=solidchaincell,
 % every join/.style=blockarrow,
-node distance=2ex and 2ex,
+node distance=\ndist and 2ex,
 baseline=(current bounding box.north)
 ]
-\tikzstyle{strokednode}	= [text badly centered, draw=black, thick]
+\tikzstyle{strokednode}	= [text badly centered, draw=black, thick, inner xsep = \ndist]
 \tikzstyle{block}	= [strokednode, text width=18ex, minimum height=6ex]
 
 
-\tikzstyle{bus}	= [ultra thick, draw=black!80!green]
+% \tikzstyle{bus}	= [ultra thick, draw=black!80!green]
+\tikzstyle{bus}	= [very thick,double]
+% \tikzstyle{powerline}	= [draw=green]
+\tikzstyle{powerline}	= []
+% \tikzstyle{buscommentstyle}	= [blue,thin, text=blue]
+\tikzstyle{buscommentstyle}	= [densely dashed,thin]
+
 
 \node[block, on chain=uvv] (hdd) {Долговременная память};
 \node[block, on chain=uvv] (prn) {Принтер};
@@ -22,57 +33,99 @@ baseline=(current bounding box.north)
 \node[block, on chain=uvv] (mon)  {Монитор};
 \node[fit=(hdd) (mon), inner sep=0ex] (uvv_box) {};
 
-\node[strokednode, text width=50ex, above=4ex of uvv_box] (uvv_common) {Устройства ввода-вывода};
+\node[block, text width=42ex, above=2\ndist of uvv_box] (uvv_common) {Устройства ввода-вывода};
 
 \foreach \i in {hdd, prn, kbd, mon}
 {
   \draw[] (\i.north) -- (uvv_common);
 }
 
+\coordinate[left = 0.5\ndist of uvv_common.north] (centerleftbus_south);
 
-\coordinate[on chain=bus_south] (addr_south) at (uvv_common.120);
+\coordinate[on chain=bus_south, left = of centerleftbus_south] (addr_south);
 \coordinate[on chain=bus_south] (data_south);
 \coordinate[on chain=bus_south] (ctrl_south);
 \coordinate[on chain=bus_south] (power_south);
 
+\coordinate[right = 2\ndist of power_south] (rightblocks_west);
+
 \tikzstyle{block}	= [strokednode, text width=18ex, minimum height=10ex]
 
-\coordinate[above=12ex of addr_south] (addr_ram);
-\node[block, left = 4ex of addr_ram] (ram)  {Оперативная память};
-
-\coordinate[below = of addr_ram] (data_ram);
-\coordinate[above = of addr_ram] (ctrl_ram);
-\coordinate[above = of ctrl_ram] (power_ram);
-
-\node[strokednode, text width=33ex, text badly ragged, right =4ex of addr_ram-|power_south] (cpu)  {
+% \node[strokednode, text width=33ex, text badly ragged, above right = 2\ndist of power_south] (cpu)  {
+\node[strokednode, text width=27ex, text badly ragged, above  = 2\ndist of rightblocks_west, anchor=south west] (cpu)  {
 Центральный процессор
-\setlength{\leftmargini}{4ex}
-\begin{itemize}
-\item регистр команд; 
-\item устройство управления;
+% \setlength{\leftmargini}{14ex}
+\begin{itemize}[leftmargin=*,topsep=0pt,itemsep=0pt]
 \item АЛУ;
-\item адресный регистр; 
-\item указатель команды.
+% \item устройство управления;
+\item УУ;
+\item регистры ЦПУ.
+% % \item адресный регистр; 
+% \item регистр команд; 
+% \item указатель команды.
 \end{itemize}
 };
 
-\tikzstyle{powerline}	= [draw=green]
+\tikzstyle{highest} = [above = 1.5\ndist of cpu.west]
+\foreach \i/\pos in {addr/highest, data/, ctrl/, power/}
+{
+  \coordinate[on chain=bus_vdown, \pos] (\i_cpu);
+}
+
+\node[block, left = 2\ndist of addr_south|-cpu.west] (ram)  {Оперативная память};
+
+
 
 \foreach \i/\s in {addr/, data/, ctrl/, power/powerline}
 {
-  \draw[bus, \s] (ram.east|-\i_ram) -- (cpu.west|-\i_ram);
+  \draw[bus, \s] (ram.east|-\i_cpu) -- (cpu.west|-\i_cpu);
+}
+
+{
+
+  \tikzset{node distance=3ex}
+  % \tikzset{buscommentstyle}
+
+  \coordinate[above =  of cpu.north-|addr_south, on chain=bus_comment] (addr_comment);
+  \coordinate[on chain=bus_comment] (data_comment);
+  \coordinate[on chain=bus_comment] (ctrl_comment);
+  \coordinate[on chain=bus_comment] (power_comment);
+
+  \coordinate (end_comment) at (cpu.east);
+
+
+  \foreach \i/\s in {addr/адреса, data/данных, ctrl/управления, power/\vphantom{у}питания}
+  {
+    \draw[buscommentstyle](\i_comment-|\i_south) -- node[above=-1ex, buscommentstyle, at end, anchor=south east, text badly ragged] {шина \s} (\i_comment-|end_comment);
+  }
 }
 
 
+% \node[block, above = 16ex of ram] (bios)  {Постоянное запоминающее устройство};
+% \node[block, right =4ex of bios-|power_south] (clock)  {Тактовый генератор};
 
-\node[block, above = 20ex of ram] (bios)  {Постоянное запоминающее устройство};
-\node[block, right =4ex of bios-|power_south] (clock)  {Тактовый генератор};
+\node[block, above = 2\ndist of power_comment-|rightblocks_west, anchor=south west] (clock)  {Тактовый генератор};
+\node[block, left = 2\ndist of addr_south|-clock] (bios)  {Постоянное запоминающее устройство};
 
-\coordinate[above = of bios.east-|ctrl_south] (ctrl_north);
-\coordinate (data_north) at (bios.east);
-\coordinate[below = of data_north] (addr_north);
 
-\coordinate[above = of ctrl_north-|power_south] (power_north);
+% \coordinate[above = of bios.east-|ctrl_south] (ctrl_north);
+% \coordinate (data_north) at (bios.east);
+% \coordinate[below = of data_north] (addr_north);
+% 
+% \coordinate[above = of ctrl_north-|power_south] (power_north);
+
+% \tikzstyle{highest} = [above = 1.5\ndist of bios.east]
+% \foreach \i/\pos in {addr/highest, data/, ctrl/, power/}
+% {
+%   \coordinate[on chain=bus_vdown, \pos] (\i_vnorth);
+%   \coordinate (\i_north) at (\i_vnorth-|\i_south);
+% }
+\tikzstyle{lowest} = [below = 1.5\ndist of bios.east]
+\foreach \i/\pos in {addr/lowest, data/, ctrl/, power/}
+{
+  \coordinate[on chain=bus_vup, \pos] (\i_vnorth);
+  \coordinate (\i_north) at (\i_vnorth-|\i_south);
+}
 
 \foreach \i/\s in {ctrl/, power/powerline}
 {
@@ -80,24 +133,12 @@ baseline=(current bounding box.north)
   \draw[bus, \s] (bios.east|-\i_north) -- (clock.west|-\i_north);
 }
 
-\draw[bus] (data_south) |- (data_north);
-\draw[bus] (addr_south) |- (addr_north);
+% \draw[bus] (data_south) |- (data_north);
+% \draw[bus] (addr_south) |- (addr_north);
 
-
-\tikzset{node distance=3ex}
-\tikzset{draw=blue,thin}
-
-\coordinate[above =  of cpu.north-|addr_south, on chain=bus_comment] (addr_comment);
-\coordinate[on chain=bus_comment] (data_comment);
-\coordinate[on chain=bus_comment] (ctrl_comment);
-\coordinate[on chain=bus_comment] (power_comment);
-
-\coordinate (end_comment) at (cpu.east);
-
-
-\foreach \i/\s in {addr/адреса, data/данных, ctrl/управления, power/\vphantom{у}питания}
+\foreach \i/\s in {addr/, data/}
 {
-  \draw[draw=blue](\i_comment-|\i_south) -- node[above=-1ex, text=blue, at end, anchor=south east, text badly ragged] {шина \s} (\i_comment-|end_comment);
+  \draw[bus] (\i_south) -- (\i_north) -- (\i_vnorth);
 }
 
 % \draw (bios) -- coordinate () (clock);

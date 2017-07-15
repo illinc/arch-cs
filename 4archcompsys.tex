@@ -101,7 +101,9 @@
 \def\ToRomanEmpire#1{\setcounter{romannumberx}{#1}\Roman{romannumberx}}
 \newcommand{\hex}[1]{\ensuremath{\mathtt{#1}}}
 
-
+\newcommand{\nondecdigit}[1]{\lapbox[\digitwidth]{0.06\digitwidth}{\ensuremath{\mathrm{\resizebox*{1.12\digitwidth}{\digitheight}{#1}}}}}
+\newcommand{\digitA}{\nondecdigit{A}}
+\newcommand{\digitB}{\nondecdigit{B}}
 
 
 % \DeclareMathOperator{\And}{and} уже определён как & (не в common!)

@@ -1,6 +1,6 @@
 # noexec на флешке #!/bin/bash
 
-MAINFILE=gas
+MAINFILE=archcs-gas
 
 pdflatex ${MAINFILE}
 
