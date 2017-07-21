@@ -12,12 +12,12 @@ baseline=(current bounding box.north)
 ]
 \tikzstyle{block}	= [text width=10ex,text badly centered, minimum height=4ex, draw=black]
 
-\tikzstyle{reg}	= [block,  fill=colorRegisterLight]
-\tikzstyle{alu}	= [block,  fill=colorCalcLight, text width=20ex]
-\tikzstyle{mem}	= [reg,  fill=colorMemoryLight]
+\tikzstyle{reg}	= [block,  fill=clRegisterLight]
+\tikzstyle{alu}	= [block,  fill=clCalcLight, text width=20ex]
+\tikzstyle{mem}	= [reg,  fill=clMemoryLight]
 
-\tikzstyle{reglabel}	= [block,  draw=none, node distance=0ex and 8ex, text=colorRegister]
-\tikzstyle{memlabel}	= [reglabel, text=colorMemory]
+\tikzstyle{reglabel}	= [block,  draw=none, node distance=0ex and 8ex, text=clRegisterDark]
+\tikzstyle{memlabel}	= [reglabel, text=clMemoryDark]
 
 \node[mem, on chain=Mem]  (s1) {};
 \node[mem,solidchaincell,on chain=Mem]  {};

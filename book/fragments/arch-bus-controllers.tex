@@ -20,20 +20,20 @@ baseline=(current bounding box.north)
 
 
 % \tikzstyle{bus}	= [ultra thick, draw=black!80!green]
-\tikzstyle{bus}	= [very thick,double]
+\tikzstyle{bus}	= [very thick,double, draw=clBusDark]
 % \tikzstyle{powerline}	= [draw=green]
 \tikzstyle{powerline}	= []
 % \tikzstyle{buscommentstyle}	= [blue,thin, text=blue]
-\tikzstyle{buscommentstyle}	= [densely dashed,thin]
+\tikzstyle{buscommentstyle}	= [densely dashed,thin, clCommentDark, text=clCommentDark]
 
 
-\node[block, on chain=uvv] (hdd) {Долговременная память};
-\node[block, on chain=uvv] (prn) {Принтер};
-\node[block, on chain=uvv] (kbd) {Клавиатура};
-\node[block, on chain=uvv] (mon)  {Монитор};
+\node[block, on chain=uvv, fill=clDeviceLight] (hdd) {Долговременная память};
+\node[block, on chain=uvv, fill=clDeviceLight] (prn) {Принтер};
+\node[block, on chain=uvv, fill=clDeviceLight] (kbd) {Клавиатура};
+\node[block, on chain=uvv, fill=clDeviceLight] (mon)  {Монитор};
 \node[fit=(hdd) (mon), inner sep=0ex] (uvv_box) {};
 
-\node[block, text width=42ex, above=2\ndist of uvv_box] (uvv_common) {Устройства ввода-вывода};
+\node[block, text width=42ex, above=2\ndist of uvv_box, fill=clDeviceLight] (uvv_common) {Устройства ввода-вывода};
 
 \foreach \i in {hdd, prn, kbd, mon}
 {
@@ -52,7 +52,7 @@ baseline=(current bounding box.north)
 \tikzstyle{block}	= [strokednode, text width=18ex, minimum height=10ex]
 
 % \node[strokednode, text width=33ex, text badly ragged, above right = 2\ndist of power_south] (cpu)  {
-\node[strokednode, text width=27ex, text badly ragged, above  = 2\ndist of rightblocks_west, anchor=south west] (cpu)  {
+\node[strokednode, text width=27ex, text badly ragged, above  = 2\ndist of rightblocks_west, anchor=south west, fill=clCalcLight] (cpu)  {
 Центральный процессор
 % \setlength{\leftmargini}{14ex}
 \begin{itemize}[leftmargin=*,topsep=0pt,itemsep=0pt]
@@ -72,7 +72,7 @@ baseline=(current bounding box.north)
   \coordinate[on chain=bus_vdown, \pos] (\i_cpu);
 }
 
-\node[block, left = 2\ndist of addr_south|-cpu.west] (ram)  {Оперативная память};
+\node[block, left = 2\ndist of addr_south|-cpu.west, fill=clMemoryLight] (ram)  {Оперативная память};
 
 
 
@@ -104,8 +104,8 @@ baseline=(current bounding box.north)
 % \node[block, above = 16ex of ram] (bios)  {Постоянное запоминающее устройство};
 % \node[block, right =4ex of bios-|power_south] (clock)  {Тактовый генератор};
 
-\node[block, above = 2\ndist of power_comment-|rightblocks_west, anchor=south west] (clock)  {Тактовый генератор};
-\node[block, left = 2\ndist of addr_south|-clock] (bios)  {Постоянное запоминающее устройство};
+\node[block, above = 2\ndist of power_comment-|rightblocks_west, anchor=south west, fill=clDeviceLight] (clock)  {Тактовый генератор};
+\node[block, left = 2\ndist of addr_south|-clock, fill=clDeviceLight] (bios)  {Постоянное запоминающее устройство};
 
 
 % \coordinate[above = of bios.east-|ctrl_south] (ctrl_north);

@@ -10,7 +10,8 @@
 \input{\COMMONPATH/1disser}
 \input{\COMMONPATH/3subj-book}
 \input{4archcompsys}
-\input{book/viewheader}
+\def\blackandwhiteschemas{0}
+\input{viewheader}
 \graphicspath{{fig/}{fig/digits/}{fig/fpu/}}
 
 \geometry{margin=20mm}
@@ -80,14 +81,14 @@
 
 \input{book/tools}
 
-\input{book/asm}
-\input{book/gas}
 
 
-% \input{book/disasm}
 
 \input{book/cpp}
+% \input{book/disasm}
 
+\input{book/gas}
+\input{book/asm}
 
 \chapter{Лабораторный практикум GNU Assembler}
 \begingroup

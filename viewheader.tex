@@ -1,0 +1,53 @@
+
+% \def\blackandwhiteschemas{0}
+
+\newcommand{\colorpairlet}[3]
+{
+  \ifthenelse{\equal{\blackandwhiteschemas}{1}}
+  {
+      \colorlet{cl#1Dark}{black}
+      \colorlet{cl#1Light}{white}
+  }
+  {
+      \colorlet{cl#1Dark}{#2}
+      \colorlet{clDark}{#2}
+      \colorlet{cl#1Light}{#3}
+  }
+}
+
+% \ifthenelse{\equal{\blackandwhiteschemas}{1}}
+% {
+%   \colorlet{clRegisterDark}{black}
+%   \colorlet{clMemoryDark}{black}
+%   \colorlet{clDeviceDark}{black}
+% 
+%   \colorlet{clRegisterLight}{white}
+%   \colorlet{clMemoryLight}{white}
+%   \colorlet{clCalcLight}{white}
+% }
+% {
+%   \colorlet{clRegisterDark}{black!80!green}
+%   \colorlet{clMemoryDark}{blue(ncs)}
+%   \colorlet{clDeviceDark}{olive}
+% 
+%   \colorlet{clRegisterLight}{green!50!yellow!10!white}
+%   \colorlet{clMemoryLight}{clMemoryDark!20!white}
+%   \colorlet{clCalcLight}{yellow!40!white}
+%   \colorlet{clDeviceLight}{clRegisterDark!40!white}
+% }
+
+\colorpairlet{Register}{olive}{clDark!40!white}
+% \colorpairlet{Register}{black!80!green}{green!70!yellow!10!white}
+\colorpairlet{Memory}{blue(ncs)}{clDark!20!white}
+\colorpairlet{Calc}{black}{yellow!40!white}
+\colorpairlet{Bus}{black!80!green}{green!70!yellow!10!white}
+% \colorpairlet{Device}{black}{clBusDark!5!white}
+\colorpairlet{Device}{black}{white}
+% \colorpairlet{Comment}{gray}{clDark!40!white}
+\colorpairlet{Comment}{blue}{clDark!40!white}
+
+
+
+
+\colorlet{csControl}{green!50}
+\colorlet{csSystem}{blue!20!red!10}

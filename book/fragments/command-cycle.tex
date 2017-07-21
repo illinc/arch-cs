@@ -14,12 +14,12 @@ baseline=(current bounding box.north)
 ]
 \tikzstyle{block}	= [text width=10ex,text badly centered, minimum height=4ex, draw=black]
 
-\tikzstyle{reg}	= [block,  fill=colorRegisterLight]
-\tikzstyle{alu}	= [block,  fill=colorCalcLight, text width=20ex]
-\tikzstyle{mem}	= [reg,  fill=colorMemoryLight]
+\tikzstyle{reg}	= [block,  fill=clRegisterLight]
+\tikzstyle{alu}	= [block,  fill=clCalcLight, text width=20ex]
+\tikzstyle{mem}	= [reg,  fill=clMemoryLight]
 
-\tikzstyle{reglabel}	= [block,  draw=none, node distance=0ex, text=colorRegister]
-\tikzstyle{memlabel}	= [reglabel, text=colorMemory]
+\tikzstyle{reglabel}	= [block,  draw=none, node distance=0ex, text=clRegisterDark]
+\tikzstyle{memlabel}	= [reglabel, text=clMemoryDark]
 
 \node[reg,solidchaincell,on chain=RegA] (A1) {Регистры};
 \node[reg,solidchaincell,on chain=RegA] (A2) {};
@@ -40,12 +40,20 @@ baseline=(current bounding box.north)
 
 % \coordinate[left=  of A2-|flags] (result_to_A2);
 
-\coordinate[below= of alu_exec] (alu_exec_to_result);
-\coordinate (result) at (result_to_A2|-alu_exec_to_result);
+% \coordinate[left = of alu_exec.south] (alu_exec_south_to_result);
+% \coordinate[right = of alu_exec.south] (alu_exec_south_to_addr);
 
+
+\coordinate[below= of alu_exec] (alu_exec_to_result);
+% \coordinate[below= of alu_exec_south_to_result] (alu_exec_to_result);
+\coordinate (result) at (result_to_A2|-alu_exec_to_result);
+% % \coordinate[below= of alu_exec_to_result] (alu_exec_to_addr);
+% % \coordinate[below= of alu_exec_to_result-|alu_exec_south_to_addr] (alu_exec_to_addr);
+% \coordinate[right = of alu_exec] (alu_exec_to_addr);
+\coordinate[below= of alu_exec_to_result] (alu_exec_to_addr_lowline);
 
 \node[reg,right=  of B2] (C) {К-1};
-\node[reglabel,right= of C]   {Регистр команд};
+\node[reglabel,right= of C] (C_comment)   {Регистр команд};
 
 \coordinate[above= of A1|-mem_to_B1] (from_prog);
 \node[mem, above= of from_prog,on chain=MemProg] (C1)  {К-1};
@@ -56,7 +64,8 @@ baseline=(current bounding box.north)
 \coordinate[below= of C1] (C1_to_C);
 
 \node[reg,above left= of C1] (IP)  {УК};
-\node[reglabel,left= of IP]   {Указатель команды (ip)};
+% \node[reglabel,left= of IP]   {Указатель команды (ip)};
+\node[reglabel,above= of IP, text width=22ex]   {Указатель команды (ip)};
 
 % \node[mem,solidchaincell,above left= 8ex of A1,on chain=MemData]  {Память};
 \node[mem, left=of mem_to_B1-|result_to_A2, on chain=MemData]  (O1) {Оп-1};
@@ -69,14 +78,25 @@ baseline=(current bounding box.north)
 \path[blockarrow] (C1) -- (C1_to_C) -| node[near start, above, sloped] {выборка} (C);
 \path[blockarrow] (C) |- node[%near start,
 pos=0.3, above, sloped] {декодирование} (alu);
-\path[blockarrow] (O1) -- node[near start,above, sloped] {загрузка} (mem_to_B1) -- (B1);
+% \path[blockarrow] (O1) -- node[near start,above, sloped] {загрузка} (mem_to_B1) -- (B1);
+\path[blockarrow] (O1) -- node[near start,above, sloped] {выборка} (mem_to_B1) -- (B1);
 
 \path[blockarrow] (An) -- (An|-alu.north);
 \path[blockarrow] (Bn) -- (Bn|-alu.north);
 
-\path[blockarrow, draw=colorRegister] (IP) -| (C1);
+\path[blockarrow, draw=clRegisterDark] (IP) -| (C1);
 \path[blockarrow] (alu_exec) --  node[at end, above, sloped] {флаги} (flags);
 \path[blockarrow] (alu_exec) -- (alu_exec_to_result)  -- node[midway, above, sloped] {результат} (result) --  node[midway, above, sloped] {запись} (result_to_A2) -- (A2);
 \path[blockarrow] (result) -|  node[pos=0.84, above, sloped] {запись} (On) ;
+
+\coordinate[left = of O1] (from_exec_to_ip);
+% \path[blockarrow] (alu_exec) -- (alu_exec_to_addr) |- (alu_exec_to_addr_lowline)  -| node[near start, below, sloped] {адрес следующей команды} (from_exec_to_ip)  |-  node[midway, above, sloped] {коррекция}   (IP);
+\coordinate[right = of C_comment] (from_fetch_to_addr);
+\tikzstyle{ipcorr}	= [draw,densely dashed,thin]
+% \path[blockarrow, ipcorr] (alu-|C) |- (alu_exec_to_addr_lowline)  -| node[near start, below, sloped] {адрес следующей команды} (from_exec_to_ip)  |-  node[midway, above, sloped] {коррекция}   (IP);
+\path[blockarrow, ipcorr] (C1_to_C) -| (from_fetch_to_addr) |- node[near start, above, sloped] {адрес следующей команды} (alu_exec_to_addr_lowline)  -|  (from_exec_to_ip)  |-  (IP);
+% \path[blockarrow, ipcorr] (alu_exec_to_result) -- (alu_exec_to_addr_lowline);
+\path[blockarrow, ipcorr] (alu_exec) --  node[midway, below, sloped] {коррекция}  (alu_exec-|from_fetch_to_addr);
+\path[ipcorr] (alu-|C) -- (alu_exec-|C);
 
 \end{tikzpicture}

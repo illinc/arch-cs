@@ -67,14 +67,14 @@
 
 
 \definecolor{blue(ncs)}{rgb}{0.0, 0.53, 0.74}
-\colorlet{colorRegister}{olive}
-\colorlet{colorMemory}{blue(ncs)}
+\colorlet{clRegisterDark}{olive}
+\colorlet{clMemoryDark}{blue(ncs)}
 
-\colorlet{colorRegisterLight}{colorRegister!40!white}
-\colorlet{colorMemoryLight}{colorMemory!20!white}
-\colorlet{colorCalcLight}{yellow!40!white}
+\colorlet{clRegisterLight}{clRegisterDark!40!white}
+\colorlet{clMemoryLight}{clMemoryDark!20!white}
+\colorlet{clCalcLight}{yellow!40!white}
 
-\newcommand{\Reg}[1]{{\textcolor{colorRegister}{#1}}}
+\newcommand{\Reg}[1]{{\textcolor{clRegisterDark}{#1}}}
 
 \newcommand{\mathReg}[1]{\text{\Reg{\texttt{#1}}}}
 
@@ -127,7 +127,7 @@
   
 \tikzstyle{bitlabel}	= []
 \tikzstyle{block}	= [text badly centered, minimum height=\bitwidthex ex, draw=black]
-\tikzstyle{reg}	= [block,  fill=colorRegisterLight]
+\tikzstyle{reg}	= [block,  fill=clRegisterLight]
 \tikzstyle{bit}	= [reg, solidchaincell, minimum width=\bitwidthex ex]
 
 \newcommand{\onebit}[3][]
