@@ -1,8 +1,96 @@
 
-\subsection{%РњРёРєСЂРѕР°СЂС…РёС‚РµРєС‚СѓСЂР° %РїСЂРѕС†РµСЃСЃРѕСЂР° 
-РЎС‚СЂСѓРєС‚СѓСЂР°
+
+
+1938 "--- механическая счётная машина Z1 Конрада Цузе, Германия, была использована уже двоичная система счисления.
+Для ввода-вывода данные преобразовывались в~десятичный вид.
+
+1939 "--- усовершенствованный вариант вычислителя Цузе, Z2 на основе телеграфных реле.
+
+1941 "--- Z3
+
+% http://wiki.livid.pp.ru/students/cs/lectures/1.html
+% В~механической счётной машине Z1 Конрада Цузе (1938~г.) была использована уже двоичная система счисления.
+% Это позволило существенно уменьшить размеры устройства.
+% Усовершенствованный вариант вычислителя Цузе, Z2 на основе телеграфных реле (1939),  закрепил использование двоичной логики.
+
+
+
+1943 "--- ЭНИАК (ENIAC, Electronic Numerical Integrator and Computer) на  вакуумных лампах и десятичной СС
+% Эниак иногда называют первой ЭВМ, но он не являлся вычислительной машиной (компьютером) в~современном понимании, так как не программировался.
+
+% 
+% Реле может находиться только в~двух состояниях "--- оно открыто либо закрыто.
+% Именно в~электромеханическом реле в~Mark II (1946), согласно легенде, был обнаружен первый баг.
+
+1943--1950 "--- Z4 на реле, первый ЯВУ (Планкалкюль)
+
+1946  первый баг,  Mark 2, Гарвард
+
+1952~г. Первый компилятор, {A-0}
+
+1954~г.
+ПП-1
+
+1957~г.
+Фортран
+APL
+
+1958~г.
+Алгол
+Lisp, 
+
+
+1959~г.  Кобол, США
+
+1959~г. троичная ЭВМ Сетунь, МГУ
+% https://habrahabr.ru/company/ua-hosting/blog/273929/
+
+1967-1969 троичная ЭВМ Сетунь-70
+язык ДССП "--- одно слово программы соответствует одному слову кода. 
+
+1968 Паскаль
+
+
+2000 компилятор Планкалкюль
+
+% https://habrahabr.ru/company/ua-hosting/blog/273929/
+% С 2008 года в университете « California Polytechnic State University of San Luis Obispo» функционирует цифровая компьютерная система TCA2, основанная на троичной системе счисления.
+2008 "--- троичная ЭВМ TCA2, Калифорнийский политехнический университет
+
+
+
+
+\chapter{Краткий обзор уровней современной ВС }
+\nsection{Контрольные вопросы}
+
+\includegraphics[width=\approvedImageWidth,valign=t]{multi-level-abstract}
+
+
+
+\includegraphics[width=\approvedImageWidth,valign=c]{multi-level-asm}
+
+
+\includegraphics[width=\approvedImageWidth,valign=c]{Layered_computer_structure}
+
+
+Сигналы и~вентили
+
+\newcolumntype{Y}{>{$}C<{$}}
+\newcolumntype{Z}{>{\columncolor{csMarker}}Y}
+\begin{tabularx}{1\linewidth}{YY|YZZ|YYY}
+a 	&	b &	\lnot a 	&	\overline{a \land b} 	&	\overline{a \lor b} & a \land b 	&	a \lor b & a \oplus b\\\hline
+0 	&	0 	&\multirow{2}{*}{$1$}&	1         	&	1         &0         	&	0         &	0\\
+0 	&	1 	&		&	1         	&	0         &0         	&	1         &	1\\\hline
+1 	&	0 	&\multirow{2}{*}{$0$}&	1         	&	0         &0         	&	1         &	1\\
+1 	&	1 	&		&	0         	&	0         &1         	&	1         &	0\\\hline
+\end{tabularx}
+
+
+
+\subsection{%Микроархитектура %процессора 
+Структура
 Intel 8008
-Рё~Core2}
+и~Core2}
 
 \begin{tabularx}{1\linewidth}{@{}l@{\,}l@{}}
 % \includegraphics[width=0.7\linewidth,valign=c]{data-path}
@@ -16,9 +104,9 @@ Intel 8008
 
 
 
-\subsection{РњР°РіРёСЃС‚СЂР°Р»Рё}
-% \subsection{РњР°РєСЂРѕР°СЂС…РёС‚РµРєС‚СѓСЂР°}
-% \subsection{Р¤СѓРЅРєС†РёРѕРЅР°Р»СЊРЅР°СЏ СЃС…РµРјР° РєРѕРјРїСЊСЋС‚РµСЂР°}
+\subsection{Магистрали}
+% \subsection{Макроархитектура}
+% \subsection{Функциональная схема компьютера}
 % \begin{frame}{\insertsubsection}
 % \footnotesize
 % {
@@ -31,4 +119,188 @@ Intel 8008
 
 \resizebox{0.8\linewidth}{!}{
 \input{book/fragments/arch-bus-controllers}
+}
+
+\section{С плавающей точкой}
+
+
+Если рассматривать вещественное число $X$ в~виде~\eqref{eq:digits:position-exponentiation-realsweaexsdd},
+мантисса нормализованного представления $X$ включает 
+% все двоичные цифры, начиная со старшей ненулевой цифры $x_k$ (так как двоичные цифры могут принимать только значения $0$ и~$1$, $x_k=1$),
+все цифры, начиная со старшей ненулевой,
+а~порядок 
+на единицу больше  степени основания~$N$ в~\eqref{eq:digits:position-exponentiation-realsweaexsdd} при этой старшей ненулевой цифре.
+% равен~$w+1$.
+
+% \begin{equation}
+% % \label{eq:digits-floatpoint-position}
+% \begin{array}{c}
+% X = \overline{x_k \ldots x_1 x_0,x_{-1}\ldots} 
+% = x_k\cdot 2^w + \ldots + x_1\cdot 2 + x_0 + \dfrac{x_{-1}}{2} + \ldots  = \\[2ex]
+% = 2^{w+1}\cdot \left( \dfrac{x_k}{2} + \ldots + \dfrac{x_1}{2^w} + \dfrac{x_0}{2^{w+1}} + \dfrac{x_{-1}}{2^{w+2}} + \ldots  \right) = \\[2ex]
+% = 2^{w+1}\cdot\overline{0, x_k \ldots x_1 x_0x_{-1}\ldots}, ~~ 0\leqslant x_i < 2 ~\text{"--- целые}, x_k \neq 0
+% \end{array}
+% \end{equation}
+% При переходе к~\eqref{eq:digits-floatpoint-def} запятая сместилась от~разряда $x_{-1}$ к~$x_k$.
+Таким образом, в~нормализованном представлении десятичная или двоичная  запятая в~мантиссе всегда стоит перед старшей ненулевой цифрой.
+При обратном переходе от~нормализованного представления~\eqref{eq:digits-floatpoint-def} к~позиционному~\eqref{eq:digits:position-exponentiation-realsweaexsdd}  запятая сместится от начала мантиссы 
+% к~$p=w+1$ (начиная от старшего) разряду $x_{0}$.
+к~разряду~$p$ (начиная от старшего). 
+В~зависимости от значения порядка  запятая в~мантиссе может быть поставлена после любого разряда, поэтому представление 
+вещественного числа в~виде комбинации знака, порядка и~мантиссы называется представлением с~плавающей запятой (в~западных источниках "--- с~плавающей точкой).
+
+После нормализации мантисса округляется до заданной длины.
+
+Но, так как порядок $p$ кодируется конечным числом бит, он может принимать только ограниченный диапазон значений.
+\begin{equation}
+p_{min} \leqslant p \leqslant p_{max}
+\end{equation}
+Соответственно, и~диапазон представимых в~нормализованном виде чисел также ограничен.
+% 
+Значения, большие максимального нормализованного числа, невозможно представить в~формате с~плавающей запятой.
+% 
+Некоторые значения, меньшие минимального нормализованного числа, могут быть представлены %в~денормализованном виде:
+в~форме~\eqref{eq:digits-floatpoint-def} с~$p = p_{min}$ и~$\mu < 0,1_N$.
+Такие числа называются денормализованными.
+% \begin{equation}
+% X = (-1)^{s} \cdot 2^{p} \cdot \mu, ~~ s \in \{0, 1\}, p \in \Integerset, 0 \leqslant \mu < 0,1
+% \end{equation}
+
+
+В~частности, рассмотрим нормализацию двух чисел в~десятичной системе счисления:
+\begin{equation}
+\begin{array}{c}
+512,12 = 0,51212 \cdot 10^3\\
+0,0017 = 0,17 \cdot 10^{-2}
+% 512,12\ldots = 0,51212\ldots \cdot 10^3\\
+% 0,0017\ldots = 0,17\ldots \cdot 10^{-2}
+\end{array}
+\end{equation}
+и в~двоичной:
+\begin{equation}
+\begin{array}{c}
+1000000000,0001111\ldots = 0,10000000000001111\ldots \cdot 2^9\\
+% 0,00000000011011 = 0,11011 \cdot 2^{-9}
+  0,00000000011011110110100\ldots
+ = 0,11011110110100\ldots \cdot 2^{-9}
+\end{array}
+\end{equation}
+
+
+Вещественные числа, 
+(Согласно стандарту двоичной арифметики с~плавающей точкой IEEE 754~\cite{ieeeFloat1985rus, ieeeFloat2008},
+% представляются в~виде знака, экспоненты (порядка) и~мантиссы
+рис.~\ref{ris:ieee754_1}).
+
+
+% Это представление основано на двоичной экспоненциальной форме вещественного числа $F$, то есть:
+Число $F$ представляется в~двоичной экспоненциальной форме "--- в~виде произведения трёх компонент:
+\begin{itemize}
+\item знак ($+1$ или $-1$);
+\item двойка в~некоторой степени~$\epsilon$, называемой \emph{порядком}, или экспонентой; %(порядок "--- зна);
+% (для записи очень маленьких чисел порядок должен быть отрицательным);
+\item \emph{мантиссы $\mu$} "--- двоичной дроби $1 \leqslant \mu <2$, то есть $\mu = 1,\beta_1\beta_2\beta_3\ldots\beta_n$, где $\beta_i$ "--- двоичный разряд.
+\end{itemize}
+$$
+F = (-1)^{\sigma} \cdot 2^{\epsilon} \cdot \mu
+% \big( 1,\beta_1\beta_2\beta_3\ldots\beta_n \big)
+$$
+В~такой форме можно представить любое конечное число, кроме нуля.
+
+Старший бит (S) "--- бит знака, если $S=0$ "--- число положительное, если $S=1$ "--- число отрицательное.
+Следующие $b$ бит отводятся под  порядок, смещённый на $2^{b-1} - 1$ (то есть 
+знаковое значение порядка представляется не дополнительным кодом, а~кодом с~избытком:
+% для отр
+порядок~$0$ представляется числом $2^{b-1} - 1$,
+% отрицательные порядки представляются малыми беззнаковыми числами
+порядок~$-2^{b-1}+1$ "--- нулём%
+).
+% S - бит знака, если S=0 - положительное число; S=1 - отрицательное число
+% E - смещенная экспонента двоичного числа;
+% exp2 = E - (2(b-1) - 1) - экспонента двоичного нормализованного числа с плавающей точкой
+% (2(b-1) -1) - заданное смещение экспоненты (в 32-битном ieee754 оно равно +127 см.выше)
+Оставшиеся $n$ бит кодируют $M$ остаток мантиссы двоичного нормализованного числа с плавающей точкой (мантиссу без ведущей единицы).
+
+Таким образом, значение вещественного числа (рис.~\ref{ris:ieee754_1}) для всех комбинаций битов, кроме исключительных (таблица~\ref{tab:ieee754-singular})   вычисляется по формуле:
+\begin{illustration}
+\includegraphics[width=\approvedImageWidth]{ieee754_1}
+\caption{Представление числа в формате IEEE 754}
+\label{ris:ieee754_1}
+\end{illustration}
+$$
+F = (-1)^S \cdot 2^{E - 2^{b-1} + 1} \cdot \left( 1 + \dfrac{M}{2^n}\right)
+$$
+
+\begin{table}
+
+\caption{Исключительные значения представления IEEE 754}
+\label{tab:ieee754-singular}
+\begin{tabular}%{l>{$}l<{$}}
+{ll}
+\includegraphics[width=\approvedImageWidth,valign=c]{ieee754+0} & $+0$\\
+\includegraphics[width=\approvedImageWidth,valign=c]{ieee754-0} & $-0$ \\
+\includegraphics[width=\approvedImageWidth,valign=c]{ieee754den} & денормализованные числа \\
+\\\hline
+\\
+\includegraphics[width=\approvedImageWidth,valign=c]{ieee754+inf} & $+\infty$ \\
+\includegraphics[width=\approvedImageWidth,valign=c]{ieee754-inf} & $-\infty$ \\
+\includegraphics[width=\approvedImageWidth,valign=c]{ieee754nan} & $NaN$ (нечисла) \\
+\end{tabular}
+\end{table}
+
+% Денормализованные числа. Это числа, мантиссы которых лежат в диапазоне 0.1 <= M <1.
+
+Денормализованные числа находятся ближе к нулю, чем наименьшие по модулю нормализованные. 
+% Их мантиссы (при минимально возможном по)
+% 
+% Денормализованные числа как бы разбивают минимальный разряд нормализованного числа на некоторое подмножество. Сделано так потому, что в технической практике чаще встречаются величины близкие к нулю. 
+
+Стандарт %двоичной арифметики с~плавающей точкой
+IEEE 754-2008 описывает
+%  \begin{itemize}
+% \item 
+три двоичных вещественных формата разрядностью 32, 64, и 128 бита. %;
+% \item два двоично-десятичных формата "--- 64 и~128 бита.
+% \end{itemize}
+% 
+Более старый вариант этого стандарта    IEEE 754-1985 определяет также формат с~двойной расширенной точностью (double-extended precision) $\geqslant$ 79 бит. % (обычно используют 80 бит).
+\index{Представление данных!вещественных!расширенной точности}
+
+\begin{illustration}
+\includegraphics[width=\wideImageWidth]{ieee754_32}\\
+a)\\
+
+\includegraphics[width=\wideImageWidth]{ieee754_64}\\
+б)
+\caption{Формат чисел а) одинарной (single-precision, 32 бита)  и~б) двойной точности (double-precision, 64 бита)}
+\label{ris:ieee754_32}
+\end{illustration}
+
+
+\resizebox{0.8\linewidth}{!}{
+\tikzstyle{blockarrow}	= [-latex',thick,draw=blue]
+\footnotesize
+\begin{tikzpicture}[start chain=cpp going below,start chain=S going below,
+every on chain/.style=join,every join/.style=blockarrow,
+node distance=2ex and 4ex
+]
+\tikzstyle{block}	= [text width=16ex,text badly centered, minimum height=3ex, draw=black]
+\tikzstyle{file}	= [block,  fill=yellow!40!white]
+\tikzstyle{stage}	= [block, fill=blue,text=white]
+
+
+\node[file,on chain=cpp] (prog1_s) {prog.s};
+\node[stage,on chain=cpp] (cpp_asm) {Ассемблер};
+\node[file,on chain=cpp] (prog1_o) {prog.o};
+\node[stage,on chain=cpp] (linker) {Компоновщик};
+
+  
+\node[file, right= of linker,text width=20ex] (obj_lib) {Объектные файлы библиотек};
+\path[blockarrow] (obj_lib) -- (linker);
+
+\node[file,below= of linker] (prog) {prog};
+\path[blockarrow] (linker) -- (prog);
+
+
+\end{tikzpicture}
 }

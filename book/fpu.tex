@@ -49,7 +49,7 @@ FPU x87 предоставляет восемь 80-разрядных регистров для хранения данных и~шесть 
 
 \resizebox{\linewidth}{!}
 {
-\input{book/fragments/fpureg}
+\input{book/drawings/fpureg}
 }
 
 \caption{Регистры FPU}
@@ -77,7 +77,7 @@ FPU x87 предоставляет восемь 80-разрядных регистров для хранения данных и~шесть 
 \end{alphenumerate}
 \begin{illustration}
 
-\resizebox{\linewidth}{!}{\input{book/fragments/fpureg-tw}}
+\resizebox{\linewidth}{!}{\input{book/drawings/fpureg-tw}}
 
 \caption{Слово тегов FPU}
 \label{ris:fpu-tw}
@@ -95,7 +95,7 @@ FPU x87 предоставляет восемь 80-разрядных регистров для хранения данных и~шесть 
 
 \resizebox{\linewidth}{!}
 {
-\input{book/fragments/fpureg-sw-cw}
+\input{book/drawings/fpureg-sw-cw}
 }
 
 \caption{Слово состояния и~управляющее слово FPU}
@@ -137,7 +137,7 @@ FPU x87 предоставляет восемь 80-разрядных регистров для хранения данных и~шесть 
 \begin{illustration}
 \resizebox{\linewidth}{!}
 {
-\input{book/fragments/fpu-top-change}
+\input{book/drawings/fpu-top-change}
 }
 
 \caption{Стек FPU}
@@ -171,8 +171,11 @@ FPU x87 предоставляет восемь 80-разрядных регистров для хранения данных и~шесть 
 % IEEE 754
 
 % http://stackoverflow.com/questions/612507/what-are-the-applications-benefits-of-an-80-bit-extended-precision-data-type
-Значения в~сопроцессоре представлены в 80-битном формате (с~двойной расширенной точностью соответственно IEEE 754-1985~\cite{ieeeFloat1985rus}).
-Этот формат исключён из современной версии стандарта IEEE 754~\cite{ieeeFloat2008}, но из-за соображений совместимости формат данных FPU не изменился.
+Значения в~сопроцессоре представлены в %80-битном формате 
+% (с~двойной расширенной точностью соответственно IEEE 754-1985~\cite{ieeeFloat1985rus}).
+% Этот формат исключён из современной версии стандарта IEEE 754~\cite{ieeeFloat2008}, но из-за соображений совместимости формат данных FPU не изменился.
+нестандартном 80-битном формате с~плавающей запятой,
+называемом форматом с~двойной расширенной (или просто расширенной) точностью.
 
 Нормализованное двоичное представление вещественного числа имеет вид~\cite{urov,av-assembler-asm-real-normalization}:
 \begin{equation}
@@ -215,51 +218,51 @@ $$
 Соответственно, минимальное положительное  число, представимое в~нормализованном виде в~%80-битном формате FPU, 
 формате расширенной точности,
 равно 
-$\xi_{min} = 2^{p_{min}} \cdot 0,1_2 = 2^{-2^{14}+2} = $ \lstinline$0001$\,\lstinline$8000...00$.
-Числа в~диапазоне $(0, \xi_{min})$ представляются в~виде $2^{p_{min}} \cdot m, ~~ 0 < m < 0,1_2$ и~называются \termin{денормализованными}.
+$X_{min} = 2^{p_{min}} \cdot 0,1_2 = 2^{-2^{14}+2} = $ \lstinline$0001$\,\lstinline$8000...00$.
+Числа в~диапазоне $(0, X_{min})$ представляются в~виде $2^{p_{min}} \cdot m, ~~ 0 < m < 0,1_2$ и~называются \termin{денормализованными}.
 В~поле смещённого порядка таких чисел при этом записываются нули.
-В~частности, $\frac{\xi_{min}}{2} = 2^{p_{min}} \cdot 0,01_2 = 2^{p_{min}-1} \cdot 0,1_2$, но представляется это число как \lstinline$0000$\,\lstinline$4000...00$, 
+В~частности, $\frac{X_{min}}{2} = 2^{p_{min}} \cdot 0,01_2 = 2^{p_{min}-1} \cdot 0,1_2$, но представляется это число как \lstinline$0000$\,\lstinline$4000...00$, 
 % хотя порядок 
 в~чём можно убедиться при помощи отладчика.
 Если попытаться прочесть такую запись как корректное число, то получим нулевой знаковый бит, нулевой смещённый порядок, что соответствует порядку $p_{min}-1$, 
-и~мантиссу $0,0100..._2$, то есть $(-1)^0 \cdot 2^{p_{min}-1}\cdot 0,01_2 = \frac{\xi_{min}}{4}$, что неверно.
+и~мантиссу $0,0100..._2$, то есть $(-1)^0 \cdot 2^{p_{min}-1}\cdot 0,01_2 = \frac{X_{min}}{4}$, что неверно.
 Денормализованные числа "--- один из видов \termin{специальных значений,} которые нельзя раскодировать по общему правилу.
 % Если попытаться 
 
-Представление отрицательных вещественных чисел, в~том числе из диапазона $(-\xi_{min}, 0)$ ,
+Представление отрицательных вещественных чисел, в~том числе из диапазона $(-X_{min}, 0)$ ,
 отличается от представления их модулей только знаковым битом.
 
 
 В~зарубежных источниках то же самое представление вещественных чисел в~FPU интерпретируется иначе~\cite{intelBasic} (хотя суть от этого не меняется).
 % 
-Там считается, что мантисса нормализованного числа включает целую часть (рис.~\ref{ris:fpu_digits-en}):
+Там считается, что мантисса нормализованного числа включает целую часть (рис.~\ref{ris:fpu_digits-en}),
 \begin{illustration}
 \includegraphics[width=\linewidth]{X86_Extended_Floating_Point_Format_ru}
-\caption{Внутренний 80-битный формат сопроцессора}
+\caption{Внутренний 80-битный формат сопроцессора в~зарубежной интерпретации}
 \label{ris:fpu_digits-en}
 \end{illustration}
-\begin{equation}
-\label{eq:float-en}
-(-1)^s \cdot 2^{\tilde{p}} \cdot \widetilde{m},~~ 1 \leqslant \widetilde{m} < 10_2
-\end{equation}
-% тогда нормализованные числа соответствуют мантиссам $1 \leqslant \widetilde{m} < 10_2$,
+% \begin{equation}
+% \label{eq:float-en}
+% (-1)^s \cdot 2^{\tilde{p}} \cdot \widetilde{m},~~ 1 \leqslant \widetilde{m} < 10_2
+% \end{equation}
+% % тогда нормализованные числа соответствуют мантиссам $1 \leqslant \widetilde{m} < 10_2$,
 тогда денормализованные числа соответствуют мантиссам $0 \leqslant \widetilde{m} < 1$.
 
-Формы~\eqref{eq:float-rus} и~\eqref{eq:float-en} взаимно однозначно соответствуют друг другу:
-$$
-\left\{
-\begin{array}{lll}
-\tilde{p} &=& p - 1\\
-\widetilde{m} &=& 2\cdot m\\
-\end{array}
-\right.
-$$
-Так как двоичная запятая не может быть сохранена в~регистре~$r_i$, а~только \emph{подразумевается} на той или иной позиции,
-двоичное представление мантиссы в~формах~\eqref{eq:float-rus} и~\eqref{eq:float-en} \emph{полностью совпадает.}
-Порядок~$\tilde{p}$ формы~\eqref{eq:float-en}, %в~этом случае 
-соответственно,
-записывается с~избытком $2^{14} -1$, так что полученное значение смещённого порядка в~результате также совпадает с~формой~\eqref{eq:float-rus}.
-Таким образом, двоичное представление одинаковых чисел (как нормализуемых в~формате расширенной точности, так и~денормализованных) одинаково и~не зависит от формы нормализованного представления.
+% Формы~\eqref{eq:float-rus} и~\eqref{eq:float-en} взаимно однозначно соответствуют друг другу:
+% $$
+% \left\{
+% \begin{array}{lll}
+% \tilde{p} &=& p - 1\\
+% \widetilde{m} &=& 2\cdot m\\
+% \end{array}
+% \right.
+% $$
+% Так как двоичная запятая не может быть сохранена в~регистре~$r_i$, а~только \emph{подразумевается} на той или иной позиции,
+% двоичное представление мантиссы в~формах~\eqref{eq:float-rus} и~\eqref{eq:float-en} \emph{полностью совпадает.}
+% Порядок~$\tilde{p}$ формы~\eqref{eq:float-en}, %в~этом случае 
+% соответственно,
+% записывается с~избытком $2^{14} -1$, так что полученное значение смещённого порядка в~результате также совпадает с~формой~\eqref{eq:float-rus}.
+% Таким образом, двоичное представление одинаковых чисел (как нормализуемых в~формате расширенной точности, так и~денормализованных) одинаково и~не зависит от формы нормализованного представления.
 
 \subsubsection{Виды значений}
 Регистры сопроцессора могут содержать следующие значения:
@@ -384,7 +387,7 @@ asm(
 \small
 \def\normalsize{\small}
 
-\LTXtable{\textwidth}{book/fragments/fpu-fld-list.tex}
+\LTXtable{\textwidth}{book/tables/fpu-fld-list.tex}
 
 % \endgroup
 
@@ -409,7 +412,7 @@ asm(
 \small
 \def\normalsize{\small}
 
-\LTXtable{\textwidth}{book/fragments/fpu-fst-list.tex}
+\LTXtable{\textwidth}{book/tables/fpu-fst-list.tex}
 
 \endgroup
 
@@ -506,7 +509,7 @@ x = 5.7  y = 0  i = 6  f = 10  l = 1
 \small
 \def\normalsize{\small}
 
-\LTXtable{\textwidth}{book/fragments/fpu-arcommon-typelist.tex}
+\LTXtable{\textwidth}{book/tables/fpu-arcommon-typelist.tex}
 
 \end{table}
 % \FloatBarrier
@@ -569,7 +572,7 @@ x = 5.7  y = 0  i = 6  f = 10  l = 1
 % \small
 % \def\normalsize{\small}
 % 
-% \LTXtable{\textwidth}{book/fragments/fpu-fsub-r-typelist.tex}
+% \LTXtable{\textwidth}{book/tables/fpu-fsub-r-typelist.tex}
 % 
 % \end{table}
 
@@ -596,7 +599,7 @@ x = 5.7  y = 0  i = 6  f = 10  l = 1
 \small
 \def\normalsize{\small}
 
-\LTXtable{\textwidth}{book/fragments/fpu-att-r-typelist.tex}
+\LTXtable{\textwidth}{book/tables/fpu-att-r-typelist.tex}
 
 \end{table}
 
@@ -615,7 +618,7 @@ x = 5.7  y = 0  i = 6  f = 10  l = 1
 \small
 \def\normalsize{\small}
 
-\LTXtable{\textwidth}{book/fragments/fpu-arcommon-mnemlist.tex}
+\LTXtable{\textwidth}{book/tables/fpu-arcommon-mnemlist.tex}
 
 *
 %Один из операндов всегда находится на вершине стека~$st(0)$.
@@ -692,7 +695,7 @@ asm(                           //          st(0),    st(1), st(2), st(3)
 \small
 \def\normalsize{\small}
 
-\LTXtable{\textwidth}{book/fragments/fpu-arex-list.tex}
+\LTXtable{\textwidth}{book/tables/fpu-arex-list.tex}
 
 \end{table}
 

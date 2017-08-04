@@ -23,6 +23,7 @@ baseline=(current bounding box.north)
 \node[mem,solidchaincell,on chain=Mem]  {};
 \node[mem,solidchaincell,on chain=Mem]  {};
 \node[mem,solidchaincell,on chain=Mem] (sCurrent) {};
+  \tikzstyle{mem}	= [block]
 \node[mem,solidchaincell,on chain=Mem]  {};
 \node[mem,solidchaincell,on chain=Mem]  {};
 \node[mem,solidchaincell,on chain=Mem]  {};
@@ -35,12 +36,15 @@ baseline=(current bounding box.north)
 \node[reglabel,right= of s1, text width=24ex]  (bottom)  {Дно стека \mbox{(начальное значение sp)}};
 
 \coordinate[right=of sCurrent]  (from_sp);
-% \node[reg, right=of from_sp]  (sp) {esp/sp};
-% \node[reglabel,right= of sp]   {Вершина стека};
-\node[reglabel,right= of from_sp] (top)  {Вершина стека};
-\node[reg, right=6ex of top]  (sp) {esp/sp};
 \coordinate[above=of from_sp]  (pop);
 \coordinate[below=of from_sp]  (push);
+
+% \node[reg, right=of from_sp]  (sp) {esp/sp};
+% \node[reglabel,right= of sp]   {Вершина стека};
+\node[reglabel,right= 12ex of from_sp] (top)  {Вершина стека};
+% \node[right = 6ex of from_sp-|pop.east, reglabel, anchor=west] (top)  {Вершина стека};
+
+\node[reg, right=6ex of top]  (sp) {esp/sp};
 
 % \path[blockarrow] (bottom) -- (s1);
 \path[blockarrow] (bottom-|sp.west) -- (s1);

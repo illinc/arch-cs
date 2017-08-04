@@ -1,6 +1,17 @@
 
 % \def\blackandwhiteschemas{0}
 
+  \ifthenelse{\equal{\blackandwhiteschemas}{1}}
+  {
+  }
+  {
+  \colorlet{clLink}{blue!90!black}
+\hypersetup{citecolor=clLink,linkcolor=clLink}
+  }
+  
+\newcounter{figletter} % для рисунков а) б) 
+
+
 \newcommand{\colorpairlet}[3]
 {
   \ifthenelse{\equal{\blackandwhiteschemas}{1}}
@@ -36,7 +47,8 @@
 %   \colorlet{clDeviceLight}{clRegisterDark!40!white}
 % }
 
-\colorpairlet{Register}{olive}{clDark!40!white}
+% \colorpairlet{Register}{olive}{clDark!40!white}
+\colorpairlet{Register}{olive!70!black}{olive!40!white}
 % \colorpairlet{Register}{black!80!green}{green!70!yellow!10!white}
 \colorpairlet{Memory}{blue(ncs)}{clDark!20!white}
 \colorpairlet{Calc}{black}{yellow!40!white}

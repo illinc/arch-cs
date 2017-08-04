@@ -2,6 +2,124 @@
 \chapter{Инструменты разработки}
 
 
+\subsubsection{Компиляторы C++ (x86)}
+
+\begin{itemize}
+\item \termin{GNU Compiler Collection (GCC)} "--- более 45 платформ, большинство ОС (порт под MS Windows "---  \termin{MinGW}), %7 языков (в~том числе C и~C++, стандарт), 
+лицензия GNU GPL 3+ 
+\item \termin{Portable C Compiler (PCC)} "--- Unix-подобные ОС, %GNU/Linux, 
+MS Windows; лицензия BSD
+
+
+\item \termin{TenDRA} "--- x86, x86-64, IA-64; POSIX-совместимые ОС; лицензия BSD
+
+\item \termin{Oracle Solaris Studio} "--- x86, x86-64, SPARC; Solaris, OpenSolaris, GNU/Linux; собственническая лицензия
+
+\item \termin{Intel C++ compiler} "--- x86, x86-64,  IA-64 (Itanium), GNU/Linux, MacOS X, MS Windows, коммерческая собственническая лицензия
+
+\item \termin{Open Watcom} "--- DOS, OS/2 и MS Windows; лицензия  	
+Sybase Open Watcom Public License version 1.0, 
+%не полностью поддерживает стандарт С++
+неполная поддержка стандарта
+
+\item \termin{MS Visual C++} "--- x86, x86-64, IA-64 и~.NET, только MS Windows, коммерческая собственническая лицензия, %грубые 
+нарушения стандарта
+
+% \item \termin{Norcroft C Сompiler} "--- Intel Pentium для GNU/Linux, коммерческая собственническая лицензия
+% 
+% 
+% \hrulefill
+% \item \termin{Clang} "--- виртуальная RISC-машина LLVM
+
+\end{itemize}
+
+Коллекция GCC:
+
+\termin{gcc} "---  компилятор~C;
+
+\termin{g++} "---  компилятор~C++.
+
+
+\subsubsection{Ассемблеры x86}
+
+\begin{itemize}
+\item \termin{GNU Assembler (GCC)} "--- более 45 платформ, большинство ОС, лицензия GNU GPL 3+ 
+\item \termin{Flat Assembler (FASM)} "--- x86, DOS, Microsoft Windows, UNIX-подобные (GNU/Linux, OpenBSD и др.), MenuetOS, KolibriOS, DexOS,  лицензия BSD 
+\item \termin{NASM/Yasm} "--- x86, x86-64, GNU/Linux, DOS, Microsoft Windows, UNIX,  лицензия BSD 
+% \item HLASM "--- z/Architecture IBM
+\item \termin{Turbo Assembler (TASM)/Lazy Assembler} "--- x86, DOS, Microsoft~Windows
+\item \termin{MASM} "--- x86, DOS, Microsoft Windows
+
+\end{itemize}
+
+{} \termin{AT\&T}
+
+\begin{lstlisting}[numbers=none]
+movl $42, %eax
+
+movl $0x10, %ebx
+
+
+lea  -0x30(%rcx,%rax,8), %eax
+movl (%ebx), %eax
+
+movl $0xCCCCCCCC, %ecx
+
+
+movl 0xCCCCCCCC, %ecx
+\end{lstlisting}
+
+
+% -4(%ebp), Intel:  [ebp - 4]
+{} \termin{Intel}
+
+\begin{lstlisting}[numbers=none]
+mov eax, 42
+
+mov ebx, 10h
+mov ebx, 0x10 ; masm
+
+lea eax, [rcx+rax*8-0x30]
+mov eax, dword ptr [ebx]
+
+mov ecx, 0xCCCCCCCC   
+/*@\textcolor{red}{mov ecx, dword ptr [0xCCCCCCCC] ; masm}@*/
+mov ecx, ds:[0xCCCCCCCC]
+/*@\textcolor{red}{mov ecx, dword ptr [0xCCCCCCCC] ; nasm}@*/
+\end{lstlisting}
+
+
+\subsubsection{Компиляция}
+
+main.cpp
+\begin{lstlisting}
+int x = 13;
+int main()
+{
+    int y = 2*x + 123;
+...
+}
+\end{lstlisting}
+
+g++ -S main.cpp $\to$
+
+main.s
+\begin{lstlisting}
+...
+.globl	x
+	.data
+	.align 4
+	.type	x, @object
+	.size	x, 4
+x:
+	.long	13
+...
+	movl	x, %eax
+	addl	%eax, %eax
+	addl	$123, %eax
+	movl	%eax, -12(%ebp)
+\end{lstlisting}
+
 
 
 \section{Процесс компиляции}
@@ -699,11 +817,11 @@ addl $4, %esp
 Если же вы хотите, чтобы произошло не что-то где-то, а~что надо и~здесь, придётся подбирать выражения. Точнее "--- заклинания.
 }{Жвалевский/Мытько}
 
-\addquestion Какие вы знаете соглашения о~вызове?
+\addquestion{Какие~вы знаете соглашения о~вызове?}
 
-\addquestion Как в~функции передаются целые параметры ?
-\addquestion Как в~функции передаются вещественные параметры?
-\addquestion Как в~функции передаются три и~более параметров?
+\addquestion{Как в~функции передаются целые параметры?}
+\addquestion{Как в~функции передаются вещественные параметры?}
+\addquestion{Как в~функции передаются три и~более параметров?}
 
 
 

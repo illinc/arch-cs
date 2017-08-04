@@ -1,0 +1,66 @@
+
+\tikzstyle{blockarrow}	= [-latex',draw]
+% \footnotesize
+\scriptsize
+% \tiny
+\begin{tikzpicture}[
+start chain=Mem going below,
+% every on chain/.style=join,
+% every on chain/.style=solidchaincell,
+% every join/.style=blockarrow,
+%	 	y and x
+node distance=2ex and 2ex,
+baseline=(current bounding box.north),
+x = 22ex
+]
+\tikzstyle{block}	= [text width=9ex,text badly centered, minimum height=2ex, draw=black]
+
+\tikzstyle{reg}	= [block,  fill=clRegisterLight, text width=5ex,]
+\tikzstyle{mem}	= [block,  fill=clMemoryLight]
+\tikzstyle{funcmem}	= [mem, minimum height=8ex ]
+
+
+% \newcounter{figletter}
+\setcounter{figletter}{1}
+
+
+\foreach \sp in {1,2,3,2,1}
+{
+  \coordinate (sbottom) at (\arabic{figletter}, 0);
+  \node[mem,solidchaincell, on chain=Mem, below=of sbottom]  {};
+  % \node[mem,solidchaincell,on chain=Mem]  {};
+  \node[mem,solidchaincell,on chain=Mem]  {$\ldots$};
+  \node[funcmem,solidchaincell,on chain=Mem] (s1) {Данные main()};
+  
+  \tikzmath{int \emptycells; \emptycells = 1;}
+  
+  % https://tex.stackexchange.com/questions/294686/ifthenelse-inside-tikz-not-working
+  % \pgfmathparse не работает
+  % >= не работает
+  
+  \xintifboolexpr{\sp > 1}
+    {\node[funcmem,solidchaincell,on chain=Mem] (s2) {Данные foo()}}
+    {\tikzmath{\emptycells = \emptycells + 4;}}
+  ;  
+  \xintifboolexpr{\sp > 2}
+    {\node[funcmem,solidchaincell,on chain=Mem] (s3) {Данные bar()}}
+    {\tikzmath{\emptycells = \emptycells + 4;}}
+  ;  
+  
+  \tikzstyle{mem}	= [block]
+  \foreach \i in {1,...,\emptycells}
+  {
+    \node[mem,solidchaincell,on chain=Mem] {};
+  }
+  \node[mem,solidchaincell,on chain=Mem]  {$\ldots$};
+  \node[mem,solidchaincell,on chain=Mem]  {};
+  
+  \coordinate[above=1ex of s\sp.south east]  (sCurrent);
+%   \coordinate[below=1ex of s\sp.north east]  (sCurrent);
+  \node[reg, right= of sCurrent]  (sp) {sp};
+  \path[blockarrow] (sp) -- (sCurrent);  
+
+  \node[on chain=Mem]   {\normalfont\normalsize\small\asbuk{figletter})\stepcounter{figletter}};
+}
+
+\end{tikzpicture}

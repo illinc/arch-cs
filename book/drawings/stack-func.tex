@@ -1,0 +1,60 @@
+\scriptsize
+\tikzstyle{blockarrow}	= [-latex',draw]
+% \footnotesize
+\scriptsize
+\begin{tikzpicture}[
+start chain=Mem going below,
+% every on chain/.style=join,
+% every on chain/.style=solidchaincell,
+% every join/.style=blockarrow,
+node distance=4ex and 8ex,
+baseline=(current bounding box.north)
+]
+\tikzstyle{block}	= [text width=20ex,text badly centered, minimum height=1ex, draw=black]
+
+\tikzstyle{reg}	= [block,  fill=clRegisterLight, text width=10ex,]
+% \tikzstyle{alu}	= [block,  fill=clCalcLight, text width=20ex]
+\tikzstyle{mem}	= [block,  fill=clMemoryLight]
+
+\tikzstyle{reglabel}	= [block,  draw=none, node distance=0ex and 8ex, text=clRegisterDark]
+\tikzstyle{memlabel}	= [reglabel, text=clMemoryDark]
+
+\node[mem, on chain=Mem]  (s1) {};
+% \node[mem,solidchaincell,on chain=Mem]  {};
+\node[mem,solidchaincell,on chain=Mem]  {$\ldots$};
+\node[mem,solidchaincell,on chain=Mem]  {Данные функции main()};
+\node[mem,solidchaincell,on chain=Mem]  {Данные функции foo()};
+\node[mem,solidchaincell,on chain=Mem]  (sfoo2) {Данные функции bar()};
+% \node[mem,solidchaincell,on chain=Mem] {Данные функции foo(), вызванной из bar()};
+\tikzstyle{mem}	= [block]
+
+% \node[mem,solidchaincell,on chain=Mem] {};
+% \node[mem,solidchaincell,on chain=Mem]  {};
+% \node[mem,solidchaincell,on chain=Mem]  {};
+\node[mem,solidchaincell,on chain=Mem]  {};
+\node[mem,solidchaincell,on chain=Mem]  {$\ldots$};
+\node[mem,solidchaincell,on chain=Mem]  {};
+
+
+
+\node[reglabel,right= of s1, text width=24ex]  (bottom)  {Дно стека \mbox{(начальное значение sp)}};
+
+\coordinate[above=1ex of sfoo2.south east]  (sCurrent);
+\coordinate[right=of sCurrent]  (from_sp);
+% \node[reg, right=of from_sp]  (sp) {esp/sp};
+% \node[reglabel,right= of sp]   {Вершина стека};
+\coordinate[above=of from_sp]  (pop);
+\coordinate[below=of from_sp]  (push);
+
+\path[blockarrow] (from_sp) -- node[right] {return} (pop);
+\path[blockarrow] (from_sp) -- node[right] (call) {вызов функции} (push);
+
+
+\node[reglabel,right = 1ex of from_sp-|call.east, text width=10ex] (top)  {Вершина стека};
+\node[reg, right= 2ex of top]  (sp) {esp/sp};
+\path[blockarrow] (sp) -- (sCurrent);
+
+% \path[blockarrow] (bottom) -- (s1);
+\path[blockarrow] (bottom-|sp.west) -- (s1);
+
+\end{tikzpicture}

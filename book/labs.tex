@@ -1,0 +1,69 @@
+
+\chapter{Лабораторный практикум GNU Assembler}
+\begingroup
+\input{\COMMONPATH/3subj-lab}
+% \let\oldsection\section
+% \let\oldnsection\nsection
+
+\let\nchapter\nsection
+\let\nsection\nsubsection
+% \let\chapter\section
+\let\section\subsection
+% \let\subsection\subsubsection
+\let\subsection\paragraph
+\renewcommand\thechapter{Л}
+
+\renewcommand{\thefigure}{\thesection.\arabic{figure}}
+\renewcommand{\thetable}{\thesection.\arabic{table}}
+
+\renewcommand\beforesubsection{\beforesection}
+
+\renewcommand\chapter[1]{
+\clearpage
+\phantomsection
+\refstepcounter{section}%
+
+{
+\beforechapter
+\chapteralign\thechapterfont Лабораторная работа \arabic{section}.
+% \addcontentsline{toc}{section}{#1}
+% \makeatletter
+% \addcontentsline{toc}{section}{\protect\numberline{\@tocseccntformat{section}} #1}
+% \makeatother
+\addcontentsline{toc}{section}{\thesection.~#1}
+
+\chapteralign\chapterfont #1
+\afterchapter
+    
+}
+}
+
+\makeatletter
+\renewcommand\thesection{%
+\ifnum\c@chapter > \z@
+  \thechapter\@arabic\c@section%
+\else\@arabic\c@section\fi}
+\makeatother
+
+\newcommand{\theoryrefs}{
+\section{Теоретические сведения}
+Для выполнения данной лабораторной работы необходимо изучить следующие разделы:
+
+}
+
+\newcommand{\theoryref}[1]{
+\ref{#1} \nameref{#1}
+
+}
+
+\input{book/labs/reglament}
+\input{book/labs/digits}
+\input{book/labs/disasm}
+\input{book/labs/func}
+\input{book/labs/inline}
+\input{book/labs/fpu}
+\input{book/labs/jmp}
+\input{book/labs/array}
+
+\endgroup
+
