@@ -43,8 +43,10 @@ $y(x) = 4 - 4x$
 \end{variants}
 
 \item \bonus{+2 балла}  Опишите  на ассемблере
-одну функцию  с~параметрами $a, b, \ldots$ и~результатами $x$ и~$y$
-и~вызовите её из другой ассемблерной функции.
+% одну функцию  с~параметрами $a, b, \ldots$ и~результатами $x$ и~$y$
+% и~вызовите её из другой ассемблерной функции.
+одну подпрограмму с~параметрами $a, b, \ldots$ и~результатами $x$ и~$y$
+и~вызовите её из другой ассемблерной программы.
 
 \begin{variants}[asm2asm]
 $\left\{\begin{array}{ll}
@@ -67,6 +69,49 @@ y = 2 a b\\
 \theoryref{sec:asm-func}
 \theoryref{sec:asm-calling-conventions}
 \theoryref{sec:gas-extern}
+
+
+
+\subsection{Подключение к~проекту модулей на ассемблере}
+\addquestion{Как подключить к~проекту используемой вами IDE модуль на ассемблере?}
+\label{sec:ide-extern}
+
+\subsubsection{Code::Blocks}
+
+Создать ассемблерный модуль в~Code::Blocks можно, используя меню $File \to New \to Empty~file$.
+Имя файла обязательно должно иметь расширение \lstinline!.S! (заглавное; расширение \programname{.s} не воспринимается Code::Blocks как допустимое).
+
+После создания в~проекте файла с~таким расширением он во время сборки проекта обрабатывается препроцессором и~компилируется gcc; полученный объектный файл в~дальнейшем используется линкером. Дополнительных настроек делать не нужно.
+
+\subsubsection{Qt~Creator}
+% \lstset{frame=top,frame=bottom}
+
+
+Файл проекта Qt~Creator для добавления ассемблерного модуля \programname{sqr.S} необходимо отредактировать вручную, добавив строку \lstinline!SOURCES += sqr.S!, так как мастер добавления файлов не воспринимает расширения  \programname{.S} и \programname{.s} как допустимые для исходного кода.
+% \begin{lstlisting}[caption=Файл проекта, label=lst:pro]
+\begin{lstlisting}
+TEMPLATE = app
+CONFIG += console
+CONFIG -= app_bundle
+CONFIG -= qt
+
+SOURCES += main.cpp
+SOURCES += sqr.S
+
+include(deployment.pri)
+qtcAddDeployment()
+\end{lstlisting}
+Файл  \programname{sqr.S} должен находиться в~той же папке, что и~проект.
+Других настроек, кроме редактирования файла проекта, делать не нужно.
+
+
+
+
+
+\addquestion{Как в~функции передаются целые параметры?}
+\addquestion{Как в~функции передаются вещественные параметры?}
+\addquestion{Как в~функции передаются три и~более параметров?}
+
 
 
 \section{Вопросы}

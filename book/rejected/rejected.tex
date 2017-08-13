@@ -1,5 +1,253 @@
 
 
+\colorlet{csArch}{orange!70!black}
+\newcommand{\terminModel}[1]{{\textcolor{csArch}{#1}}}
+\newcommand{\terminComment}[1]{{\textcolor{gray}{#1}}}
+
+\begin{tabularx}{1\linewidth}{@{}l@{~}L@{}}
+
+\termin{4-битные:}& 4004, 4040\\
+
+\termin{8-битные:}& 8008, 8080 \terminComment{(адрес "--- %16 или 
+14),} 8085 \terminComment{(частота "--- 5 МГц)}\\
+
+\termin{16-битные:}& \termin{8086} \terminComment{(адрес "--- 20, \termin{слово "--- 16 бит}, %отдельный 
+FPU 8087),} 8088 \rlap{\terminComment{(8 бит),}}\\
+&80186, 80188,\\
+&80286 \terminComment{(адрес "--- 24)}\\
+\termin{32-битные:}& \textcolor{clRegisterDark}{
+iAPX 432 %, 80960, 80860, 
+"--- не x86-совместим
+}
+\\
+&80386DX, 80386SX\\
+&80486DX \terminComment{(встроенный FPU),} 80486SX\\
+\end{tabularx}
+
+\begin{tabularx}{1\linewidth}{@{}l@{}L@{}}
+&Pentium (P5, P54, P54C, \terminComment{данные "--- 64}), Pentium MMX\\
+&Pentium Pro, Pentium II \terminModel{(Klamath, Deschutes)}, Celeron \terminModel{(Covington, Mendocino)},\\
+&Pentium III (SSE, \terminModel{Katmai, Coppermine, Tualatin}), Celeron \terminModel{(Coppermine, Tualatin)}...\\
+\end{tabularx}
+\\
+\includegraphics[width=1\linewidth,keepaspectratio,valign=t]{IntelProcessorRoadmap}
+
+
+
+
+\begin{equation}
+\label{eq:command:mod00}
+\text{Адрес} = 
+\left\{
+\begin{array}{ll}
+Displacement, &R/M = 101 \\%(bp)\\
+\zeta, & R/M \neq 101
+\end{array}
+\right.
+\end{equation}
+
+
+\begin{equation}
+\label{eq:command:zeta}
+\zeta = 
+\left\{
+\begin{array}{ll}
+Base, & R/M = 100, Index = 100\\
+2^{Scale} \cdot Index, & R/M = 100, Mod=00, Base = 101\\
+Base + 2^{Scale} \cdot Index, & R/M = 100, \text{иначе}\\
+Base, & R/M  = Base ~(\text{иначе}) %\in \{A, B, C, D, si, di\}\\
+\end{array}
+\right.
+\end{equation}
+
+
+
+
+
+
+
+
+
+\begin{equation}
+\label{eq:command:baseonly-displacementonly}
+\text{Адрес} = 
+\left\{
+\begin{array}{ll}
+Displacement, &R/M = 101 \\%(bp)\\
+2^{Scale} \cdot Index + Displacement, & R/M = 100, Mod=00, Base=101 \\% (sp), Base \in  \{A, B, C, D, sp, si, di\}, Index \in  \{A, B, C, D, bp, si, di\}\\
+Base + 2^{Scale} \cdot Index, & R/M = 100, (Scale, Index, Base) \in SIB \\% (sp), Base \in  \{A, B, C, D, sp, si, di\}, Index \in  \{A, B, C, D, bp, si, di\}\\
+Base, & R/M  = Base ~(\text{иначе}) %\in \{A, B, C, D, si, di\}\\
+\end{array}
+\right.
+\end{equation}
+
+
+При $Mod=00$ это косвенная адресация без смещения (кроме одного специального случая%~\eqref{eq:command:displacement-only}
+, когда, наоборот, остаётся только смещение).
+Поле $R/M$  "--- номер базового регистра, значения $100$ и~$101$ (соответствующие в~таблице~\ref{tab:command:reg} регистрам~$sp$ и~$bp$) считаются специальными:
+\begin{equation}
+\label{eq:command:baseonly-displacementonly}
+\text{Адрес} = 
+\left\{
+\begin{array}{ll}
+Displacement, &R/M = 101 \\%(bp)\\
+Base + 2^{Scale} \cdot Index, & R/M = 100, (Scale, Index, Base) \in SIB \\% (sp), Base \in  \{A, B, C, D, sp, si, di\}, Index \in  \{A, B, C, D, bp, si, di\}\\
+Base, & R/M  = Base ~(\text{иначе}) %\in \{A, B, C, D, si, di\}\\
+\end{array}
+\right.
+\end{equation}
+
+Значения поля $Mod$ $01$ и~$10$ показывают наличие поля $Displacement$ различной длины, содержащего смещение.
+\begin{equation}
+\label{eq:command:base+displacement}
+\text{Адрес} = 
+\left\{
+\begin{array}{ll}
+Base + 2^{Scale} \cdot Index + Displacement, & R/M = 100\\
+Base + Displacement, & R/M  = Base ~(\text{иначе}) %\in \{A, B, C, D, si, di\}\\
+\end{array}
+\right.
+\end{equation}
+
+Значение $R/M=100$, соответствующее номеру $sp$, трактуется как специальное:
+после байта $Mod~R/M$ следует байт~$SIB$.
+Первые два его бита "--- масштаб "--- целое число $Scale \in [0, 3]$.
+
+
+
+В~этом случае адрес операнда  может включать до четырёх компонент: %задаётся 
+\begin{equation}
+\label{eq:command:addressing}
+\text{Адрес} = \Reg{Base} + 2^{Scale} \cdot \Reg{Index} + Displacement
+\end{equation}
+где $Scale$ "--- масштаб "--- константа,
+$\Reg{Base}$ и~$\Reg{Index}$ "--- регистры "--- поля байта~$SIB$. 
+
+
+($Mod=$)
+.
+
+Поле $R/M$ в~совокупности с~последующими "--- $SIB$ и~$Displacement$
+задают операнд, который может быть как регистром, так и~переменной в~памяти.
+%, в~зависимости от поля $Mod$, 
+может задавать номер регистра, где находится второй (правый) операнд (при $Mod=11$),
+либо номер регистра $Base$ для %классической 
+косвенной адресации со смещением: %, где находится адрес, 
+% тогда адрес операнда
+\begin{equation}
+\label{eq:command:rm}
+\text{Адрес} = \Reg{Base} + Displacement
+\end{equation}
+Частным случаем~\eqref{eq:command:rm} является 
+прямая адресация.
+% Определённая комбинация 
+При определённом значении поля ($R/M=100$ и~$Mod\neq11$)
+после байта $Mod~R/M$ следует байт~$SIB$.
+% В~системе команд x86 косвенная адресация может включать до четырёх компонент адреса (косвенная базовая индексная адресация со смещением):
+В~этом случае адрес второго операнда  может включать до четырёх компонент: %задаётся 
+\begin{equation}
+\label{eq:command:addressing}
+\text{Адрес} = \Reg{Base} + 2^{Scale} \cdot \Reg{Index} + Displacement
+\end{equation}
+где $Scale$ "--- масштаб "--- константа,
+$\Reg{Base}$ и~$\Reg{Index}$ "--- регистры "--- поля байта~$SIB$. 
+% Эти три компоненты задаются полем $R/M$ байта $Mod~R/M$ и~байтом~$SIB$. % (последний используется, если база).
+$Displacement$ "--- смещение, заданное соответствующим полем.
+% Частными случаями~\cite{eq:command:addressing} являются 
+% Частным случаем~\eqref{eq:command:addressing} является 
+% прямая адресация.
+
+Подробно формат команды описан в~официальной документации~\cite{intelInstructionSet} и~у~исследователей кода~\cite{nezumi-disasm}.
+% Описание формата  изобилует оговорками и~
+% При этом практически в
+
+
+
+
+
+
+(кроме одного специального случая~\eqref{eq:command:displacement-only}, когда, наоборот, остаётся только смещение), 
+\begin{equation}
+\label{eq:command:modbase}
+\text{Адрес} = \Reg{Base}, ~~\text{где}~Base = R/M = A, B, C, D, si, di
+\end{equation}
+значения поля $Mod$ $01$ и~$10$ показывают наличие поля $Displacement$ различной длины, содержащего смещение.
+\begin{equation}
+\label{eq:command:rm}
+\text{Адрес} = \Reg{Base} + Displacement
+\end{equation}
+номер регистра  $Base$ при этом находится в~поле $R/M$.
+
+При $Mod=00$ значение $R/M$, соответствующее номеру $bp$, трактуется как специальное:
+\begin{equation}
+\label{eq:command:displacement-only}
+\text{Адрес} = Displacement
+~~\text{при}~
+\left\{
+\begin{array}{ccl}
+Mod&=&00\\
+R/M&=&101 (bp)\\
+\end{array}
+\right.
+\end{equation}
+Частным случаем~\eqref{eq:command:modbase} является 
+прямая адресация.
+
+
+
+
+
+Значение $R/M=100$, соответствующее номеру $sp$, трактуется как специальное:
+после байта $Mod~R/M$ следует байт~$SIB$.
+В~этом случае адрес второго операнда  может включать до четырёх компонент: %задаётся 
+\begin{equation}
+\label{eq:command:addressing}
+\text{Адрес} = \Reg{Base} + 2^{Scale} \cdot \Reg{Index} + Displacement
+\end{equation}
+где $Scale$ "--- масштаб "--- константа,
+$\Reg{Base}$ и~$\Reg{Index}$ "--- регистры "--- поля байта~$SIB$. 
+
+
+($Mod=$)
+.
+
+Поле $R/M$ в~совокупности с~последующими "--- $SIB$ и~$Displacement$
+задают операнд, который может быть как регистром, так и~переменной в~памяти.
+%, в~зависимости от поля $Mod$, 
+может задавать номер регистра, где находится второй (правый) операнд (при $Mod=11$),
+либо номер регистра $Base$ для %классической 
+косвенной адресации со смещением: %, где находится адрес, 
+% тогда адрес операнда
+\begin{equation}
+\label{eq:command:rm}
+\text{Адрес} = \Reg{Base} + Displacement
+\end{equation}
+Частным случаем~\eqref{eq:command:rm} является 
+прямая адресация.
+% Определённая комбинация 
+При определённом значении поля ($R/M=100$ и~$Mod\neq11$)
+после байта $Mod~R/M$ следует байт~$SIB$.
+% В~системе команд x86 косвенная адресация может включать до четырёх компонент адреса (косвенная базовая индексная адресация со смещением):
+В~этом случае адрес второго операнда  может включать до четырёх компонент: %задаётся 
+\begin{equation}
+\label{eq:command:addressing}
+\text{Адрес} = \Reg{Base} + 2^{Scale} \cdot \Reg{Index} + Displacement
+\end{equation}
+где $Scale$ "--- масштаб "--- константа,
+$\Reg{Base}$ и~$\Reg{Index}$ "--- регистры "--- поля байта~$SIB$. 
+% Эти три компоненты задаются полем $R/M$ байта $Mod~R/M$ и~байтом~$SIB$. % (последний используется, если база).
+$Displacement$ "--- смещение, заданное соответствующим полем.
+% Частными случаями~\cite{eq:command:addressing} являются 
+% Частным случаем~\eqref{eq:command:addressing} является 
+% прямая адресация.
+
+Подробно формат команды описан в~официальной документации~\cite{intelInstructionSet} и~у~исследователей кода~\cite{nezumi-disasm}.
+% Описание формата  изобилует оговорками и~
+% При этом практически в
+
+
+
+
 
 1938 "--- механическая счётная машина Z1 Конрада Цузе, Германия, была использована уже двоичная система счисления.
 Для ввода-вывода данные преобразовывались в~десятичный вид.
@@ -118,7 +366,7 @@ Intel 8008
 
 
 \resizebox{0.8\linewidth}{!}{
-\input{book/fragments/arch-bus-controllers}
+\input{book/drawings/arch-bus-controllers}
 }
 
 \section{С плавающей точкой}

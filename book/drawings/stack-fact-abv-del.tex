@@ -32,7 +32,7 @@ x = 22ex
   \node[mem,solidchaincell, on chain=Mem, below=of sbottom]  {};
   % \node[mem,solidchaincell,on chain=Mem]  {};
   \node[mem,solidchaincell,on chain=Mem]  {$\ldots$};
-  \node[funcmem,solidchaincell,on chain=Mem] (s1) {Данные main()};
+  \node[funcmem,solidchaincell,on chain=Mem] (s1) {Данные $main()$};
     
   % https://tex.stackexchange.com/questions/294686/ifthenelse-inside-tikz-not-working
   % \pgfmathparse не работает
@@ -42,13 +42,13 @@ x = 22ex
     {}
     {\tikzstyle{mem}	= [block]}
   ;  
-  \node[funcmem,solidchaincell,on chain=Mem] (s2) {Данные foo()};
+  \node[funcmem,solidchaincell,on chain=Mem] (s2) {Данные $fact(3)$};
   
   \xintifboolexpr{\sp > 2}
     {}
     {\tikzstyle{mem}	= [block]}
   ;    
-  \node[funcmem,solidchaincell,on chain=Mem] (s3) {Данные bar()};
+  \node[funcmem,solidchaincell,on chain=Mem] (s3) {Данные $fact(2)$};
   \tikzstyle{mem}	= [block]
   \node[mem,solidchaincell,on chain=Mem]  {};
   \node[mem,solidchaincell,on chain=Mem]  {$\ldots$};
@@ -56,7 +56,7 @@ x = 22ex
   
   \coordinate[above=1ex of s\sp.south east]  (sCurrent);
 %   \coordinate[below=1ex of s\sp.north east]  (sCurrent);
-  \node[reg, right= of sCurrent]  (sp) {sp};
+  \node[reg, right= of sCurrent]  (sp) {$sp$};
   \path[blockarrow] (sp) -- (sCurrent);  
 
   \node[on chain=Mem]   {\normalfont\normalsize\footnotesize\asbuk{figletter})\stepcounter{figletter}};

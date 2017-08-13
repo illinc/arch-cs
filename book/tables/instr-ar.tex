@@ -1,0 +1,90 @@
+\begin{longtable}{|>{\ttfamily}l|L|} 
+\caption{Основные арифметические команды}\label{tab:ar-command-list} \\
+\hline
+\normalfont\thead{Команда} & \thead{Действие}  %& \thead{Флаги} 
+\\\hline
+\multicolumn{2}{|c|}{\textbf{Операции расширения}}\\\hline
+movz src, dest & $dest := src$ с~беззнаковым расширением (размер $src$ меньше~$dest$) %($src$ по~размеру меньше~$dest$)
+\\\hline
+movs src, dest & $dest := src$ со знаковым расширением (размер $src$ меньше~$dest$)
+\\\hline
+cStD & Знаковое расширение регистра~$A$ (таблица~\ref{tab:asm-conversion})
+\\\hline
+\multicolumn{2}{|c|}{\textbf{Арифметические операции}}\\\hline
+inc arg & %\lstinline!++!
+${+}{+}arg$ (выполняется быстрее add)
+\\\hline
+dec arg & %\lstinline!--!
+${-}{-}arg$ (выполняется быстрее sub)
+\\\hline
+add src, dest & $dest := dest + src$
+% & 
+\\\hline
+adc src, dest & $dest := dest + src + carry flag$
+% & 
+\\\hline
+sub src, dest & $dest := dest - src$
+% & 
+\\\hline
+sbb src, dest & $dest := dest - (src + carry flag)$
+% & 
+\\\hline
+mul arg & Беззнаковое умножение $A\cdot arg$. 
+В~зависимости от размера $arg$:
+
+4 байта: $edx:eax := eax\cdot arg$
+
+2 байта: $dx:ax := ax\cdot arg$
+
+1 байт: $ax := al\cdot arg$
+
+$arg$ "--- регистр или переменная в~памяти
+% & 
+\\\hline
+imul arg & Знаковое умножение $A\cdot arg$, аналогично mul
+\\\hline
+imul src, dest & Умножение $dest := dest\cdot src$
+\\\hline
+imul imm, src, dest & Знаковое умножение $dest := imm\cdot src$, $imm$ "--- константа
+\\\hline
+
+div arg & Беззнаковое деление с~остатком $A/arg$.
+В~зависимости от размера $arg$:
+
+4 байта: $\left\{\begin{array}{l}
+eax := (edx:eax)/arg \\
+edx := (edx:eax)\%arg \\
+\end{array}\right.$
+
+2 байта: $\left\{\begin{array}{l}ax := (dx:ax)/arg\\ dx := (dx:ax)\%arg\end{array}\right.$
+
+1 байт: $\left\{\begin{array}{l}al := ax/arg\\ ah := ax\%arg\end{array}\right.$
+
+$arg$ "--- регистр или переменная в~памяти
+\\\hline
+idiv arg & Знаковое деление с~остатком $A/arg$, аналогично div
+\\\hline
+% cdq & Знаковое расширение регистра \EAX{}  в~пару регистров \EDX:\EAX{} (convert double-word to quad-word)
+% \\\hline
+% cwd & Знаковое расширение регистра \lstinline!AX!  в~пару регистров \lstinline!DX:AX!
+% 
+% (convert word to double-word)
+% \\\hline
+% cbw & Знаковое расширение регистра \lstinline!AL!  до \lstinline!AX!
+% % 
+% (convert byte to word)
+% \\\hline
+% cwde & Знаковое расширение регистра \lstinline!AX!  до \lstinline!EAX!
+% \\\hline
+% % neg arg
+% % 
+% % Arithmetically negates the argument (i.e. two's complement negation).
+
+
+
+
+\end{longtable}
+
+
+
+

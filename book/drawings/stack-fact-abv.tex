@@ -30,7 +30,7 @@ x = 22ex
   \node[mem,solidchaincell, on chain=Mem, below=of sbottom]  {};
   % \node[mem,solidchaincell,on chain=Mem]  {};
   \node[mem,solidchaincell,on chain=Mem]  {$\ldots$};
-  \node[funcmem,solidchaincell,on chain=Mem] (s1) {Данные main()};
+  \node[funcmem,solidchaincell,on chain=Mem] (s1) {Данные $main()$};
   
   \tikzmath{int \emptycells; \emptycells = 1;}
   
@@ -39,11 +39,11 @@ x = 22ex
   % >= не работает
   
   \xintifboolexpr{\sp > 1}
-    {\node[funcmem,solidchaincell,on chain=Mem] (s2) {Данные fact(3)}}
+    {\node[funcmem,solidchaincell,on chain=Mem] (s2) {Данные $fact(3)$}}
     {\tikzmath{\emptycells = \emptycells + 4;}}
   ;  
   \xintifboolexpr{\sp > 2}
-    {\node[funcmem,solidchaincell,on chain=Mem] (s3) {Данные fact(2)}}
+    {\node[funcmem,solidchaincell,on chain=Mem] (s3) {Данные $fact(2)$}}
     {\tikzmath{\emptycells = \emptycells + 4;}}
   ;  
   
@@ -56,7 +56,7 @@ x = 22ex
   \node[mem,solidchaincell,on chain=Mem]  {};
   
   \coordinate[above=1ex of s\sp.south east]  (sCurrent);
-  \node[reg, right= of sCurrent]  (sp) {sp};
+  \node[reg, right= of sCurrent]  (sp) {$sp$};
   \path[blockarrow] (sp) -- (sCurrent);  
 
   \node[on chain=Mem]   {\normalfont\normalsize\small\asbuk{figletter})\stepcounter{figletter}};

@@ -1,0 +1,56 @@
+\begin{longtable}{|>{\ttfamily}l|L|} 
+\caption{Основные битовые операции}\label{tab:bit-command-list} \\
+\hline
+\normalfont\thead{Команда} & \thead{Действие}  %& \thead{Флаги} 
+\\\hline
+
+\multicolumn{2}{|c|}{\textbf{Поразрядные операции}}\\\hline
+not arg & Побитовая инверсия\hfill \lstinline!arg := ~arg!
+\\\hline
+and src, dest & Побитовое «и»\hfill \lstinline!dest := dest & src!
+\\\hline
+or src, dest & Побитовое «или» \hfill\lstinline!dest := dest | src!
+\\\hline
+xor src, dest & Побитовое «исключающее или» \hfill \lstinline!dest := dest ^ src!
+\\\hline
+\multicolumn{2}{|c|}{\textbf{Битовые сдвиги}}\\\hline
+shr src, dest & Беззнаковый сдвиг вправо\hfill \lstinline!dest := (unsigned)dest >> src! 
+
+Освободившиеся старшие разряды заполняются нулями, младшие теряются, кроме последнего, который попадает в~\lstinline!carry flag!
+
+Эквивалентно беззнаковому делению на $2^{src}$ (остаток не вычисляется).
+\\\hline
+sar src, dest & Знаковый (арифметический) сдвиг вправо\hfill \lstinline!dest := (signed)dest >> src! 
+
+Освободившиеся старшие разряды заполняются знаковым битом, младшие теряются, кроме последнего, который попадает в~\lstinline!carry flag!
+
+Эквивалентно знаковому делению на $2^{src}$ (остаток не вычисляется).
+\\\hline
+\adjustbox{valign=t}{\begin{tabular}{@{}l@{}}
+shl src, dest 
+\\
+sal src, dest
+\end{tabular}}
+& Сдвиг влево (shl и~sal "--- синонимы) \hfill \lstinline!dest := dest << src! 
+
+Освободившиеся младшие разряды заполняются нулями, старшие теряются, кроме последнего, который попадает в~\lstinline!carry flag!.
+
+Эквивалентно умножению на $2^{src}$ (если результат умножения помещается в~dest%. Если не помещается, старшая часть теряется
+)
+\\\hline
+% 
+% 
+% shl src, dest  &\multirow{ 2}{0.7\linewidth}{ Сдвиг влево (shl и~sal "--- синонимы) \hfill \lstinline!dest := dest << src! 
+% % 
+% Освободившиеся младшие разряды заполняются нулями, старшие теряются, кроме последнего, который попадает в~\lstinline!carry flag!}
+% \\
+% sal src, dest&\\\hline
+
+
+
+
+\end{longtable}
+
+
+
+

@@ -1,0 +1,77 @@
+\tikzstyle{blockarrow}	= [-latex',thick,draw=blue]
+\footnotesize\singlespacing
+\lstset{basicstyle=\ttfamily\footnotesize\singlespacing}
+\begin{tikzpicture}[start chain=cpp going below,start chain=S going below,
+every on chain/.style=join,every join/.style=blockarrow,
+node distance=2ex and 4ex
+]
+\tikzstyle{block}	= [text width=16ex,text badly centered, minimum height=3ex, draw=black]
+\tikzstyle{file}	= [block,  fill=yellow!40!white]
+\tikzstyle{stage}	= [block, fill=blue,text=white]
+
+% \node (cpp) {\includegraphics[width=\linewidth,height=\slideheigth-1\baselineskip,keepaspectratio,valign=t]{halfcompilecpp}};
+\node[file,on chain=cpp] (prog1_cpp) {prog1.cpp};
+\node[stage,on chain=cpp] (cpp_preprocess) {Препроцессор};
+\node[file, on chain=cpp] (prog1_pp) {Временный файл (stdout)};
+\node[stage,on chain=cpp] (compiler) {Компилятор};
+\node[file,on chain=cpp] (prog1_s) {prog1.s};
+\node[stage,on chain=cpp] (cpp_asm) {Ассемблер};
+\node[file,on chain=cpp] (prog1_o) {prog1.o};
+\node[stage,on chain=cpp] (cpp_linker) {Компоновщик};
+% \coordinate[on chain=cpp] (cpp_linker);
+
+\node[file, right= of cpp_preprocess,text width=20ex] (cpp_headers) {Заголовочные файлы (\#include)};
+\path[blockarrow] (cpp_headers) -- (cpp_preprocess);
+
+
+% \node[right= of compiler] (mangling) {Декорирование};
+\node[text width=18ex] at (compiler-|cpp_headers) (mangling) {Декорирование \lstinline!int foo(int x)! $\to$ \lstinline!_Z3fooi!};
+
+\node[fit=(prog1_cpp) (cpp_headers), inner sep=0ex] (cpp_box) {};
+\coordinate[right=0ex of cpp_box] (cpp_egde);
+
+
+% \node[right= of cpp] (S) {\includegraphics[width=\linewidth,height=\slideheigth-1\baselineskip,keepaspectratio,valign=t]{halfcompileS}};
+\node[file,right= of prog1_cpp-|cpp_egde,on chain=S] (prog2_S) {prog3.cpp};
+\node[stage,on chain=S] (S_preprocess) {Препроцессор};
+\node[file, on chain=S] (prog2_pp) {Временный файл (stdout)};
+\node[stage,on chain=S]  (compiler2) {Компилятор};
+\node[file,on chain=S]  {prog3.s};
+\node[stage,on chain=S,right= of cpp_asm-|cpp_egde]  (S_asm) {Ассемблер};
+\node[file,on chain=S] (prog2_o) {prog3.o};
+\node[stage,on chain=S] (S_linker) {Компоновщик};
+% \coordinate[on chain=S] (S_linker);
+
+% \node[file, right= of S_preprocess,text width=20ex] (S_headers) {Заголовочные файлы (\#include)};
+% \path[blockarrow] (S_headers) -- (S_preprocess);
+\path[blockarrow] (cpp_headers) -- (S_preprocess);
+
+% \path[blockarrow] (cpp_asm) -- (S_asm);
+
+% \path (cpp_linker)
+\node[stage,fit=(cpp_linker) (S_linker), inner sep=0ex,align=center] (linker) {\strut
+
+  \vspace{-0.5\baselineskip}Компоновщик};
+  
+\node[file, right= of linker,text width=20ex] (obj_lib) {Объектные файлы библиотек};
+\path[blockarrow] (obj_lib) -- (linker);
+
+\node[file,below= of linker] (prog) {prog};
+\path[blockarrow] (linker) -- (prog);
+
+\node[below= of prog-|cpp_linker]  {extern};
+
+\node[below= of prog-|S_linker]  {.globl};
+
+
+% \coordinate[above=6ex of cpp.south] (linking_start);
+
+\begin{pgfonlayer}{background}
+% %   \coordinate[left=0ex of cpp.south west] (cpp_egde);
+% %   \coordinate[right=0ex of S.south east] (S_egde);
+%   \node[rectangle,fit=(cpp.south west) (S.south east) (linking_start), inner sep=0ex, minimum height=11.8mm,fill=yellow] (linking) {};
+\node[rectangle,fit=(compiler) (mangling) (compiler2), fill=blue!20!white]  {};
+
+\end{pgfonlayer} 
+
+\end{tikzpicture}

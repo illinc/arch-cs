@@ -33,7 +33,7 @@ baseline=(current bounding box.north)
 \node[memlabel,above= of s1.north east]   {0};
 \node[memlabel,above= of s1.north west]   {31};
 
-\node[reglabel,right= of s1, text width=24ex]  (bottom)  {Дно стека \mbox{(начальное значение sp)}};
+\node[reglabel,right= of s1, text width=24ex]  (bottom)  {Дно стека \mbox{(начальное значение $sp$)}};
 
 \coordinate[right=of sCurrent]  (from_sp);
 \coordinate[above=of from_sp]  (pop);
@@ -44,7 +44,7 @@ baseline=(current bounding box.north)
 \node[reglabel,right= 12ex of from_sp] (top)  {Вершина стека};
 % \node[right = 6ex of from_sp-|pop.east, reglabel, anchor=west] (top)  {Вершина стека};
 
-\node[reg, right=6ex of top]  (sp) {esp/sp};
+\node[reg, right=6ex of top]  (sp) {$sp$}; %{$esp/sp$};
 
 % \path[blockarrow] (bottom) -- (s1);
 \path[blockarrow] (bottom-|sp.west) -- (s1);
