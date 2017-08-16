@@ -48,7 +48,7 @@ imul src, dest & Умножение $dest := dest\cdot src$
 imul imm, src, dest & Знаковое умножение $dest := imm\cdot src$, $imm$ "--- константа
 \\\hline
 
-div arg & Беззнаковое деление с~остатком $A/arg$.
+div arg & Беззнаковое деление с~остатком $D{:}A/arg$. % или $A/arg$.
 В~зависимости от размера $arg$:
 
 4 байта: $\left\{\begin{array}{l}
@@ -62,7 +62,7 @@ edx := (edx:eax)\%arg \\
 
 $arg$ "--- регистр или переменная в~памяти
 \\\hline
-idiv arg & Знаковое деление с~остатком $A/arg$, аналогично div
+idiv arg & Знаковое деление с~остатком $D{:}A/arg$, аналогично div
 \\\hline
 % cdq & Знаковое расширение регистра \EAX{}  в~пару регистров \EDX:\EAX{} (convert double-word to quad-word)
 % \\\hline
