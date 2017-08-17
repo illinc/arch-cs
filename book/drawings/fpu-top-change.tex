@@ -44,8 +44,8 @@ baseline=(current bounding box.north)
 {
   \foreach \i in {0,...,7}
   {
-%     \tikzmath{int \sti;  \sti=Mod(\i-\top,8);}
-    \tikzmath{int \sti, \ii, \itop, \ic; \ii=\i-\top; \ic=8; \sti=mod(\ii,\ic);}
+    \tikzmath{int \sti;  \sti=Mod(\i-\top,8);}
+%     \tikzmath{int \sti, \ii, \itop, \ic; \ii=\i-\top; \ic=8; \sti=mod(\ii,\ic);}
     \node[reg, solidchaincell, on chain=cst\ch]  (r\ch\i) {$st(\sti)$};
     \node[left = of r\ch\i]  {$r_\i$};    
   }

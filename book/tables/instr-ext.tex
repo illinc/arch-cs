@@ -1,0 +1,31 @@
+\begin{longtable}{|>{\ttfamily}l|L|} 
+\caption{Команды целочисленной арифметики}\label{tab:ar-command-list} \\
+\hline
+\normalfont\thead{Команда} & \thead{Действие}  %& \thead{Флаги} 
+\\\hline
+\multicolumn{2}{|c|}{\textbf{Операции расширения}}\\\hline
+movz src, dest & $dest := src$ с~беззнаковым расширением (размер $src$ меньше~$dest$) %($src$ по~размеру меньше~$dest$)
+\\\hline
+movs src, dest & $dest := src$ со знаковым расширением (размер $src$ меньше~$dest$)
+\\\hline
+cStD & Знаковое расширение регистра~$A$ (таблица~\ref{tab:asm-conversion})
+\\\hline
+% cdq & Знаковое расширение регистра \EAX{}  в~пару регистров \EDX:\EAX{} (convert double-word to quad-word)
+% \\\hline
+% cwd & Знаковое расширение регистра \lstinline!AX!  в~пару регистров \lstinline!DX:AX!
+% 
+% (convert word to double-word)
+% \\\hline
+% cbw & Знаковое расширение регистра \lstinline!AL!  до \lstinline!AX!
+% % 
+% (convert byte to word)
+% \\\hline
+% cwde & Знаковое расширение регистра \lstinline!AX!  до \lstinline!EAX!
+% \\\hline
+
+
+\end{longtable}
+
+
+
+

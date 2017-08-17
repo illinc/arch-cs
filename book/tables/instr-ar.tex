@@ -1,21 +1,14 @@
 \begin{longtable}{|>{\ttfamily}l|L|} 
-\caption{Основные арифметические команды}\label{tab:ar-command-list} \\
+\caption{Команды целочисленной арифметики}\label{tab:ar-command-list} \\
 \hline
 \normalfont\thead{Команда} & \thead{Действие}  %& \thead{Флаги} 
 \\\hline
-\multicolumn{2}{|c|}{\textbf{Операции расширения}}\\\hline
-movz src, dest & $dest := src$ с~беззнаковым расширением (размер $src$ меньше~$dest$) %($src$ по~размеру меньше~$dest$)
+\multicolumn{2}{|c|}{\textbf{Сложение и~вычитание}}\\\hline
+inc dest & %\lstinline!++!
+${+}{+}dest$ (выполняется быстрее add)
 \\\hline
-movs src, dest & $dest := src$ со знаковым расширением (размер $src$ меньше~$dest$)
-\\\hline
-cStD & Знаковое расширение регистра~$A$ (таблица~\ref{tab:asm-conversion})
-\\\hline
-\multicolumn{2}{|c|}{\textbf{Арифметические операции}}\\\hline
-inc arg & %\lstinline!++!
-${+}{+}arg$ (выполняется быстрее add)
-\\\hline
-dec arg & %\lstinline!--!
-${-}{-}arg$ (выполняется быстрее sub)
+dec dest & %\lstinline!--!
+${-}{-}dest$ (выполняется быстрее sub)
 \\\hline
 add src, dest & $dest := dest + src$
 % & 
@@ -29,6 +22,12 @@ sub src, dest & $dest := dest - src$
 sbb src, dest & $dest := dest - (src + carry flag)$
 % & 
 \\\hline
+% \multicolumn{2}{|c|}{\textbf{Изменение знака}}\\\hline
+neg dest & Изменение знака $dest := -dest$
+% % 
+% % Arithmetically negates the argument (i.e. two's complement negation).
+\\\hline
+\multicolumn{2}{|c|}{\textbf{Умножение и~деление}}\\\hline
 mul arg & Беззнаковое умножение $A\cdot arg$. 
 В~зависимости от размера $arg$:
 
@@ -64,6 +63,13 @@ $arg$ "--- регистр или переменная в~памяти
 \\\hline
 idiv arg & Знаковое деление с~остатком $D{:}A/arg$, аналогично div
 \\\hline
+% \multicolumn{2}{|c|}{\textbf{Операции расширения}}\\\hline
+% movz src, dest & $dest := src$ с~беззнаковым расширением (размер $src$ меньше~$dest$) %($src$ по~размеру меньше~$dest$)
+% \\\hline
+% movs src, dest & $dest := src$ со знаковым расширением (размер $src$ меньше~$dest$)
+% \\\hline
+% cStD & Знаковое расширение регистра~$A$ (таблица~\ref{tab:asm-conversion})
+% \\\hline
 % cdq & Знаковое расширение регистра \EAX{}  в~пару регистров \EDX:\EAX{} (convert double-word to quad-word)
 % \\\hline
 % cwd & Знаковое расширение регистра \lstinline!AX!  в~пару регистров \lstinline!DX:AX!
@@ -76,11 +82,6 @@ idiv arg & Знаковое деление с~остатком $D{:}A/arg$, аналогично div
 % \\\hline
 % cwde & Знаковое расширение регистра \lstinline!AX!  до \lstinline!EAX!
 % \\\hline
-% % neg arg
-% % 
-% % Arithmetically negates the argument (i.e. two's complement negation).
-
-
 
 
 \end{longtable}
