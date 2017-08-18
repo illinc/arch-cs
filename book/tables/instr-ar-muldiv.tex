@@ -1,0 +1,19 @@
+\begin{longtable}{|>{}l|L|L|} 
+\caption{Команды умножения и~деления неявного аргумента~$A$}\label{tab:ar-command-muldiv} \\
+\hline
+\normalfont\thead{Размер~$arg$} & \thead{Действие~\texttt{[i]mul arg}} & \thead{Действие~\texttt{[i]div arg}} %& \thead{Флаги} 
+\\\hline
+4 байта& $edx:eax = eax\cdot arg$	&	$\left\{\begin{array}{l}
+eax = (edx:eax)/arg \\
+edx = (edx:eax)\%arg \\
+\end{array}\right.$
+\\\hline
+2 байта& $dx:ax = ax\cdot arg$	&	$\left\{\begin{array}{l}ax = (dx:ax)/arg\\ dx = (dx:ax)\%arg\end{array}\right.$
+\\\hline
+1 байт& $ax = al\cdot arg$	&	$\left\{\begin{array}{l}al = ax/arg\\ ah = ax\%arg\end{array}\right.$
+\\\hline
+\end{longtable}
+
+
+
+

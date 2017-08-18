@@ -59,10 +59,11 @@
 \lstnewenvironment{ccol}[1][]{\lstset{language=c,#1}}{}
 \lstnewenvironment{acol}[1][]{\lstset{language=[x86gas]Assembler,#1}}{}
 
-\lstset{language=[x86gas]Assembler}
-\lstset{language=C++, alsolanguage=[x86masm]Assembler}
+% \lstset{language=[x86gas]Assembler}
+% \lstset{language=C++, alsolanguage=[x86masm]Assembler}
 % \lstset{language=C++, alsolanguage=[x86gas]Assembler}
 
+\lstset{language=C++}
 
 
 
@@ -115,6 +116,14 @@
 \DeclareMathOperator{\NOT}{not}
 \DeclareMathOperator{\NEG}{neg}
 
+
+
+\newcommand{\usecopeq}{%
+  \mathcode`+=\numexpr\mathcode`+ + "1000\relax % turn + into a relation
+  \mathcode`-=\numexpr\mathcode`- + "1000\relax
+  \mathcode`*=\numexpr\mathcode`* + "1000\relax
+  \mathcode`/=\numexpr\mathcode`/ + "1000\relax
+}
 
 % Рисование регистров
 

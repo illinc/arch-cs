@@ -3,65 +3,104 @@
 \hline
 \normalfont\thead{Команда} & \thead{Действие}  %& \thead{Флаги} 
 \\\hline
+% \multicolumn{2}{|c|}{Если не указано иное, $src$ и~$dest$ "--- регистры или переменные в~памяти}\\\hline
+\multicolumn{2}{|c|}{Если не указано иное, $src$, $dest$ и~$arg$ "--- регистры или переменные в~памяти}\\\hline
 \multicolumn{2}{|c|}{\textbf{Сложение и~вычитание}}\\\hline
 inc dest & %\lstinline!++!
-${+}{+}dest$ (выполняется быстрее add)
+Инкремент ${+}{+}dest$ ($dest = dest+1$, выполняется быстрее \lstinline!add!)
 \\\hline
 dec dest & %\lstinline!--!
-${-}{-}dest$ (выполняется быстрее sub)
+Декремент ${-}{-}dest$ ($dest = dest-1$, выполняется быстрее \lstinline!sub!)
 \\\hline
-add src, dest & $dest := dest + src$
+add src, dest & Сложение $\usecopeq dest += src ~~(dest = dest + src)$
 % & 
 \\\hline
-adc src, dest & $dest := dest + src + carry flag$
+% adc src, dest & Сложение с~переносом из предыдущей части $\usecopeq dest += src + carry flag ~~\Big(dest = dest + (src + carry flag)\Big)$
+adc src, dest & Сложение с~переносом из предыдущей части $\usecopeq dest += src + CF ~~\Big(dest = dest + (src + CF)\Big)$
 % & 
 \\\hline
-sub src, dest & $dest := dest - src$
+sub src, dest & Вычитание $\usecopeq dest -= src ~~(dest = dest - src)$
+\\\hline
+cmp src, dest & Вычитание $dest - src$ без изменения $dest$ (только %установка флагов)
+флаги)
 % & 
 \\\hline
-sbb src, dest & $dest := dest - (src + carry flag)$
+% sbb src, dest & Вычитание с~переносом из предыдущей части $\usecopeq dest -= src + carry flag ~~\Big(dest = dest - (src + carry flag)\Big)$
+sbb src, dest & Вычитание с~переносом из предыдущей части $\usecopeq dest -= src + CF ~~\Big(dest = dest - (src + CF)\Big)$
 % & 
 \\\hline
 % \multicolumn{2}{|c|}{\textbf{Изменение знака}}\\\hline
-neg dest & Изменение знака $dest := -dest$
+neg dest & Изменение знака $dest = -dest$
 % % 
 % % Arithmetically negates the argument (i.e. two's complement negation).
 \\\hline
+\multicolumn{2}{|c|}{\textbf{Расчёт линейной комбинации}}\\\hline
+% \begin{tabular}{@{}l@{}}
+% lea\\imm(src1,src2,scale),\\dest 
+% \end{tabular}
+lea $\delta$(r1,r2,$\gamma$), dest 
+& Вычисление эффективного адреса часто используется для~расчёта  линейной комбинации
+$dest = r1 + \gamma\cdot r2 + \delta$ 
+% (не изменяет флагов)
+
+$dest, r1, r2$ "---  регистры, 	$\gamma$ "--- 1, 2, 4 или 8, $\delta$ "--- константа 
+
+\lstinline!lea! не изменяет флагов
+\\\hline
 \multicolumn{2}{|c|}{\textbf{Умножение и~деление}}\\\hline
-mul arg & Беззнаковое умножение $A\cdot arg$. 
-В~зависимости от размера $arg$:
-
-4 байта: $edx:eax := eax\cdot arg$
-
-2 байта: $dx:ax := ax\cdot arg$
-
-1 байт: $ax := al\cdot arg$
-
-$arg$ "--- регистр или переменная в~памяти
+mul arg & Беззнаковое умножение $D{:}A = A\cdot arg$
+%  (таблица~\ref{tab:ar-command-muldiv})
+% % В~зависимости от размера $arg$:
+% 
+% $sizeof(arg) = 4$ байта: $edx:eax = eax\cdot arg$
+% 
+% 2 байта: $dx:ax := ax\cdot arg$
+% 
+% 1 байт: $ax := al\cdot arg$ (для восьмибитных множителей~$D$ не используется)
+% 
+% $arg$ "--- регистр или переменная в~памяти
 % & 
 \\\hline
-imul arg & Знаковое умножение $A\cdot arg$, аналогично mul
+imul arg & Знаковое умножение $D{:}A = A\cdot arg$ %, аналогично \lstinline!mul!
+%  (таблица~\ref{tab:ar-command-muldiv})
+% 
+% $arg$ "--- регистр или переменная в~памяти
 \\\hline
-imul src, dest & Умножение $dest := dest\cdot src$
+imul src, dest & Умножение $\usecopeq dest *= src ~~(dest = dest\cdot src)$
 \\\hline
-imul imm, src, dest & Знаковое умножение $dest := imm\cdot src$, $imm$ "--- константа
+imul imm, src, dest & Знаковое умножение $dest = imm\cdot src$, 
+
+$imm$ "--- константа
 \\\hline
 
-div arg & Беззнаковое деление с~остатком $D{:}A/arg$. % или $A/arg$.
-В~зависимости от размера $arg$:
-
-4 байта: $\left\{\begin{array}{l}
-eax := (edx:eax)/arg \\
-edx := (edx:eax)\%arg \\
+div arg & Беззнаковое деление с~остатком %$A = (D{:}A)/arg$. % или $A/arg$.
+$\left\{\begin{array}{l}
+A = (D{:}A)/arg \\
+D = (D{:}A)\%arg \\
 \end{array}\right.$
-
-2 байта: $\left\{\begin{array}{l}ax := (dx:ax)/arg\\ dx := (dx:ax)\%arg\end{array}\right.$
-
-1 байт: $\left\{\begin{array}{l}al := ax/arg\\ ah := ax\%arg\end{array}\right.$
-
-$arg$ "--- регистр или переменная в~памяти
+%  (таблица~\ref{tab:ar-command-muldiv})
+% В~зависимости от размера $arg$:
+% 
+% 4 байта: $\left\{\begin{array}{l}
+% eax := (edx:eax)/arg \\
+% edx := (edx:eax)\%arg \\
+% \end{array}\right.$
+% 
+% 2 байта: $\left\{\begin{array}{l}ax := (dx:ax)/arg\\ dx := (dx:ax)\%arg\end{array}\right.$
+% 
+% 1 байт: $\left\{\begin{array}{l}al := ax/arg\\ ah := ax\%arg\end{array}\right.$
+% 
+% $arg$ "--- регистр или переменная в~памяти
 \\\hline
-idiv arg & Знаковое деление с~остатком $D{:}A/arg$, аналогично div
+idiv arg & Знаковое деление с~остатком %$D{:}A/arg$, 
+$\left\{\begin{array}{l}
+A = (D{:}A)/arg \\
+D = (D{:}A)\%arg \\
+\end{array}\right.$
+%  (таблица~\ref{tab:ar-command-muldiv})
+% аналогично \lstinline!div!
+% 
+% $arg$ "--- регистр или переменная в~памяти
 \\\hline
 % \multicolumn{2}{|c|}{\textbf{Операции расширения}}\\\hline
 % movz src, dest & $dest := src$ с~беззнаковым расширением (размер $src$ меньше~$dest$) %($src$ по~размеру меньше~$dest$)

@@ -1,0 +1,34 @@
+\begin{longtable}{|>{\ttfamily}l|L|} 
+\caption{Команды обработки флагов}\label{tab:flags-command-list} \\
+\hline
+\normalfont\thead{Команда} & \thead{Действие}  %& \thead{Флаги} 
+\\\hline
+% http://asmworld.ru/uchebnyj-kurs/024-komandy-upravleniya-flagami/
+\multicolumn{2}{|c|}{\textbf{Установка отдельных флагов}}\\\hline
+stc/clc/cmc & 
+Установка (set, $CF=1$)/сброс (clear, $CF=0$)/инверсия ($CF=!CF$) флага переноса $CF$
+\\\hline
+std/cld &
+Установка/сброс флага направления $DF$
+\\\hline
+sti/cli &
+Установка/сброс флага разрешения прерываний $IF$
+\\\hline
+\multicolumn{2}{|c|}{\textbf{Обработка $flags$ в~целом или фрагментов}}
+\\\hline
+lahf/sahf &
+Сохранение младшего байта~$flags$ в~$ah$/загрузка $ah$ в~младший байт~$flags$
+\\\hline
+pushf/pushfd/pushfq &
+Загрузить младшие 16/32/64 бита $flags$ в~стек
+\\\hline
+popf/popfd/popfq &
+Выгрузить 16/32/64 бита из~стека в~$flags$ (в~младшую часть)
+\\\hline
+\multicolumn{2}{|c|}{Зарезервированные биты не загружаются в~$flags$}
+\\\hline
+\end{longtable}
+
+
+
+
