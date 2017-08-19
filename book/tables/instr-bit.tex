@@ -5,47 +5,69 @@
 \\\hline
 
 \multicolumn{2}{|c|}{\textbf{Поразрядные операции}}\\\hline
-not arg & Побитовая инверсия\hfill \lstinline!arg := ~arg!
+not dest & Побитовая инверсия\hfill $dest = {\sim}dest$
 \\\hline
-and src, dest & Побитовое «и»\hfill \lstinline!dest := dest & src!
+and src, dest & Побитовое «и»\hfill $dest ~{\&}{=}~  src ~~(dest = dest \And{} src)$
 \\\hline
-or src, dest & Побитовое «или» \hfill\lstinline!dest := dest | src!
+test src, dest & Побитовое «и» $dest \And{} src$ без изменения $dest$ (только %установка флагов)
+флаги)
 \\\hline
-xor src, dest & Побитовое «исключающее или» \hfill \lstinline!dest := dest ^ src!
+or src, dest & Побитовое «или» \hfill  $dest ~{|}{=}~  src ~~(dest = dest \Or{} src)$
+\\\hline
+xor src, dest & Побитовое «исключающее или» \hfill $dest ~{\Xor{}}{=}~  src ~~ (dest = dest \Xor{} src)$
 \\\hline
 \multicolumn{2}{|c|}{\textbf{Битовые сдвиги}}\\\hline
-shr src, dest & Беззнаковый сдвиг вправо\hfill \lstinline!dest := (unsigned)dest >> src! 
+% \multicolumn{2}{|c|}{$times$ "--- регистр~$cl$ или непосредственное значение}\\\hline
+shr times, dest & Беззнаковый (логический) сдвиг вправо \hfill $dest = (unsigned)dest >> times$
 
-Освободившиеся старшие разряды заполняются нулями, младшие теряются, кроме последнего, который попадает в~\lstinline!carry flag!
-
-Эквивалентно беззнаковому делению на $2^{src}$ (остаток не вычисляется).
+Освободившиеся старшие разряды заполняются нулями, младшие~теряются, кроме последнего, который попадает в~$CF$
+% 
+% Эквивалентно беззнаковому делению на $2^{times}$ (остаток не вычисляется).
 \\\hline
-sar src, dest & Знаковый (арифметический) сдвиг вправо\hfill \lstinline!dest := (signed)dest >> src! 
+sar times, dest & Знаковый (арифметический) сдвиг вправо %\hfill \lstinline!dest := (signed)dest >> times! 
+\hfill $dest = (signed)dest >> times$
 
-Освободившиеся старшие разряды заполняются знаковым битом, младшие теряются, кроме последнего, который попадает в~\lstinline!carry flag!
-
-Эквивалентно знаковому делению на $2^{src}$ (остаток не вычисляется).
+Освободившиеся старшие разряды заполняются знаковым битом, младшие~теряются, кроме последнего, который попадает в~$CF$
+% 
+% Эквивалентно знаковому делению на $2^{times}$ (остаток не вычисляется).
 \\\hline
 \adjustbox{valign=t}{\begin{tabular}{@{}l@{}}
-shl src, dest 
+shl times, dest 
 \\
-sal src, dest
+sal times, dest
 \end{tabular}}
-& Сдвиг влево (shl и~sal "--- синонимы) \hfill \lstinline!dest := dest << src! 
+& Сдвиг влево (\lstinline!shl! и~\lstinline!sal! "--- синонимы) \hfill %\lstinline!dest := dest << times! 
+$dest = dest << times$
 
-Освободившиеся младшие разряды заполняются нулями, старшие теряются, кроме последнего, который попадает в~\lstinline!carry flag!.
-
-Эквивалентно умножению на $2^{src}$ (если результат умножения помещается в~dest%. Если не помещается, старшая часть теряется
-)
-\\\hline
+Освободившиеся младшие разряды заполняются нулями, старшие~теряются, кроме последнего, который попадает в~$CF$
 % 
+% Эквивалентно умножению на $2^{times}$ (если результат умножения помещается в~dest%. Если не помещается, старшая часть теряется
+% )
+\\\hline
+ror times, dest & Циклический сдвиг $dest$ вправо
+\\\hline
+rol times, dest & Циклический сдвиг $dest$ влево
+\\\hline
+rcr times, dest & Циклический сдвиг через флаг переноса $dest \cup CF$ вправо
+\\\hline
+rcl times, dest & Циклический сдвиг через флаг переноса $dest \cup CF$ влево
+\\\hline% 
 % 
 % shl src, dest  &\multirow{ 2}{0.7\linewidth}{ Сдвиг влево (shl и~sal "--- синонимы) \hfill \lstinline!dest := dest << src! 
 % % 
 % Освободившиеся младшие разряды заполняются нулями, старшие теряются, кроме последнего, который попадает в~\lstinline!carry flag!}
 % \\
 % sal src, dest&\\\hline
-
+\multicolumn{2}{|c|}{\textbf{Загрузка $idx$-го бита числа во~флаг $CF$}}\\\hline
+\multicolumn{2}{|c|}{$idx$ "--- регистр или непосредственное значение, для младшего бита $idx=0$}\\\hline
+bt idx, dest & $CF = dest[idx]$
+\\\hline
+btc idx, dest & $CF = dest[idx]$ с~последующей инверсией бита\hfill  $dest[idx] = \lnot dest[idx]$
+\\\hline
+btr idx, dest & $CF = dest[idx]$ с~последующим сбросом бита\hfill  $dest[idx] = 0$
+\\\hline
+bts idx, dest & $CF = dest[idx]$ с~последующей установкой бита \hfill $dest[idx] = 1$
+\\\hline
 
 
 

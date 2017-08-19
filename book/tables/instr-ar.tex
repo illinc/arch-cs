@@ -4,7 +4,7 @@
 \normalfont\thead{Команда} & \thead{Действие}  %& \thead{Флаги} 
 \\\hline
 % \multicolumn{2}{|c|}{Если не указано иное, $src$ и~$dest$ "--- регистры или переменные в~памяти}\\\hline
-\multicolumn{2}{|c|}{Если не указано иное, $src$, $dest$ и~$arg$ "--- регистры или переменные в~памяти}\\\hline
+% \multicolumn{2}{|c|}{Если не указано иное, $src$, $dest$ и~$arg$ "--- регистры или переменные в~памяти}\\\hline
 \multicolumn{2}{|c|}{\textbf{Сложение и~вычитание}}\\\hline
 inc dest & %\lstinline!++!
 Инкремент ${+}{+}dest$ ($dest = dest+1$, выполняется быстрее \lstinline!add!)
@@ -49,7 +49,7 @@ $dest, r1, r2$ "---  регистры, 	$\gamma$ "--- 1, 2, 4 или 8, $\delta$ "--- конст
 \\\hline
 \multicolumn{2}{|c|}{\textbf{Умножение и~деление}}\\\hline
 mul arg & Беззнаковое умножение $D{:}A = A\cdot arg$
-%  (таблица~\ref{tab:ar-command-muldiv})
+ (таблица~\ref{tab:ar-command-muldiv})
 % % В~зависимости от размера $arg$:
 % 
 % $sizeof(arg) = 4$ байта: $edx:eax = eax\cdot arg$
@@ -62,18 +62,24 @@ mul arg & Беззнаковое умножение $D{:}A = A\cdot arg$
 % & 
 \\\hline
 imul arg & Знаковое умножение $D{:}A = A\cdot arg$ %, аналогично \lstinline!mul!
-%  (таблица~\ref{tab:ar-command-muldiv})
+ (таблица~\ref{tab:ar-command-muldiv})
 % 
 % $arg$ "--- регистр или переменная в~памяти
 \\\hline
-imul src, dest & Умножение $\usecopeq dest *= src ~~(dest = dest\cdot src)$
+imul arg, dest & Умножение $\usecopeq dest *= arg ~~(dest = dest\cdot arg)$
 \\\hline
-imul imm, src, dest & Знаковое умножение $dest = imm\cdot src$, 
-
-$imm$ "--- константа
+imul imm, arg, dest & Знаковое умножение $dest = imm\cdot arg$
+% 
+% ($imm$ "--- константа)
 \\\hline
 
-div arg & Беззнаковое деление с~остатком %$A = (D{:}A)/arg$. % или $A/arg$.
+div arg & 
+% Беззнаковое деление с~остатком %$A = (D{:}A)/arg$. % или $A/arg$.
+\begin{tabular}{@{}l@{}}
+Беззнаковое деление с~остатком
+\\
+ (таблица~\ref{tab:ar-command-muldiv})
+\end{tabular}
 $\left\{\begin{array}{l}
 A = (D{:}A)/arg \\
 D = (D{:}A)\%arg \\
@@ -92,7 +98,12 @@ D = (D{:}A)\%arg \\
 % 
 % $arg$ "--- регистр или переменная в~памяти
 \\\hline
-idiv arg & Знаковое деление с~остатком %$D{:}A/arg$, 
+idiv arg & %Знаковое деление с~остатком %$D{:}A/arg$, 
+\begin{tabular}{@{}l@{}}
+Знаковое деление с~остатком
+\\
+ (таблица~\ref{tab:ar-command-muldiv})
+\end{tabular}
 $\left\{\begin{array}{l}
 A = (D{:}A)/arg \\
 D = (D{:}A)\%arg \\
@@ -121,7 +132,19 @@ D = (D{:}A)\%arg \\
 % \\\hline
 % cwde & Знаковое расширение регистра \lstinline!AX!  до \lstinline!EAX!
 % \\\hline
-
+\multicolumn{2}{|c|}{\textbf{Масштабирование (битовый сдвиг)}}\\\hline
+shr src, dest & Беззнаковое деление  $\usecopeq {dest}/={2^{src}}$ (остаток не вычисляется)
+\\\hline
+sar src, dest & Знаковое деление $\usecopeq dest/=2^{src}$ (остаток не вычисляется)
+\\\hline
+\begin{tabular}{@{}l@{}}
+shl src, dest 
+\\
+sal src, dest
+\end{tabular}
+& Умножение  $\usecopeq dest *= 2^{src}$ %(если результат умножения помещается в~dest%. Если не помещается, старшая часть теряется
+% )
+\\\hline
 
 \end{longtable}
 
