@@ -78,6 +78,10 @@
 % \end{longtable}
 
 \begin{longtable}{|l@{~}>{(}l<{)}|L|L|}
+\caption{Основные арифметические операции~FPU% над вещественными числами
+}
+\label{tab:fpu-ar-list}
+\\
 \hline
 \multicolumn{2}{|c|}{\thead{Команда}} & \thead{Действие Intel}  & \thead{Действие GAS*} 
 \\\hline
@@ -85,45 +89,45 @@
 &
 сложение
 &	
-\multicolumn{2}{c|}{ $dest ~~ := ~~ dest + src~~ = ~~st(0) + \xi$}
+\multicolumn{2}{c|}{ $dest ~~ = ~~ dest + src~~ = ~~st(0) + \xi$}
 \\\hline
 \lstinline!fsub!
 &
 вычитание
 &	
-{$dest := dest - src$}
+{$dest = dest - src$}
 &
-{$dest :=  st(0) - \xi$}
+{$dest =  st(0) - \xi$}
 \\\hline
 \lstinline!fsubr!
 &
 обратное вычитание
 &
-{$dest := src - dest$}
+{$dest = src - dest$}
 &
-{$dest :=  \xi - st(0)$}
+{$dest =  \xi - st(0)$}
 \\\hline
 \lstinline!fmul!
 &
 умножение
 &	
-\multicolumn{2}{c|}{$dest ~~ :=~~ dest \cdot src ~~=~~ st(0) \cdot \xi$}
+\multicolumn{2}{c|}{$dest ~~ =~~ dest \cdot src ~~=~~ st(0) \cdot \xi$}
 \\\hline
 \lstinline!fdiv!
 &
 деление
 &	
-{$dest := dest / src$}
+{$dest = dest / src$}
 &
-{$dest :=  st(0)/\xi$}
+{$dest =  st(0)/\xi$}
 \\\hline
 \lstinline!fdivr!
 &
 обратное деление
 &
-{$dest := src / dest$}
+{$dest = src / dest$}
 &
-{$dest :=  \xi/st(0)$}
+{$dest =  \xi/st(0)$}
 \\\hline
 
 \end{longtable}

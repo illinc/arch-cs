@@ -17,7 +17,8 @@ sti/cli &
 \multicolumn{2}{|c|}{\textbf{Обработка $flags$ в~целом или фрагментов}}
 \\\hline
 lahf/sahf &
-Сохранение младшего байта~$flags$ в~$ah$/загрузка $ah$ в~младший байт~$flags$
+Сохранение младшего байта~$flags$ в~$ah$/загрузка $ah$ в~%младший байт~
+$flags$
 \\\hline
 pushf/pushfd/pushfq &
 Загрузить младшие 16/32/64 бита $flags$ в~стек
@@ -25,8 +26,8 @@ pushf/pushfd/pushfq &
 popf/popfd/popfq &
 Выгрузить 16/32/64 бита из~стека в~$flags$ (в~младшую часть)
 \\\hline
-\multicolumn{2}{|c|}{Зарезервированные биты не загружаются в~$flags$}
-\\\hline
+% \multicolumn{2}{|c|}{Зарезервированные биты не загружаются в~$flags$}
+% \\\hline
 \end{longtable}
 
 

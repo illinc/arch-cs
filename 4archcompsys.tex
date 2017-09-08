@@ -86,22 +86,32 @@
 \definecolor{glaucous}{rgb}{0.38, 0.51, 0.71}	
 \definecolor{intelblue}{HTML}{0071c5}
 
-\colorlet{colorIntel}{intelblue}
-\colorlet{colorGas}{magenta}
+% \colorlet{colorIntel}{intelblue}
+% \colorlet{colorGas}{magenta}
+% \newcommand{\onlyIntel}[1]{{\color{colorIntel}{Intel: #1}}}
+% \newcommand{\onlyGas}[1]{{\color{colorGas}{GAS: #1}}}
+\newcommand{\onlyIntel}[1]{{\color{clIntel}{Intel: #1}}}
+\newcommand{\onlyGas}[1]{{\color{clGas}{GAS: #1}}}
 
 
-\newcommand{\onlyIntel}[1]{{\color{colorIntel}{Intel: #1}}}
-
-\newcommand{\onlyGas}[1]{{\color{colorGas}{GAS: #1}}}
 
 \newcommand{\RN}[1]{\ensuremath{\mathrm{#1}}}
 \newcounter{romannumberx}
 \def\ToRomanEmpire#1{\setcounter{romannumberx}{#1}\Roman{romannumberx}}
 \newcommand{\hex}[1]{\ensuremath{\mathtt{#1}}}
 
+\providecommand{\ethm}[1]{{\emph{\textcolor{clEthimology}{#1}}}}
+
+\providecommand{\stdcppsec}[1][]{[\textbf{#1}]}
+
+
 \newcommand{\nondecdigit}[1]{\lapbox[\digitwidth]{0.06\digitwidth}{\ensuremath{\mathrm{\resizebox*{1.12\digitwidth}{\digitheight}{#1}}}}}
 \newcommand{\digitA}{\nondecdigit{A}}
 \newcommand{\digitB}{\nondecdigit{B}}
+\newcommand{\digitC}{\nondecdigit{C}}
+\newcommand{\digitD}{\nondecdigit{D}}
+\newcommand{\digitE}{\nondecdigit{E}}
+\newcommand{\digitF}{\nondecdigit{F}}
 
 
 % \DeclareMathOperator{\And}{and} уже определён как & (не в common!)
@@ -128,7 +138,7 @@
 % Рисование регистров
 
 \tikzmath{real \bitwidthex, \halfbitex; 
-  \bitwidthex=6; 
+  \bitwidthex=7; 
   \halfbitex = \bitwidthex/2;}
   
 \tikzstyle{bitlabel}	= []

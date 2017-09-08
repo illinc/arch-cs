@@ -1,4 +1,4 @@
-\begin{longtable}{|>{\ttfamily}l|@{}c@{}|L|L|}
+\begin{longtable}{|>{\ttfamily}l|@{}c@{}|L|>{\raggedright\arraybackslash}m{28ex}|}
 \caption{Команды безусловного и~условного перехода}\label{tab:jmp-command-list} \\
 % {|K{6em}|X|H|}
 \hline
@@ -7,8 +7,8 @@
 % \thead{Условие (флаги)}  
 $
 \begin{array}{c}
-\text{\textbf{Условие}}\\
-\text{\textbf{(флаги)}}\\
+\text{\theadfont{Условие}}\\
+\text{\theadfont{(флаги)}}\\
 \end{array}
 $
 & %\theadfont Условие (sub src, dst или \mbox{cmp  src, dst})
@@ -49,7 +49,10 @@ $dst \neq src$
 
 \jname{Jump if not equal}
 \\\hline
-jc/jb/jnae
+\begin{tabular}{@{}l@{}}
+jc/\\jb/jnae
+\end{tabular}
+% jc/jb/jnae
 &	
 $CF = 1$
 &
@@ -57,7 +60,7 @@ $CF = 1$
 
 % Результат не умещается в~$dst$ (полные $2^n$ бит) 
 
-Для сдвигов на один бит "--- вытесненный бит был единицей
+% Для сдвигов на один бит "--- вытесненный бит был единицей
 
 \jname{Jump if carry }
 &
@@ -96,7 +99,9 @@ $dst \leqslant src$ как беззнаковое
 
 \jname{Jump if not above }
 \\\hline
-jnc/jnb/jae
+\begin{tabular}{@{}l@{}}
+jnc/\\jnb/jae
+\end{tabular}
 &	
 $CF = 0$
 &
@@ -104,7 +109,7 @@ $CF = 0$
 
 % Результат умещается в~$dst$ (полные $2^n$ бит)  
 
-Для сдвигов на один бит "--- вытесненный бит был нулём
+% Для сдвигов на один бит "--- вытесненный бит был нулём
 
 \jname{Jump if not carry }
 &
@@ -128,7 +133,7 @@ ZF = 0
 $
 &
 Нет беззнакового переполнения
-и~результат не равен нулю
+и~результат \mbox{не равен нулю}
 &
 $dst > src$ как беззнаковое
 \att{$src < dst$} 
@@ -144,45 +149,64 @@ $dst > src$ как беззнаковое
 js &
 $SF = 1$
 &
-Старший  бит результата (знаковый для знаковых чисел)
- равен 1 
- 
-\jname{Jump if sign }
-&
+\multicolumn{2}{E|}{
+% Старший  бит результата (знаковый для знаковых чисел)
+%  равен 1 
+Старший (знаковый) бит результата равен 1 
+\hfill
+\jname{Jump if sign}
+}% &
 \\\hline
 
 jns &
 $SF = 0$
 &
-Старший  бит результата (знаковый для знаковых чисел)
- равен 0 
- 
-\jname{Jump if not sign }
-&
+% Старший  бит результата (знаковый для знаковых чисел)
+%  равен 0 
+%  
+% \jname{Jump if not sign }
+% &
+\multicolumn{2}{E|}{
+% Старший  бит результата (знаковый для знаковых чисел)
+%  равен 1 
+Старший (знаковый) бит результата равен 0
+\hfill
+\jname{Jump if not sign}
+}
 \\\hline
 
 jo &
 $OF = 1$
 &
+\multicolumn{2}{E|}{
 Есть знаковое переполнение
-
-\jname{Jump if overflow }
-&
+\hfill
+\jname{Jump if overflow}
+}
+% &
 \\\hline
 
 jno &
 $OF = 0$
 &
+\multicolumn{2}{E|}{
 Нет знакового переполнения
-
-\jname{Jump if not overflow }
-&
+\hfill
+\jname{Jump if not overflow}
+}
+% &
 \\\hline
 
 jl/jnge
 &
 $SF\neq OF$
-&&
+&
+Результат сложения/вычитания отрицателен
+
+(знак равен 1 и~корректен 
+
+или~равен 0, но некорректен)
+&
 $dst < src$ как знаковое
 \att{$src > dst$}
 % (не~больше и не~равно)
@@ -202,7 +226,11 @@ SF\neq OF\\
 ZF = 1
 \end{array}
 \right.
-$&&
+$&
+Результат сложения/вычитания 
+
+отрицателен или \mbox{равен нулю}
+&
 $dst \leqslant src$ как знаковое
 \att{$src \geqslant dst$}
 % (меньше или равно/не больше)
@@ -217,7 +245,13 @@ $dst \leqslant src$ как знаковое
 jnl/jge 
 &
 $SF = OF$
-&&
+&
+Результат сложения/вычитания неотрицателен
+
+(знак равен 0 и~корректен 
+
+или равен~1, но~некорректен)
+&
 $dst \geqslant src$ как знаковое
 \att{$src \leqslant dst$}
 
@@ -234,7 +268,11 @@ SF= OF\\
 ZF = 0
 \end{array}
 \right.
-$&&
+$&
+Результат сложения/вычитания 
+
+неотрицателен и~не~равен~нулю
+&
 $dst > src$ как знаковое
 \att{$src < dst$}
 
@@ -246,23 +284,27 @@ $dst > src$ как знаковое
 jp/jpe &
 $PF = 1$
 &
+\multicolumn{2}{E|}{
 Число единичных бит младшего байта результата чётное
 
-\jname{Jump if parity}
-
+\jname{Jump if parity,}
+% 
 \jname{Jump if parity even }
-&
+}
+% &
 \\\hline
 
 jnp/jpo &
 $PF = 0$
 &
+\multicolumn{2}{E|}{
 Число единичных бит младшего байта результата нечётное
 
-\jname{Jump if not parity}
-
+\jname{Jump if not parity,}
+% 
 \jname{Jump if parity odd }
-&
+}
+% &
 \\\hline
 
 

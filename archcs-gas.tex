@@ -34,7 +34,49 @@
 \makeatother	%DEBUGONLY
 % \lstset{keywordstyle=}
 
+
+
+
+
+\makeatletter
+\renewcommand\maketitle{
+\begin{center}
+\thispagestyle{empty}
+\DepartmentFull
+
+\InstitutionOfficialFull
+
+
+\vfill
+        {\Large {\bfseries {\@title}} \par
+        
+        }
+\vspace{1em}
+с~приложением %в~виде 
+методических указаний к~лабораторным работам \par
+\vspace{1.5em}
+
+{\Competencia\par}
+
+\vspace{4em}
+       {{  \@author} \par}
+       \MyEmail
+       
+\vfill
+\vfill
+	\the\year
+\end{center}
+\clearpage
+}
+\makeatother
+
+\author{\MyFioShort}
+
+
+
+
 \begin{document}
+% \singlespacing
 
 \title{Основы архитектуры вычислительных систем и~Ассемблера}
 
@@ -49,13 +91,18 @@
 % \vfill
 \setcounter{tocdepth}{2}
 
+% % \makeatletter
+% % \pretocmd{\chapter}{\addtocontents{toc}{\protect\addvspace{-15\p@}}}{}{}
+% % \makeatother
+
 \tableofcontents
 
 
 
-Аннотация
+\section*{Аннотация}
 
-Данное учебное пособие предназначено для студентов бакалавриата направлений 09.03.04 Программная инженерия и~01.03.04 Прикладная математика
+Данное учебное пособие предназначено для студентов бакалавриата направлений 09.03.04 Программная инженерия и~01.03.04 Прикладная математика.
+Приложение~\ref{sec:app:labs} содержит методические указания к~лабораторным работам.
 
 \input{book/intro}
 
@@ -94,6 +141,10 @@
 \bibliography{links}
 
 \bibliographystyle{gost705s}
+
+% \addcontentsline{toc}{section}{\listtablename}
+\listoftables
+% \listoffigures
 
 % Makeindex[intoc] % needs imakeidx
 \newpage

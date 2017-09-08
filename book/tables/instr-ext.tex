@@ -4,9 +4,11 @@
 \normalfont\thead{Команда} & \thead{Действие}  %& \thead{Флаги} 
 \\\hline
 % \multicolumn{2}{|c|}{\textbf{Операции расширения}}\\\hline
-movz src, dest & $dest = src$ с~беззнаковым расширением (размер $src$ меньше~$dest$) %($src$ по~размеру меньше~$dest$)
+% \multicolumn{2}{|c|}{\textbf{Присваивание с~расширением} $dest$ "--- только регистр, $src \in \{reg, mem\}$}\\\hline
+% \multicolumn{2}{|c|}{$dest$ "--- только регистр, $src \in \{reg, mem\}$, размер $src$ меньше~$dest$}\\\hline
+movz srm, dreg & $dreg = srm$ с~беззнаковым расширением (размер $srm$ меньше~$dreg$) %($srm$ по~размеру меньше~$dreg$)
 \\\hline
-movs src, dest & $dest = src$ со знаковым расширением (размер $src$ меньше~$dest$)
+movs srm, dreg & $dreg = srm$ со знаковым расширением (размер $srm$ меньше~$dreg$)
 \\\hline
 cStD & Знаковое расширение регистра~$A$ (таблица~\ref{tab:asm-conversion})
 \\\hline

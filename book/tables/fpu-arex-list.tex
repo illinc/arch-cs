@@ -1,14 +1,17 @@
 \begin{longtable}{|l|L|}
+\caption{ƒополнительные арифметические и~трансцендентные команды~FPU}
+\label{tab:fpu-arex-list}
+\\
 \hline
 \thead{ оманда} & \thead{ƒействие}  %& \thead{‘лаги} 
 \\\hline
 \lstinline!fabs!
-& $st(0) := |st(0)|$
+& $st(0) = |st(0)|$
 \\\hline
 \lstinline!fsqrt!
 &	
 % вадратный корень \hfill
- $st(0) := \sqrt{st(0)}$
+ $st(0) = \sqrt{st(0)}$
 \\\hline
 \lstinline!fptan!
 &
@@ -16,14 +19,14 @@
 % 
 % % st(0) "--- угол в~радианах.
 % % ¬ычисл€ютс€ $X$ и~$Y$, такие, что $X/Y = \tg(st(0))$ ()
-% % $st(1) := X, st(0):= Y$, где 
+% % $st(1) = X, st(0)= Y$, где 
 % ¬ычисл€ет тангенс числа, наход€щегос€ в~регистре $st(0)$, замен€ет его на вычисленное значение и~затем помещает 1 в~стек, так что результат оказываетс€ в~$st(1)$, st(0) содержит~1.
 % % 
 % % ≈диница помещаетс€ в~стек дл€ того, чтобы можно было получить котангенс вызовом команды делени€ сразу после fptan и~дл€ совместимости с~ранними  модел€ми (до i386 в~$st(1)$ и~$st(0)$ помещались $X$ и~$Y$, такие, что $X/Y = \tg\big(st(0)\big)$)
 % 
 $\left\{\begin{array}{l}
-st(0) := 1\\
-st(1) := \tg\big(st(0)\big)\\
+st(0) = 1\\
+st(1) = \tg\big(st(0)\big)\\
 \end{array}\right.$
 "--- частичный тангенс $st(0)$
 \\\hline
@@ -31,23 +34,23 @@ st(1) := \tg\big(st(0)\big)\\
 &
 % ¬ычисл€ет синус и~косинус числа, наход€щегос€ в~$st(0)$, помещает синус в~$st(0)$ и~затем помещает косинус в~стек (так что синус оказываетс€ в~$st(1)$, косинус "--- в~$st(0)$).
 $\left\{\begin{array}{l}
-st(0) := \cos\big(st(0)\big)\\
-st(1) := \sin\big(st(0)\big)\\
+st(0) = \cos\big(st(0)\big)\\
+st(1) = \sin\big(st(0)\big)\\
 \end{array}\right.$
 
 \lstinline!fsincos! выполн€етс€ столько же времени, сколько \lstinline!fsin! или \lstinline!fcos! (и~вдвое меньше раздельного расчЄта синуса и~косинуса)
 \\\hline
-\lstinline!fsin!	& $st(0) := \sin\big(st(0)\big)$
+\lstinline!fsin!	& $st(0) = \sin\big(st(0)\big)$
 \\\hline
-\lstinline!fcos!	& $st(0) := \cos\big(st(0)\big)$
+\lstinline!fcos!	& $st(0) = \cos\big(st(0)\big)$
 \\\hline
 \lstinline!fscale!
-& $st(0) := {st(0)}\cdot 2^{\lfloor st(1) \rfloor}$, ~~ $st(1)$ остаЄтс€ в~стеке
+& $st(0) = {st(0)}\cdot 2^{\lfloor st(1) \rfloor}$, ~~ $st(1)$ остаЄтс€ в~стеке
 % «начение st(1) предварительно округл€етс€ в~сторону нул€ до целого числа. 
 % не мен€етс€
 \\\hline
 \lstinline!f2xmi!
-&$st(0) :=  2^{st(0)} -1$
+&$st(0) =  2^{st(0)} -1$
 
 % ¬озводит 2 в~степень, равную st(0), и~вычитает 1. –езультат сохран€етс€ в~st(0). 
 
@@ -55,7 +58,7 @@ st(1) := \sin\big(st(0)\big)\\
 \\\hline
 \lstinline!fyl2x!
 &
-$\big[st(1)\to st(0)\big] := st(1)\cdot\log_2\big(st(0)\big)$, ~~ $st(0) \geqslant 0$
+$\Big[st(1)\to st(0)\Big] = st(1)\cdot\log_2\big(st(0)\big)$, ~~ $st(0) \geqslant 0$
 
 % ѕервоначальное значение st(0) должно быть неотрицательным. 
 
@@ -63,7 +66,7 @@ $\big[st(1)\to st(0)\big] := st(1)\cdot\log_2\big(st(0)\big)$, ~~ $st(0) \geqsla
 \\\hline
 \lstinline!fyl2xp1!
 &
-$\big[st(1)\to st(0)\big] := st(1)\cdot\log_2\big(st(0)+1\big)$,
+$\Big[st(1)\to st(0)\Big] = st(1)\cdot\log_2\big(st(0)+1\big)$,
 
 % ѕервоначальное значение ST(0) должно быть в~пределах 
 $st(0)$ от $-(1 - \frac{\sqrt{2}}{2})\approx -0,3$ до $(1 + \frac{\sqrt{2}}{2})\approx 1,7$, иначе результат не определЄн. 
@@ -72,7 +75,7 @@ $st(0)$ от $-(1 - \frac{\sqrt{2}}{2})\approx -0,3$ до $(1 + \frac{\sqrt{2}}{2})\
 \\\hline
 \lstinline!fprem1!
 &
-$\big[st(1)\to st(0)\big] := st(0) \Mod st(1)$ \hfill "--- частичный остаток %делени€ $st(0)$ на $st(1)$ 
+$\Big[st(1)\to st(0)\Big] = st(0) \Mod st(1)$ \hfill "--- частичный остаток %делени€ $st(0)$ на $st(1)$ 
 по IEEE-754
 % ¬ычисл€ет частичный остаток делени€ st(0) на st(1) по стандарту IEEE-754, помещает результат в~st(1) и~выталкивает st(0) из стека, так что после этой операции результат оказываетс€ в~st(0). 
 

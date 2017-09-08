@@ -160,11 +160,12 @@ x, & x > 13\\
 \item ¬несите в~программу из задани€ \reflocal{task:dev:int}, \reflocal{task:dev:int:a} изменени€ (либо, что предпочтительнее, добавьте новые  фрагменты кода, выполн€ющие аналогичные вычислени€ дл€ других переменных, использу€ макросы препроцессора или шаблоны C++).
 
 \begin{itemize}
-\item примените к~используемым переменным модификатор volatile;
-\item  примените к~используемым переменным спецификатор register;
+% \item примените к~используемым переменным модификатор volatile;
+% \item  примените к~используемым переменным спецификатор register;
 \item сделайте переменные глобальными;
 \item измените тип с~int на char, short, long и long long;
-\item измените тип с~int на  на double, float, long double% (деление (\lstinline!/!) "--- вещественное, дл€ расчЄта остатка (\lstinline!%!) усекайте вещественные переменные до int)
+\item измените тип с~int на  на %double, float, 
+long double% (деление (\lstinline!/!) "--- вещественное, дл€ расчЄта остатка (\lstinline!%!) усекайте вещественные переменные до int)
 .
 \end{itemize}
 ќпишите в~отчЄте различи€ в ассемблерном коде.
@@ -316,11 +317,17 @@ x, & x > 13\\
 
 
 \theoryrefs
+\theoryref{sec:mem-segments}
+\theoryref{sec:registers}
 % \theoryref{sec:cpp-ide} 
-
+% \theoryref{sec:rel}
+\theoryref{sec:cpp-compile}
+% \theoryref{sec:asm}
+\theoryref{sec:asm-gas}
 \theoryref{sec:asm-commandsintro}
-
-\theoryref{sec:asm-flags}
+% \theoryref{sec:asm-fpu}
+% 
+% \theoryref{sec:asm-flags}
 
 
 

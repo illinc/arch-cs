@@ -1,0 +1,91 @@
+\begin{longtable}{|>{\ttfamily}l|c|L|}
+\caption{Условия \lstinline!fcmovCC! и~их связь с~флагами состояния~$flags$}\label{tab:fpu-cc-list} \\
+% {|K{6em}|X|H|}
+\hline
+\normalfont\thead{CC} 
+&
+% \thead{Условие (флаги)}  
+$
+\begin{array}{c}
+\text{\theadfont{Условие}}\\
+\text{\theadfont{(флаги)}}\\
+\end{array}
+$
+&
+\theadfont Условие (\mbox{f*cmp  src})
+\\\hline
+e
+&	
+$ZF = 1$
+&
+$st(0) = src$ 
+\hfill
+\ethm{if equal}
+\\\hline
+ne
+&	
+$ZF = 0$
+&
+$st(0) \neq src$
+\hfill
+\ethm{if not equal}
+\\\hline
+b/nae
+&	
+$CF = 1$
+&
+$st(0) < src$ 
+\hfill\ethm{if below / if not above or equal }
+\\\hline
+be/na
+&
+$
+\left[
+\begin{array}{@{\,}l}
+CF = 1\\
+ZF = 1
+\end{array}
+\right.
+$
+&
+$st(0) \leqslant src$ 
+\hfill\ethm{if below or equal / if not above}
+\\\hline
+nb/ae
+&	
+$CF = 0$
+&
+$st(0) \geqslant src$
+\hfill\ethm{if not below / if above or equal }
+\\\hline
+nbe/a
+&
+$
+\left\{
+\begin{array}{@{\,}l}
+CF = 0\\
+ZF = 0
+\end{array}
+\right.
+$
+&
+$st(0) > src$ 
+\hfill\ethm{if not below or equal / if  above}
+\\\hline
+u &
+$PF = 1$
+&
+$src$ и~$st(0)$ несравнимы 
+\hfill\ethm{if unordered}
+\\\hline
+nu &
+$PF = 0$
+&
+$src$ и~$st(0)$ сравнимы
+\hfill\ethm{if not unordered}
+\\\hline
+\end{longtable}
+
+
+
+
