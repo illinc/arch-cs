@@ -388,7 +388,7 @@ long double% (деление (\lstinline!/!) "--- вещественное, для расчёта остатка (\l
 Как обозреватель, так и~редактор памяти можно открыть для просмотра конкретной переменной, используя контекстное меню переменной в~окне «Локальные и~наблюдаемые переменные» (рис.~\ref{ris:qtc-memory}), при этом подсвечивается не только начало, но и~размер объекта.
 \begin{illustration}
 \includegraphics[width=\linewidth]{qtc-memory}
-\caption{\insertsubsubsection{} Qt Creator}
+\caption{Обозреватель и~редактор памяти Qt Creator}
 \label{ris:qtc-memory}
 \end{illustration}
 
@@ -408,17 +408,24 @@ long double% (деление (\lstinline!/!) "--- вещественное, для расчёта остатка (\l
 
 
 
-\subsection{Дизассемблер}
+\subsubsection{Дизассемблер}
 
-Окно «\insertsubsubsection»  отображает дизассемблированный код для текущей функции (рис.~\ref{ris:qtc-disasm}).
+Окно дизассемблера  отображает дизассемблированный код для текущей функции (рис.~\ref{ris:qtc-disasm}).
 В~Qt Creator по умолчанию спрятано, перейти в~режим работы на уровне инструкций процессора возможно во время отладки.
 \begin{illustration}
 \includegraphics[width=\linewidth]{qtc-disasm}
-\caption{\insertsubsubsection{} (Qt Creator)}
+\caption{Дизассемблированный код программы (Qt Creator)}
 \label{ris:qtc-disasm}
 \end{illustration}
 
 В~среде Code::Blocks окно дизассемблера \index{IDE Code::Blocks!окно дизассемблера} можно открыть, используя меню $Debug \to Debugging~windows \to Disassembly$ (для редактирования кода и для отладки используются разные наборы окон, поэтому открывать дизассемблер необходимо уже в~процессе отладки).  Опция $Mixed~mode$ в~этом окне включает отображение строки C++ перед соответствующей ей группой команд. Кнопка $Adjust$ позволяет перемотать дизассемблированный код к~текущей команде. Кнопка $Save~to~text~file$ "--- сохранить его.
+
+Рис.~\ref{ris:cb-disasm} показывает окно дизассемблера среды Code::Blocks  с~включённой опцией $Mixed~mode$ (синтаксис AT\&T).
+\begin{illustration}
+\includegraphics[width=\linewidth]{cb-disasm}
+\caption{Дизассемблированный код программы (Code::Blocks)}
+\label{ris:cb-disasm}
+\end{illustration}
 
 Иногда при внесении изменений в~программу и~включённой опции  $Mixed~mode$ ассемблерный код и~операторы высокого уровня в~окне дизассемблера не изменяются даже после пересборки проекта. В~этом случае необходимо выключить и~снова включить $Mixed~mode$ (останавливать отладку и~пересобирать проект между этими действиями не надо).
 
@@ -433,32 +440,33 @@ long double% (деление (\lstinline!/!) "--- вещественное, для расчёта остатка (\l
 Настроить вид дизассемблированного кода можно в~настройках отладчика среды (для Code::Blocks \index{IDE Code::Blocks!синтаксис дизассемблера}
 $Settings \to Debugger \to GDB/CDB~debugger : default \to Choose~disassembly~flavor$).
 
-Рис.~\ref{ris:cb-disasm} показывает окно дизассемблера среды Code::Blocks  с~включённой опцией $Mixed~mode$ (синтаксис AT\&T).
-\begin{illustration}
-\includegraphics[width=\linewidth]{cb-disasm}
-\caption{\insertsubsubsection{} (Code::Blocks)}
-\label{ris:cb-disasm}
-\end{illustration}
 
-
+В~Qt Creator 
+% для дизассемблированного кода в~отладчике по умолчанию используется синтаксис AT\&T.
+% При необходимости это 
+настроить синтаксис дизассемблера можно в~окне параметров (меню Инструменты $\to$ Параметры).
+Для этого используется переключатель «Стиль Intel для дизассемблера», находящийся
+в~разделе «Отладчик» этого окна на вкладке GDB.
 
 % \FloatBarrier
 \subsection{Регистры}
 
+
+
+
+Окно «Регистры»  отображает текущее содержимое регистров (рис.~\ref{ris:qtc-reg}).
+В~Qt~Creator по умолчанию спрятано, включается через контекстное меню или меню «Окно».
+
 \begin{illustration}
 \includegraphics[width=\approvedImageWidth]{qtc-reg}
-\caption{\insertsubsubsection{} (Qt Creator)}
+\caption{Регистры (Qt Creator)}
 \label{ris:qtc-reg}
 \end{illustration}
 
-
-
-Окно «\insertsubsubsection»  отображает текущее содержимое регистров (рис.~\ref{ris:qtc-reg}).
-В~Qt~Creator по умолчанию спрятано, включается через контекстное меню или меню «Окно».
-
 {
 В~среде Code::Blocks содержимое основных регистров можно увидеть, используя окно CPU registers (меню $Debug \to Debugging~windows \to CPU~registers$).
-Регистры сопроцессора отображаются в~окне FPU~status (меню $Debug \to Information \to FPU~status$)
+Регистры сопроцессора отображаются в~окне FPU~status (меню $Debug \to Information \to FPU~status$), но, в~отличие от окна основных регистров, 
+открытое окно FPU~status не позволяет продолжить отладку. 
 \sloppy
 
 }
@@ -474,8 +482,8 @@ $Settings \to Debugger \to GDB/CDB~debugger : default \to Choose~disassembly~fla
 \section{Вопросы}
 \begin{enumerate}
 \item Уметь пользоваться окнами просмотра переменных и~содержимого памяти в~отладчике используемой вами IDE.
-\item Для чего служит  модификатор volatile в~C++?
-\item Для чего служит спецификатор register в~C++?
+% \item Для чего служит  модификатор volatile в~C++?
+% \item Для чего служит спецификатор register в~C++?
 \item Чем различается размещение в~памяти локальных, глобальных и~статических переменных?
 
 \item Чем различается работа с~целыми числами разной разрядности?

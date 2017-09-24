@@ -54,7 +54,7 @@
 
 
 Термин {«автоматизированная система»} (АС), %[automated system]
-в~свою очередь,~\cite{infosys2006.narod.ru} также  определяет двумя способами:
+в~свою очередь, словарь Воройского также  определяет двумя способами:
 % в~словаре
 
 \begin{enumerate}
@@ -90,7 +90,7 @@
 \begin{itemize}
 \item \termin{структурная декомпозиция} 
 рассматривает ВС с~точки зрения её аппаратных составляющих и~физических связей между ними
-и~позволяет выделить её функциональные компоненты ,
+и~позволяет выделить её функциональные компоненты,
 % вычислительной системы, %(её программной и~аппаратной частей, а~также человека)
 % и~описать их взаимодействие;
 % в~том числе аппаратную составляющую "--- вычислительную машину, или компьютер, программную составляющую и~взаимодействующего с~ними человека;
@@ -129,7 +129,7 @@
 \begin{itemize}
 \item системная, или материнская плата;
 \item центральный процессор;
-\item оперативная память (оперативное запоминающее устройство, ОЗУ);
+\item оперативная память (оперативное запоминающее устройство "--- ОЗУ);
 \item внешняя, или долговременная память (жёсткие диски, SSD и~т.\,д.);
 \item видеокарта;
 \item звуковая карта и~т.\,д.
@@ -202,6 +202,8 @@
 % \resizebox{\approvedImageWidth}{!}{
 \resizebox{\wideImageWidth}{!}{
 \schemafont
+% \setlength{\leftmargini}{14ex}
+% \setlist{leftmargin=*,topsep=0pt,itemsep=0pt}
 \input{book/drawings/arch-bus-controllers}
 }
 \caption{Структура системной шины}
@@ -220,7 +222,7 @@
 Тактовый генератор задаёт частоту работы процессора как самого быстрого устройства; частоты  более медленных устройств являются делителями частоты процессора.
 
 \index{Структурная декомпозиция!ПЗУ}
-Кроме оперативной, в~ВС имеется \termin{постоянное запоминающее устройство (ПЗУ)} "--- энергозависимая память,
+Кроме оперативной, в~ВС имеется \termin{постоянное запоминающее устройство (ПЗУ)} "--- энергонезависимая память,
 в~которой записана неизменяемая информация, которая сохраняется после отключения питания.
 Там
 % В~\termin{постоянном запоминающем устройстве} (энергонезависимой памяти) 
@@ -286,6 +288,7 @@
 \end{limerick}
 }
 {\Lear}
+\label{sec:byte}
 \index{Бит}
 \index{Байт}
 \index{Октет}
@@ -325,9 +328,19 @@
 Далее по тексту везде подразумевается, что байт состоит из восьми бит.
 
 
-\subsubsection{Порядок следования байтов% в~словах
+\subsection{Порядок следования байтов% в~словах
 }
+\epigraph{\begin{limerick}
+Злополучную даму в~Байраме\\
+Много раз прищемляло дверями.\\
+«А~может быть, впредь\\
+В~дверях не сидеть?» "---\\
+Подумала дама в~Байраме.\\
+\end{limerick}
+}
+{\Lear}
 \index{Порядок байтов}
+\label{sec:byteorder}
 % Так как байт "--- минимальный адресуемый блок памяти, невозможно судить о~
 
 Для начала уточним:
@@ -337,25 +350,269 @@
 % ?????
 Подобные последовательности принято записывать, следуя обычному направлению письма, то есть адреса возрастают слева направо.
 % То есть адреса возрастают слева направо.
-Адресом слова считается адрес его самого левого байта.
+Адресом слова считается адрес его самого левого байта (далее будем обозначать его~$\zeta$).
+
+Кроме того, число в~вычислительных системах представляется в~двоичной позиционной системе счисления, то есть в~виде совокупности двоичных разрядов "--- битов.
+Каждый бит имеет свой вес, соответственно которому разряды также можно упорядочить "--- от младшего к~старшему.
+\begin{equation}
+X = x_0 + x_1\cdot 2 + \ldots + x_k\cdot 2^k, ~~x_i \in \{0,1\}
+\end{equation}
+% Количество битов числа всегда кратно размеру байта. % (если значащих двоичных цифр меньше, «лишние»)
+Если число включает восемь бит (занимает один байт), то никакой неоднозначности нет "--- число имеет адрес, равный адресу единственного байта.
+Биты внутри байта не имеют адресов, но ранжируются по весу.
+
+Если число включает %16 бит или более, оно записывается несколькими байтами.
+шестнадцать бит, оно записывается двумя байтами.
+Каждый байт включает восемь смежных по старшинству разрядов числа (рис.~\ref{ris:word-bytes}, а).
+\begin{equation}
+% X = \chi_0 + \chi_1\cdot 2^8 + \ldots + \chi_{\kappa}\cdot (2^8)^{\kappa}, ~~\chi_i \in \{0,1,\ldots 255\}
+X = \chi_0 + \chi_1\cdot 256, 
+% + \ldots + \chi_{\kappa}\cdot 256^{\kappa}
+~~\chi_i \in \{0,1,\ldots 255\}
+\end{equation}
+
+
+
+\tikzstyle{reg}	= [text badly centered, fill=clRegisterLight, draw=black, minimum height=5 ex]
+\tikzstyle{bit}	= [reg, solidchaincell, minimum width=5 ex]
+\tikzstyle{byte}	= [reg, fill=clMemoryLight, solidchaincell, minimum width=8*5 ex]
+
+% \newcommand{\byteorder}[3][]
+% {
+% \begin{tikzpicture}[
+% start chain=going left,
+% node distance=0.5ex,
+% ]
+% 
+% 
+%   \tikzmath{
+%     int \lastbyte, \lastbit;
+%     \lastbyte = #2;
+%     \lastbit = 8*(\lastbyte)+7; 
+%     \linedistex = 12;
+%   }
+%   
+%   
+%   \foreach \bitnum in {0,...,\lastbit}
+%   {
+%     \node[bit, on chain, label=below:$\bitnum$] (b\bitnum) {$x_{\bitnum}$};
+%   };
+%     
+%   \foreach \bytenum in {0,...,\lastbyte}
+%   {
+%     \tikzmath{
+%       int \bs, \be;
+%       \bs = 8*\bytenum;
+%       \be = 8*(\bytenum+1)-1;
+%     }
+%     \draw [decorate,decoration={brace,amplitude=1em},xshift=0pt,yshift=0.5ex]
+%     (b\be.north west)--(b\bs.north east)
+%     node [black,midway,yshift=4ex] 
+% %     {байт $\bytenum$ ($\chi_{\bytenum}$)};
+%     {#3};
+% 
+%     \tikzmath{
+%       int \intel, \motor;
+%       \intel = \lastbyte - \bytenum;
+%       \motor = \bytenum;
+%     }
+%     \node[byte, label=below:$\byteaddr{\bytenum}$, below = \linedistex ex of b\bs.east, anchor = east] (i\bytenum) {$\chi_\intel$};
+%     \node[byte, label=below:$\byteaddr{\bytenum}$, below = 2*\linedistex ex of b\bs.east, anchor = east] (m\bytenum) {$\chi_\motor$};
+% 
+%   };  
+% 
+%   \foreach \leftline in {b\lastbit, i\lastbyte, m\lastbyte}
+%   {
+%     \node[left = 2ex of \leftline] {\asbuk{risletter})\stepcounter{risletter}};
+%   };  
+% 
+% 
+% \end{tikzpicture}
+% }
+
+\begin{illustration}
+\setcounter{risletter}{1}
+\tikzmath{
+  let \byted{1} = старший;
+  let \byted{0} = младший;    
+  let \byteaddr{1} = \zeta;
+  let \byteaddr{0} = \zeta+1;    
+}
+  
+\resizebox{\linewidth}{!}
+{
+% \byteorder{1}{\byted{\bytenum} байт ($\chi_{\bytenum}$)}
+\begin{tikzpicture}[
+start chain=going left,
+node distance=0.5ex,
+]
+
+
+  \tikzmath{
+    int \lastbyte, \lastbit;
+    \lastbyte = 1;
+    \lastbit = 8*(\lastbyte)+7; 
+    \linedistex = 12;
+  }
+  
+  
+  \foreach \bitnum in {0,...,\lastbit}
+  {
+    \node[bit, on chain, label=below:$\bitnum$] (b\bitnum) {$x_{\bitnum}$};
+  };
+    
+  \foreach \bytenum in {0,...,\lastbyte}
+  {
+    \tikzmath{
+      int \bs, \be;
+      \bs = 8*\bytenum;
+      \be = 8*(\bytenum+1)-1;
+    }
+    \draw [decorate,decoration={brace,amplitude=1em},xshift=0pt,yshift=0.5ex]
+    (b\be.north west)--(b\bs.north east)
+    node [black,midway,yshift=4ex] 
+%     {байт $\bytenum$ ($\chi_{\bytenum}$)};
+    {\byted{\bytenum} байт ($\chi_{\bytenum}$)};
+
+    \tikzmath{
+      int \intel, \motor;
+      \intel = \lastbyte - \bytenum;
+      \motor = \bytenum;
+    }
+    \node[byte, label=below:$\byteaddr{\bytenum}$, below = \linedistex ex of b\bs.east, anchor = east] (i\bytenum) {$\chi_\intel$};
+    \node[byte, label=below:$\byteaddr{\bytenum}$, below = 2*\linedistex ex of b\bs.east, anchor = east] (m\bytenum) {$\chi_\motor$};
+
+  };  
+
+  \foreach \leftline in {b\lastbit, i\lastbyte, m\lastbyte}
+  {
+    \node[left = 2ex of \leftline] {\asbuk{risletter})\stepcounter{risletter}};
+  };  
+
+
+\end{tikzpicture}
+}
+
+\caption{Двухбайтовое число: а)~биты старшего и~младшего байтов, б)~прямой порядок байтов в~памяти, {в)~обратный порядок байтов в~памяти}}
+\label{ris:word-bytes}
+\end{illustration}
+
+При этом каждому байту числа можно сопоставить и~его вес (старшинство его битов в~числе), 
+и~адрес (расположение в~памяти).
+На любой платформе байты двухбайтового числа (младший~$\chi_0$ и~старший~$\chi_1$) расположены в~памяти рядом,
+но друг относительно друга они могут располагаться  по-разному.
+% По младшему адресу (обозначим его~$\zeta$) может находиться как младший байт~$\chi_0$ (такой порядок называется прямым и~показан на рис.~\ref{ris:word-bytes}, б), так и~старший~$\chi_1$ (такой порядок называется обратным, рис.~\ref{ris:word-bytes}, в).
+
+Для двухбайтового числа возможны только два варианта:
+\begin{itemize}
+\item прямой порядок (также называемый little-endian, Intel или VAX)  "--- младший байт слова расположен по~младшему адресу (рис.~\ref{ris:word-bytes}, б);
+\item обратный (big-endian, Motorola или сетевой порядок) "--- младший байт слова расположен по~старшему адресу (рис.~\ref{ris:word-bytes}, в).
+\end{itemize}
+
+Числа в~любой позиционной системе счисления принято записывать в~арабской традиции "--- младший разряд справа, старший слева.
+Содержимое памяти (дамп памяти), напротив, записывается, следуя европейскому направлению письма "--- младшие адреса слева, старшие справа.
+% Таким образом, обратный порядок байтов позволяет легко читать числа, записанные в~памяти.
+% Обратный порядок принят в~протоколе TCP/IP. % и~иногда на
+Из-за этого на рис.~\ref{ris:word-bytes} именно прямой порядок выглядит «перевёрнутым», а~обратный "--- соответствует привычной позиционной записи числа.
+
+Значение каждого  байта в~дампе записывается 
+двумя шестнадцатеричными цифрами
+в~арабской традиции (как  число, которое уже не может быть разделено на части с~разными адресами).
+% в~шестнадцатеричной системе счисления. Для записи восьмибитного значения байта достаточно двух шестнадцатеричных цифр.
+Соответственно, конкретные числа в~дампе памяти выглядят ещё экзотичнее.
+Пусть необходимо записать в~память вычислительной машины с~восьмибитным байтом
+шестнадцатибитное число $x=\hex{0x0A\,0B}$.
+Оно содержит два байта: старший $\chi_1=\hex{0A}$, младший $\chi_0 = \hex{0B}$.
+Дамп памяти с~прямым порядком байтов, соответственно, будет выглядеть как $\chi_0 \chi_1 = \hex{0B\,0A}$ (то есть разряды  числа  несколько «перетасованы»),
+с~обратным порядком "--- как $\chi_1 \chi_0 = \hex{0A\,0B}$.
 
 Если %машинное слово
 число
-состоит из нескольких байтов, эти байты в~памяти ВС могут быть расположены друг относительно друга по-разному.
-
-Чаще всего используется один из следующих вариантов:
-\begin{itemize}
-\item прямой порядок (также называемый little-endian, Intel или VAX)  "--- младший байт слова расположен по~младшему адресу;
-\item обратный (big-endian, Motorola или сетевой порядок) "--- младший байт слова расположен по~старшему адресу.
-\end{itemize}
+состоит из нескольких байтов, эти байты в~памяти ВС также могут быть расположены друг относительно друга по-разному.
+% 
+Чаще всего используется 
+% один из следующих вариантов:
+% \begin{itemize}
+% \item прямой порядок (также называемый little-endian, Intel или VAX)  "--- младший байт слова расположен по~младшему адресу;
+% \item обратный (big-endian, Motorola или сетевой порядок) "--- младший байт слова расположен по~старшему адресу.
+% \end{itemize}
+прямой или обратный порядок (рис.~\ref{ris:dword-bytes}).
 
 % Прямой порядок %исторически сложился 
 % % позволяет обрабатывать числа, состоящие из 
 
-Числа принято записывать в~арабской традиции "--- младший разряд справа, старший слева.
-Содержимое памяти (дамп памяти), напротив, записывается, следуя европейскому направлению письма "--- младшие адреса слева, старшие справа.
-% Таким образом, обратный порядок байтов позволяет легко читать числа, записанные в~памяти.
-% Обратный порядок принят в~протоколе TCP/IP. % и~иногда на
+\begin{illustration}
+\setcounter{risletter}{1}
+\tikzmath{
+  let \byteaddr{3} = \zeta;
+  let \byteaddr{2} = \zeta+1;    
+  let \byteaddr{1} = \zeta+2;
+  let \byteaddr{0} = \zeta+3;    
+}
+  
+\resizebox{\linewidth}{!}
+{
+% \byteorder{3}{$\chi_{\bytenum}$}
+\begin{tikzpicture}[
+start chain=going left,
+node distance=0.5ex,
+]
+
+
+  \tikzmath{
+    int \lastbyte, \lastbit;
+    \lastbyte = 3;
+    \lastbit = 8*(\lastbyte)+7; 
+    \linedistex = 9;
+  }
+
+
+\tikzstyle{reg}	= [text badly centered, fill=clRegisterLight, draw=black, minimum height=4 ex]
+\tikzstyle{bit}	= [reg, solidchaincell, minimum width=2 ex]
+\tikzstyle{byte}	= [reg, fill=clMemoryLight, solidchaincell, minimum width=16 ex]
+  
+  
+  \foreach \bitnum in {0,...,\lastbit}
+  {
+    \node[bit, on chain, label=below:\scriptsize$\bitnum$] (b\bitnum) {};
+  };
+    
+  \foreach \bytenum in {0,...,\lastbyte}
+  {
+    \tikzmath{
+      int \bs, \be;
+      \bs = 8*\bytenum;
+      \be = 8*(\bytenum+1)-1;
+    }
+    \draw [decorate,decoration={brace,amplitude=1em},xshift=0pt,yshift=0.5ex]
+    (b\be.north west)--(b\bs.north east)
+    node [black,midway,yshift=4ex] 
+%     {байт $\bytenum$ ($\chi_{\bytenum}$)};
+    {$\chi_{\bytenum}$};
+
+    \tikzmath{
+      int \intel, \motor;
+      \intel = \lastbyte - \bytenum;
+      \motor = \bytenum;
+    }
+    \node[byte, label=below:$\byteaddr{\bytenum}$, below = \linedistex ex of b\bs.east, anchor = east] (i\bytenum) {$\chi_\intel$};
+    \node[byte, label=below:$\byteaddr{\bytenum}$, below = 2*\linedistex ex of b\bs.east, anchor = east] (m\bytenum) {$\chi_\motor$};
+
+  };  
+
+  \foreach \leftline in {b\lastbit, i\lastbyte, m\lastbyte}
+  {
+    \node[left = 2ex of \leftline] {\asbuk{risletter})\stepcounter{risletter}};
+  };  
+
+
+\end{tikzpicture}
+}
+
+\caption{Четырёхбайтовое число: а) байты и~биты числа, б)~прямой~порядок байтов в~памяти, \mbox{в) обратный порядок байтов в~памяти}}
+\label{ris:dword-bytes}
+\end{illustration}
+
 
 Пусть необходимо записать в~память вычислительной машины с~восьмибитным байтом
 тридцатидвухбитное число $x=\hex{0x0A\,0B\,0C\,0D}$.
@@ -377,7 +634,8 @@
 с~прямым порядком байтов это число будет выглядеть как \hex{0D\,0C\,0B\,0A}:
 младший байт \hex{0D} записан по младшему адресу  $\zeta$,
 \hex{0C} "--- по адресу $\zeta+1$, \hex{0D} "--- по адресу $\zeta+2$,
-старший байт \hex{0A} "--- по старшему адресу  $\zeta+3$ (то есть разряды [??? байты?] числа в~памяти несколько «перетасованы»).
+старший байт \hex{0A} "--- по старшему адресу  $\zeta+3$.
+% (то есть разряды [??? байты?] числа в~памяти несколько «перетасованы»)
 
 Очевидно, что обратный порядок байтов позволяет легко читать числа, записанные в~памяти.
 Обратный порядок принят в~протоколе TCP/IP. % и~иногда на
@@ -726,7 +984,16 @@ baseline=(current bounding box.north)
 }
 {\Lear}
 
-Память в~вычислительных системах образуют запоминающие устройства различной природы, имеющие разные характеристики по объёму памяти, по скорости обмена и~по времени создания контакта.
+Память в~вычислительных системах образуют запоминающие устройства различной природы, имеющие разные характеристики по объёму памяти, по скорости обмена и~по времени создания контакта (рис.~\ref{ris:hierarchy}).
+
+\begin{illustration}
+\includegraphics[width=\wideImageWidth,valign=c]{4-hierarchy}
+
+\caption{Иерархия запоминающих устройств.
+Сверху вниз увеличивается объём и~уменьшается скорость обмена}
+\label{ris:hierarchy}
+\end{illustration}
+
 
 Самыми быстрыми "--- но при этом и~самыми дорогими "--- являются регистры.
 Поэтому объём регистровой памяти очень ограничен.
@@ -742,6 +1009,52 @@ baseline=(current bounding box.north)
 Сейчас программисту не надо заботиться об этом.
 Операционные системы предоставляют ему необходимый объём памяти "--- в~виртуальном адресном пространстве "--- и~программист пользуется им, не заботясь о~физических протоколах обмена.
 Операционная система сама организует и~поддерживает соответствие между физическими адресами реальной памяти и~адресами виртуальной памяти.
+
+\subsubsection{Плоская модель памяти}
+
+% Современные операционные системы предоставляют каждой исполняющейся программе (процессу)
+Современные операционные системы используют так называемую \termin{плоскую модель памяти}.
+\index{Модель памяти!плоская}
+Каждой исполняющейся программе (процессу) предоставляется
+диапазон виртуальных адресов от~$0$ до $2^N$, где $N$ "--- разрядность системы (32 или~64).
+Каждому адресу соответствует один байт памяти.
+
+При обращении к~определённому виртуальному адресу он транслируется в~физический аппаратным механизмом трансляции адресов, %процессора 
+контролируемым операционной системой~\cite{amd64System}.
+Виртуальный адрес может быть некорректным %, если ему не соответствует никакой
+либо соответствовать байту в~оперативной памяти или специализированной области жёсткого диска (в~разделе подкачки; некоторые операционные системы также могут использовать файл подкачки).
+% Физическое расположение данных %, соответствующее некоторому виртуальному адресу, может меняться операционной системой.
+Операционная система может перемещать данные в~оперативной памяти или из памяти на диск и~обратно.
+Виртуальные адреса и,~соответственно, указатели в~программе при этом не изменяются.
+
+% Физические адреса в~ОЗУ занимают диапазон от
+Диапазон доступных физических адресов зависит от объёма установленных ОЗУ и~возможностей системной платы.
+% When the physical-address size extensions are enabled (see “Physical-Address Extensions (PAE)
+% Bit” on page 121), the page-translation mechanism can be extended to support 52-bit physical
+% addresses. 52-bit physical addresses allow up to 4 petabytes of physical-address space to be
+% supported. (Currently, the AMD64 architecture supports 40-bit addresses in this mode, allowing
+% up to 1 terabyte of physical-address space to be supported.
+% Long Mode—This mode is unique to the AMD64 architecture. This mode supports up to 4
+% petabytes of physical-address space using 52-bit physical addresses. Long mode requires the use of
+% page-translation and the physical-address size extensions (PAE).
+Разрядность физического адреса может составлять как 32, так и~40 или 52~бита~\cite{amd64System}.
+
+Процесс %при нормальной работе операционной системы 
+не может обратиться к~физическому адресу, принадлежащему другому процессу,
+% (но при участии обоих взаимодействующих процессов возможно выделение )
+% (но можно создать область общей памяти).
+без специальных средств межпроцессного взаимодействия. % (или сбоя).
+
+\subsubsection{Страничная организация памяти}
+
+% Минимальным квантом памяти
+Виртуальное адресное пространство плоской модели памяти делится на части определённого размера $pagesize$ "--- страницы.
+
+Каждая страница %виртуальной памяти 
+включает непрерывный последовательный диапазон виртуальных адресов $[\zeta, \zeta+pagesize)$ и~соответствует последовательному фрагменту ОЗУ или раздела подкачки на жёстком диске.
+Страница может быть вытеснена из ОЗУ на диск или загружена с~диска в~ОЗУ только целиком, то есть страница "--- минимальный квант памяти при её распределении между процессами.
+
+Страницы в~принципе могут иметь различные атрибуты защиты (разрешения чтения, записи, исполнения и~т.\,д.).
 
 % \subsection{Разделы памяти}
 \subsection{Сегменты памяти}
@@ -766,27 +1079,6 @@ baseline=(current bounding box.north)
 \item локальные "--- каждый вызов функции порождает новую копию переменной;
 \item динамические "--- память выделяется и~освобождается с~помощью $new/delete$ или $malloc()/free()$.
 \end{itemize}
-
-% Современные операционные системы предоставляют каждой исполняющейся программе (процессу)
-Современные операционные системы используют так называемую \termin{плоскую модель памяти}.
-\index{Модель памяти!плоская}
-Каждой исполняющейся программе (процессу) предоставляется
-диапазон виртуальных адресов от~$0$ до $2^N$, где $N$ "--- разрядность системы (32 или~64).
-Каждому адресу соответствует один байт памяти.
-
-При обращении к~определённому виртуальному адресу он транслируется в~физический аппаратным механизмом трансляции адресов, %процессора 
-контролируемым операционной системой.
-Виртуальный адрес может быть некорректным %, если ему не соответствует никакой
-либо соответствовать байту в~оперативной памяти или специализированной области жёсткого диска (в~разделе подкачки; некоторые операционные системы также могут использовать файл подкачки).
-% Физическое расположение данных %, соответствующее некоторому виртуальному адресу, может меняться операционной системой.
-Операционная система может перемещать данные в~оперативной памяти или из памяти на диск и~обратно.
-Виртуальные адреса и,~соответственно, указатели в~программе при этом не изменяются.
-
-Процесс %при нормальной работе операционной системы 
-не может обратиться к~физическому адресу, принадлежащему другому процессу,
-% (но при участии обоих взаимодействующих процессов возможно выделение )
-% (но можно создать область общей памяти).
-без специальных средств межпроцессного взаимодействия. % (или сбоя).
 
 % Каждому физическому адресу соответствует  байт в~оперативной памяти.
 % Корректному виртуальному адресу может соответствовать как 
@@ -1077,7 +1369,7 @@ int main(int argc,
 % Регистры "--- часть процессора и~работает с~ним на одной частоте.
 
 
-Кроме того, АЛУ процессора не может оперировать данными, расположенными непосредственно в~оперативной памяти, так что оператор %\lstinline!++i! 
+Кроме того, АЛУ процессора не может обрабатывать данные, расположенные непосредственно в~оперативной памяти, так что оператор %\lstinline!++i! 
 ${+}{+}i$ (или соответствующая ему команда ассемблера \lstinline$inc i$) будет выполняться в~несколько приёмов (раздел~\ref{sec:command-cycle}):
 \begin{itemize}
 \item загрузка значения переменной~$i$ из оперативной памяти в~специальную ячейку внутри процессора "--- регистр; % "--- операнд;
@@ -1111,14 +1403,18 @@ ${+}{+}i$ (или соответствующая ему команда ассемблера \lstinline$inc i$) будет в
 а~соответствующий машинный код содержит номер  регистра~$eax$. %~$A$ ($000$).
 % , который может быть заменён на код другого 
 Если это имя или номер заменить именем или номером другого регистра общего назначения, получим корректную команду загрузки значения в~этот регистр.
-
+% 
 Граница между специальными регистрами и~регистрами общего назначения в~наборе команд x86 достаточно размыта.
 Так как регистров в~оригинальном процессоре 8086 было мало, все %они 
-адресуемые регистры
-имеют ещё и~какое-либо специальное назначение.
+% унаследованные от него
+адресуемые регистры 
+имели ещё и~какое-либо специальное назначение.
 % В~частности, регистр~$A$ %(и~только он) 
 % используется командами знакового расширения, умножения и~деления.
-
+Со временем %большинство возможностей
+специализация % регистров общего назначения 
+сглаживается,
+но многие команды, унаследованные от оригинального набора, обращаются к~неявному аргументу в~конкретном регистре.
 
 Процессоры семейства x86 предназначены для обработки целых чисел,
 так что в~регистрах процессора %общего назначения 
@@ -1126,15 +1422,114 @@ ${+}{+}i$ (или соответствующая ему команда ассемблера \lstinline$inc i$) будет в
 целочисленные переменные (адреса, индексы и~собственно целые числа).
 
 Под номер регистра в~команде (её структура более подробно рассматривается в~разделе~\ref{sec:command-x86}) отведено всего три бита~\cite{nezumi-disasm, intelInstructionSet},
-так что регистров общего назначения в~тридцатидвухбитном режиме  x86 доступно только восемь (рис.~\ref{ris:registers}).
+так что регистров общего назначения в~тридцатидвухбитном режиме  x86 доступно только восемь (рис.~\ref{ris:registers-32}).
 % На самом деле в~современных процессорах их больше
 
-\begin{illustration}%
-\includegraphics[width=\wideImageWidth,keepaspectratio,valign=t]{Registers}
+% \begin{illustration}%
+% \includegraphics[width=\wideImageWidth,keepaspectratio,valign=t]{Registers}
+% 
+% \caption{Регистры общего назначения x86}
+% \label{ris:registers}
+% \end{illustration}
 
-\caption{Регистры общего назначения x86}
-\label{ris:registers}
+
+% \schemafont
+% \tiny
+\newlength{\bytewidth}
+\setlength{\bytewidth}{12ex}
+
+% % \tikzstyle{arrowline}=[-latex',scale=2]
+
+\tikzstyle{reg}	= [text badly centered, fill=clRegisterLight, draw=black, minimum height=3.5ex, inner ysep=0ex, textsc]
+% \tikzstyle{regpart}	= [reg, solidchaincell]
+
+\tikzstyle{r1}	= [reg, minimum width=\bytewidth]
+\tikzstyle{r2}	= [reg, minimum width=2\bytewidth]
+\tikzstyle{r4}	= [reg, minimum width=4\bytewidth]
+
+\tikzstyle{commentline}	= [draw=clRegisterDark]
+\tikzstyle{textsc}	= [scale=0.5]
+\tikzstyle{titlesc}	= [scale=0.7]
+
+\begin{illustration}
+
+\newcommand{\regA}[6][]
+{
+    
+    \node[r2, on chain, #1	,	fill=clRegisterLight!75!clRegisterDark] (h2#2) {};
+    \node[r1, solidchaincell, right = of h2#2] (h1#2) {$#4$};
+    \node[r1, solidchaincell, right = of h1#2	,	fill=clRegisterLight!75] (l#2) {$#3$};
+    
+    \node[left = 1ex of h2#2, titlesc] (title#2)  {$#2$}; 
+    
+\begin{scope}[on background layer]
+
+  \node[above = 0ex of h1#2.north east, textsc] (#5) {$#5\mathstrut$};  
+  \node[below = 0ex of h2#2.south east, textsc] (#6) {$#6$};  
+ 
+  
+  \foreach \lbl/\h/\inangle/\s/\e/\side in {#5/0ex/18/h1#2/l#2/north, #6/1ex/15/h2#2/l#2/south}
+  {
+    \ifthenelse{\equal{\side}{north}}{
+      \path[commentline] (\s.north west)	to[out=\inangle,in=180]		(\lbl);
+      \path[commentline]    (\lbl)	to[out=0,in=180-\inangle]	(\e.north east);
+    }{
+      \path[commentline] (\s.south west)	to[out=-\inangle,in=180]		(\lbl);
+      \path[commentline]    (\lbl)	to[out=0,in=180+\inangle]	(\e.south east);
+    }
+  };
+  
+  
+\end{scope}
+}
+
+\newcommand{\regsi}[4][]
+{
+    
+    \node[r2, on chain,	fill=clRegisterLight!75!clRegisterDark,	right=7ex of l#1] (h2#2) {};
+    \node[r2, solidchaincell, right = of h2#2] (l#2) {$#3$};
+    
+    \node[left = 1ex of h2#2, titlesc] (title#2)  {$#2$}; 
+    
+\begin{scope}[on background layer]
+
+  \node[below = 0ex of h2#2.south east, textsc] (#4) {$#4$};  
+  
+  \foreach \lbl/\h/\inangle/\s/\e/\side in {#4/1ex/15/h2#2/l#2/south}
+  {
+      \path[commentline] (\s.south west)	to[out=-\inangle,in=180]		(\lbl);
+      \path[commentline]    (\lbl)	to[out=0,in=180+\inangle]	(\e.south east);
+  };
+  
+  
+\end{scope}
+}
+
+
+\resizebox{\linewidth}{!}
+{
+\begin{tikzpicture}[
+start chain=going below,
+node distance=5ex]
+ 
+  \foreach \rname/\rbase in {A/a, B/b, C/c, D/d}
+  {
+    \regA{\rname}{\rbase l}{\rbase h}{\rbase x}{e\rbase x}{r\rbase x}
+  };
+  \foreach \r/\pos in {si/A, di/B, bp/C, sp/D}
+  {
+    \regsi[\pos]{\r}{\r}{e\r}
+  };
+
+    
+\end{tikzpicture}
+}
+
+\caption{Регистры общего назначения в~тридцатидвухбитном режиме}
+\label{ris:registers-32}
 \end{illustration}
+
+
 
 % Это
 
@@ -1168,6 +1563,9 @@ ${+}{+}i$ (или соответствующая ему команда ассемблера \lstinline$inc i$) будет в
 например, $sp$ вместо $rsp/esp/sp$. % или~$A$ вместо $rax/eax/ax/al$.
 Это не вызовет путаницы, так как шестнадцатиразрядный код сейчас практически не используется.
 
+
+
+
 Хотя %указатель стека 
 $sp$ можно адресовать как регистр общего назначения, использовать его иначе, чем 
 как указатель вершины стека, категорически не рекомендуется.
@@ -1175,11 +1573,17 @@ $sp$ можно адресовать как регистр общего назначения, использовать его иначе, чем
 Таким образом, будем считать регистрами общего назначения следующие семь "--- %регистров
 $A, B, C, D, si, di$ и~$bp$.
 
+\index{REX, префикс}
 В~64-разрядном режиме 
+% доступны все 64 бита регистров.
+% Кроме того,
 % увеличена разрядность не только самих регистров, но и~их~номеров в~команде, нет !!!
 может быть использован специальный префикс $REX$ (расширения регистров),
+который добавляет ещё один бит к~номерам регистров в~команде,
 так что
-добавляется ещё восемь регистров общего назначения $r8-r15$.
+% добавляется 
+можно адресовать
+ещё восемь регистров общего назначения $r8-r15$ (рис.~\ref{ris:registers-64}).
 % Префикс $REX$ игнорируется даже в~шестидесятичетырёхразрядном коде, если размер операнда менее~64. врут
 Их младшие части имеют имена $r8b - r15b$ (байты "--- 8 бит),
 $r8w-r15w$ (16 бит),
@@ -1187,6 +1591,137 @@ $r8d-r15d$ (32 бита).
 % $r8 - r15$
 В~32-разрядном режиме они недоступны. %, соответственно, их младшие части не имеют отдельных имён.
 Также префикс $REX$ позволяет адресовать младшие байты регистров $si, di, bp$ и~$sp$ "--- $sil, dil, bpl$ и~$spl$~\cite{intelBasic}.
+
+
+\begin{illustration}[p]
+
+\newcommand{\regc}[7][]
+{
+    \node[r4, on chain, #1	,	fill=clRegisterLight!50!clRegisterDark] (h4#2) {};
+    \node[r2, solidchaincell, right = of h4#2	,	fill=clRegisterLight!75!clRegisterDark] (h2#2) {};
+    \node[r1, solidchaincell, right = of h2#2] (h1#2) {$#4$};
+    \node[r1, solidchaincell, right = of h1#2	,	fill=clRegisterLight!75] (l#2) {$#3$};
+    
+%     \node[left = 2ex of h4#2, scale=0.7]  {$#2$}; 
+    \node[left = 2ex of h4#2, titlesc] (title#2)  {$#2$}; 
+    
+\begin{scope}[on background layer]
+    
+%   \foreach \lbl/\inangle/\s/\e in {#5/10/h1#2/l#2, #6/15/h2#2/l#2, #7/20/h4#2/l#2}
+%   \foreach \lbl/\h/\inangle/\s/\e in {#5/0ex/10/h1#2/l#2, #6/2ex/15/h2#2/l#2, #7/4ex/18/h4#2/l#2}
+%   {
+% %     \path[draw=clRegisterDark] (\s.north west)  to[out=\inangle,in=180-\inangle] node[fill=white, text=black, sloped,scale=1] {$\lbl$} (\e.north east);
+% %     \path[draw=clRegisterDark] (\s.north west)  .. controls ($(\s.north east) + (0,1)$)  
+% % 	  ..
+% % 	  node[fill=white, text=black, sloped,scale=1] {$\lbl$} (\e.north east);       
+% 
+%     \node[text=black, above = \h of \s.north east] (\lbl) {$\lbl$};  
+% %     \path[draw=clRegisterDark] (\s.north west)  
+% %     to[out=\inangle,in=180] 
+% %     (\lbl)
+% %     to[out=0,in=180-\inangle] 
+% %     (\e.north east);
+% 
+%     \path[commentline] (\s.north west)	to[out=\inangle,in=180]		(\lbl);
+%     \path[commentline]    (\lbl)	to[out=0,in=180-\inangle]	(\e.north east);
+%     
+% %      \path[commentline]	(\lbl)		.. controls (\lbl-|\e.east) ..	(\e.north east);
+% %      \path[commentline]	(\s.north west)	.. controls (\lbl-|\s.west) ..	(\lbl);
+%    
+%   };
+
+%   \foreach \lbl/\h/\inangle/\s/\e in {#5/0ex/10/h1#2/l#2, #6/1ex/15/h2#2/l#2, #7/2ex/18/h4#2/l#2}
+%   {
+%     \node[text=black, above = \h of \s.north east, textsc] (\lbl) {$\lbl$};  
+%   };
+  \node[above = 0ex of h1#2.north east, textsc] (#5) {$#5\mathstrut$};  
+  \node[below = 0ex of h2#2.south east, textsc] (#6) {$#6$};  
+  \node[above = 0.1ex of h4#2.north east|-#5.center, textsc] (#7) {$#7$};  
+ 
+  
+  \foreach \lbl/\h/\inangle/\s/\e/\side in {#5/0ex/18/h1#2/l#2/north, #6/1ex/15/h2#2/l#2/south}
+  {
+%     \path[commentline] (\s.north west)	to[out=\inangle,in=180]		(\lbl);
+%     \path[commentline]    (\lbl)	to[out=0,in=180-\inangle]	(\e.north east);
+    
+    \ifthenelse{\equal{\side}{north}}{
+      \path[commentline] (\s.north west)	to[out=\inangle,in=180]		(\lbl);
+      \path[commentline]    (\lbl)	to[out=0,in=180-\inangle]	(\e.north east);
+    }{
+      \path[commentline] (\s.south west)	to[out=-\inangle,in=180]		(\lbl);
+      \path[commentline]    (\lbl)	to[out=0,in=180+\inangle]	(\e.south east);
+    }
+    
+%      \path[commentline]	(\lbl)		.. controls (\lbl-|\e.east) ..	(\e.north east);
+%      \path[commentline]	(\s.north west)	.. controls (\lbl-|\s.west) ..	(\lbl);
+   
+  };
+  
+  
+  
+  \foreach \lbl/\h/\inangle/\s/\e in {#7/2ex/18/h4#2/l#2}
+%   \foreach \lbl/\h/\inangle/\s/\e in {#5/0ex/10/h1#2/l#2, #6/2ex/15/h2#2/l#2, #7/4ex/18/h4#2/l#2}
+  {
+%     \path[commentline] (\s.north west)	to[out=\inangle,in=180]		(\lbl);
+%     \path[commentline]    (\lbl)	to[out=0,in=180-\inangle]	(\e.north east);
+    
+%      \path[commentline]	(\lbl)		.. controls (\lbl-|\e.east) ..	(\e.north east);
+%      \path[commentline]	(\s.north west)	.. controls (\lbl-|\s.west) ..	(\lbl);
+
+%      \path[commentline]	(\lbl)		-|	(\e.north east);
+%      \path[commentline]	(\s.north west)	|-	(\lbl);
+
+     \path[commentline]	(\lbl.north-|\e.north east)	--	(\e.north east);
+     \path[commentline]	(\s.north west)	|-	(\lbl.north-|\s.north west);
+
+     \path[arrowline, commentline]	(\lbl)	--	(\lbl-|\e.north east);
+     \path[arrowline, commentline]	(\lbl)	--	(\lbl-|\s.north west);
+     
+  };  
+
+\end{scope}
+
+}
+
+\resizebox{\linewidth}{!}
+{
+\begin{tikzpicture}[
+start chain=going below,
+node distance=5ex]
+ 
+%   \foreach \rn in {0,...,9}
+%   {
+%     \node[r4, on chain] (h4\rn) {};
+%     \node[r2, solidchaincell, right = of h4\rn] (h2\rn) {};
+%     \node[r1, solidchaincell, right = of h2\rn] (h1\rn) {};
+%     \node[r1, solidchaincell, right = of h1\rn] (l\rn) {};
+%   };
+
+  \foreach \rname/\rbase in {A/a, B/b, C/c, D/d}
+  {
+    \regc{\rname}{\rbase l}{\rbase h}{\rbase x}{e\rbase x}{r\rbase x}
+  };
+  \foreach \r in {si, di, bp, sp}
+  {
+    \regc{\r}{\r l}{}{\r}{e\r}{r\r}
+  };
+  \foreach \r in {8}
+  {
+    \regc{r\r}{r\r b}{}{r\r w}{r\r d}{r\r}
+  };
+  \node[below = 1.5ex of h4r8.south east, titlesc] (rdots) {$\ldots$};
+  \node[titlesc] at (rdots-|titler8) {$\ldots$};
+  \foreach \r in {15}
+  {
+    \regc[below = 3.5ex of rdots.south, anchor = north east]{r\r}{r\r b}{}{r\r w}{r\r d}{r\r}
+  };
+    
+\end{tikzpicture}
+}
+
+\caption{Регистры общего назначения в~шестидесятичетырёхбитном режиме}
+\label{ris:registers-64}
+\end{illustration}
 
 Из специальных регистров следует отметить 
 регистры состояния и~управления:
@@ -1206,39 +1741,13 @@ $mm0-mm7$ "--- мантиссы  $r_0- r_7$);
 \item восемь 128-разрядных регистров расширения SSE, или XMM {({$xmm0-xmm7$})}.
 Каждый из них предназначен для хранения вектора вещественных чисел одинарной точности, а~не длинного 128-битного числа.
 В~64-битных системах количество XMM-регистров, как и~количество регистров общего назначения, увеличено до шестнадцати ($xmm0-xmm15$).
-Расширение AVX (YMM) расширило их до 256-разрядных $ymm0-ymm15$,
+Расширение AVX (YMM) вдвое увеличило их разрядность "--- до 256-разрядных $ymm0-ymm15$,
 недавно появившееся  AVX-512 (ZMM) "--- до 512-разрядных $ymm0-ymm31$ (в~32-битных системах доступны только первые восемь).
 При этом регистры $ymm_i$ "--- младшие половины регистров $zmm_i$, а~$xmm_i$, соответственно, "--- младшие половины $ymm_i$.
 Регистры ZMM есть не во всех современных процессорах.
 \end{itemize}
 Также расширения могут иметь свои специальные регистры, в~частности, регистры флагов.
-
-% \begin{itemize}
-% \item {Регистры общего назначения} 
-%  \begin{itemize}
-% \item   \Reg{a, b, c, d;}  
-% \item    \Reg{si, di, bp;}
-% \item   {указатель стека} \Reg{sp}.
-%  \end{itemize}    
-%    
-% \item Сегментные %регистры 
-%   \Reg{cs, ds, ss, es, fs, gs.}
-% 
-% \item  Регистры состояния и~управления:
-% \begin{itemize}
-% \item   регистр флагов \Reg{eflags/flags};
-% 
-% \item       указатель команды \Reg{eip/ip}.
-% \end{itemize}   
-% 
-% \item   Регистры сопроцессора x87 \Reg{st(0)...st(7)}/расширения MMX \rlap{\Reg{mm0...mm7}}
-% 
-% \item        Регистры расширения XMM \rlap{(128-разрядные \Reg{xmm0...xmm7})}
-% \end{itemize}
-
-% Также в~состав 
-
-
+Например, FPU имеет обширный набор специальных регистров, так как изначально команды набора FPU выполнялись отдельным устройством "--- математическим сопроцессором.
 
 
 \subsection{Регистр флагов}
@@ -1262,14 +1771,14 @@ $mm0-mm7$ "--- мантиссы  $r_0- r_7$);
 
 Флаг считается установленным, когда он равен~1, и~сброшенным, когда равен 0.
 
-Кроме флагов состояния, регистр флагов включает один бит, не отражающий выполнение последней операции, но влияющий на выполнение некоторых команд (управляющий флаг), а~также несколько битов, недоступных прикладным программам (системные флаги)~\cite{intelSystem, club155, sasm}.
+Кроме флагов состояния, регистр флагов включает один бит, не отражающий выполнение последней операции, но влияющий на выполнение некоторых команд (управляющий флаг), а~также несколько битов, недоступных прикладным программам (системные флаги)~\cite{intelSystem,club155,sasm}.
 Часть битов зарезервирована и~не используется сейчас как флаги (зарезервированный бит может иметь как произвольное, так и~фиксированное значение).
 
 Доступные прикладным программам флаги состояния в~основном сосредоточены в~младших восьми разрядах $flags$,
 % (таблица~\ref{tab:flags}),
 поэтому многие команды сохранения/восстановления регистра флагов оперируют только с~младшим байтом.
-Старшие восемь бит содержат один флаг состояния~$OF$, управляющий флаг и~несколько системных.
-В~тридцатидвухбитном регистре $eflags$ в~старших шестнадцати битах добавлено ещё несколько системных флагов;
+Старшие восемь бит содержат один флаг состояния~$OF$, управляющий флаг~$DF$ и~несколько системных.
+В~тридцатидвухбитном регистре $eflags$ в~старших шестнадцати битах добавлено ещё шесть системных флагов;
 старшие тридцать два бита шестидесятичетырёхбитного $rflags$ не используются.
 
 
@@ -1295,29 +1804,29 @@ $mm0-mm7$ "--- мантиссы  $r_0- r_7$);
 % № 	& 	&Название 	&Описание 	&Тип флага \\\hline
 % \multicolumn{5}{c}{\Reg{flags/eflags}}\\\hline
 \multicolumn{5}{c}{\Reg{flags}}\\\hline
-\rowcolor{csMarker}0 	&CF 	&Carry Flag 	&Флаг переноса (беззнакового переполнения) 	&Состояние\\\hline
+\rowcolor{clFlagStatus}0 	&CF 	&Carry Flag 	&Флаг переноса (беззнакового переполнения) 	&Состояние\\\hline
 1 	&1 	&---&Зарезервирован 	&\\\hline
-\rowcolor{csMarker}2 	&PF 	&Parity Flag 	&Флаг чётности 	&Состояние\\\hline
+\rowcolor{clFlagStatus}2 	&PF 	&Parity Flag 	&Флаг чётности 	&Состояние\\\hline
 3 	&0 	&---&Зарезервирован 	&\\\hline
-\rowcolor{csMarker}4 	&AF 	&Auxiliary Carry Flag 	&Вспомогательный флаг переноса 	&Состояние\\\hline
+\rowcolor{clFlagStatus}4 	&AF 	&Auxiliary Carry Flag 	&Вспомогательный флаг переноса 	&Состояние\\\hline
 5 	&0 	&---&Зарезервирован 	&\\\hline
-\rowcolor{csMarker}6 	&ZF 	&Zero Flag 	&Флаг нуля 	&Состояние\\\hline
-\rowcolor{csMarker}7 	&SF 	&Sign Flag 	&Флаг знака 	&Состояние\\\hline
-\rowcolor{csSystem}8 	&TF 	&Trap Flag 	&Флаг трассировки 	&Системный\\\hline
-\rowcolor{csSystem}9 	&IF 	&Interrupt Enable Flag 	&Флаг разрешения прерываний 	&Системный\\\hline
-\rowcolor{csControl}10 	&DF 	&Direction Flag 	&Флаг направления 	&Управляющий\\\hline
-\rowcolor{csMarker}11 	&OF 	&Overflow Flag 	&Флаг знакового переполнения 	&Состояние\\\hline
-\rowcolor{csSystem}12--13 	&IOPL 	&I/O Privilege Level 	&Уровень приоритета ввода-вывода 	&Системный\\\hline
-\rowcolor{csSystem}14 	&NT 	&Nested Task 	&Флаг вложенности задач 	&Системный\\\hline
+\rowcolor{clFlagStatus}6 	&ZF 	&Zero Flag 	&Флаг нуля 	&Состояние\\\hline
+\rowcolor{clFlagStatus}7 	&SF 	&Sign Flag 	&Флаг знака 	&Состояние\\\hline
+\rowcolor{clFlagSystem}8 	&TF 	&Trap Flag 	&Флаг трассировки 	&Системный\\\hline
+\rowcolor{clFlagSystem}9 	&IF 	&Interrupt Enable Flag 	&Флаг разрешения прерываний 	&Системный\\\hline
+\rowcolor{clFlagControl}10 	&DF 	&Direction Flag 	&Флаг направления 	&Управляющий\\\hline
+\rowcolor{clFlagStatus}11 	&OF 	&Overflow Flag 	&Флаг знакового переполнения 	&Состояние\\\hline
+\rowcolor{clFlagSystem}12--13 	&IOPL 	&I/O Privilege Level 	&Уровень приоритета ввода-вывода 	&Системный\\\hline
+\rowcolor{clFlagSystem}14 	&NT 	&Nested Task 	&Флаг вложенности задач 	&Системный\\\hline
 15 	&0 	&---&Зарезервирован 	&\\\hline
 % \\\hline
 \multicolumn{5}{c}{\Reg{eflags}}\\\hline
-\rowcolor{csSystem}16 	&RF 	&Resume Flag 	&Флаг возобновления 	&Системный\\\hline
-\rowcolor{csSystem}17 	&VM 	&Virtual-8086 Mode 	&Режим виртуального процессора 8086 	&Системный\\\hline
-\rowcolor{csSystem}18 	&AC 	&Alignment Check 	&Проверка выравнивания 	&Системный\\\hline
-\rowcolor{csSystem}19 	&VIF 	&Virtual Interrupt Flag 	&Виртуальный флаг разрешения прерывания 	&Системный\\\hline
-\rowcolor{csSystem}20 	&VIP 	&Virtual Interrupt Pending 	&Ожидающее виртуальное прерывание 	&Системный\\\hline
-\rowcolor{csSystem}21 	&ID 	&ID Flag 	&Проверка на доступность инструкции CPUID 	&Системный\\\hline
+\rowcolor{clFlagSystem}16 	&RF 	&Resume Flag 	&Флаг возобновления 	&Системный\\\hline
+\rowcolor{clFlagSystem}17 	&VM 	&Virtual-8086 Mode 	&Режим виртуального процессора 8086 	&Системный\\\hline
+\rowcolor{clFlagSystem}18 	&AC 	&Alignment Check 	&Проверка выравнивания 	&Системный\\\hline
+\rowcolor{clFlagSystem}19 	&VIF 	&Virtual Interrupt Flag 	&Виртуальный флаг разрешения прерывания 	&Системный\\\hline
+\rowcolor{clFlagSystem}20 	&VIP 	&Virtual Interrupt Pending 	&Ожидающее виртуальное прерывание 	&Системный\\\hline
+\rowcolor{clFlagSystem}21 	&ID 	&ID Flag 	&Проверка на доступность инструкции CPUID 	&Системный\\\hline
 22--31	&	&---&Зарезервированы 	&\\\hline
 \end{tabularx}
 
@@ -1334,7 +1843,9 @@ $mm0-mm7$ "--- мантиссы  $r_0- r_7$);
 и~пр.); этими флагами являются биты 0, 2, 4, 6, 7 и~11 регистра $flags$.
 
 \paragraph{CF	
-(бит 0)} Флаг переноса (Carry Flag = CF). Устанавливается, если арифметическая операция приводит к~переносу или заёму в/из старшего (выходящего за пределы операнда, воображаемого) разряда, таким образом, этот флаг показывает условие переполнения при выполнении беззнаковых арифметических операций. 
+(бит 0)} Флаг переноса (Carry Flag = CF). Устанавливается, если происходит перенос
+из старшего разряда результата за пределы разрядной сетки при сложении
+или заём в старший  разряд из несуществующего  (выходящего за пределы операнда, воображаемого) разряда при вычитании, таким образом, этот флаг показывает переполнение при выполнении беззнаковых арифметических операций. 
 
 Флаг~$CF$  часто используется и~для других целей, тогда его значение не связано с~беззнаковым  переполнением.
 Так, этот бит используется 
@@ -1361,11 +1872,11 @@ $mm0-mm7$ "--- мантиссы  $r_0- r_7$);
 (бит 6)} Флаг нуля (Zero Flag = ZF). Устанавливается, если результат операции "--- нуль, иначе "--- сбрасывается.
 
 \paragraph{SF	
-(бит 7)} Флаг знака (Sign Flag = SF). Всегда равен значению старшего бита результата. Этот бит интерпретируется как знаковый в~некоторых арифметических операциях (0/1 "--- число положительное / отрицательное).
+(бит 7)} Флаг знака (Sign Flag = SF). Всегда равен значению старшего бита результата. Этот бит интерпретируется как знаковый в~некоторых арифметических операциях (0/1 "--- число положительное/отрицательное).
 
 \paragraph{OF	
 (бит 11)} Флаг переполнения (Overflow Flag = OF). Устанавливается, если при знаковой интерпретации результат операции не помещается в~операнд (слишком большое положительное или слишком маленькое для отрицательных знаковых чисел); иначе "--- сбрасывается. 
-При сложении этот флаг устанавливается в~1, если происходит перенос в~старший бит и~нет переноса из старшего бита, или имеется перенос из старшего бита, но отсутствует перенос в~него; в~противном случае, флаг $OF$ устанавливается в~0. При вычитании он устанавливается в~1, когда возникает заём из старшего бита, но заём в~старший бит отсутствует, либо имеется заём в~старший бит, но отсутствует заём из него.
+При сложении этот флаг устанавливается в~1, если происходит перенос в~старший бит и~нет переноса из старшего бита (то есть сумма положительных чисел даёт результат, интерпретируемый как отрицательный), или имеется перенос из старшего бита, но отсутствует перенос в~него (сумма отрицательных чисел положительна); в~противном случае, флаг $OF$ устанавливается в~0. При вычитании он устанавливается в~1, когда возникает заём из старшего бита, но заём в~старший бит отсутствует, либо имеется заём в~старший бит, но отсутствует заём из него.
 
 Флаг переполнения сигнализирует о~потере старшего бита результата в~связи с~переполнением разрядной сетки при работе со знаковыми числами.
 % , то есть, если при вычитании $OF=1$, то старший (знаковый) бит равен не знаку, а~его инверсии.
@@ -1406,6 +1917,8 @@ $mm0-mm7$ "--- мантиссы  $r_0- r_7$);
 Он создавался в~условиях жёсткой экономии памяти, так что команды имеют максимально компактную (и,~соответственно, сложную для декодирования и~понимания)
 структуру и~используют разнообразные %способы задания адреса операнда.
 методы адресации операндов.
+
+Необходимость программирования в~машинных кодах возникает крайне редко, но знание формата команды помогает лучше представлять себе возможности и~ограничения архитектуры.
 
 \subsubsection{Методы адресации}
 \index{Адресация!виды}
@@ -1482,6 +1995,13 @@ $mm0-mm7$ "--- мантиссы  $r_0- r_7$);
 % \begin{itemize}
 % \item 
 % \end{itemize}
+Из префиксов x86 следует отметить префикс изменения размера операнда \lstinline!0x66!
+и~префикс изменения размера адреса~\lstinline!0x67!.
+Для тридцатидвухбитного режима (и~его шестидесятичетырёхбитного расширения) они уменьшают разрядность операнда или адреса соответственно до 16 бит, 
+для шестнадцатибитного "--- повышают до 32.
+% (по умолчанию разрядность операндов и~адреса
+Восьмибитные варианты команд, как правило, представлены отдельными опкодами.
+
 Далее идёт код операции (опкод), занимающий один, два или три байта (и, может быть, ещё три бита в~байте $Mod~R/M$).
 % 
 Следующие два байта, $Mod~R/M$ и~$SIB$, согласно~\cite{intelInstructionSet}, задают адресацию операндов. %, если они есть.
@@ -1493,7 +2013,9 @@ $mm0-mm7$ "--- мантиссы  $r_0- r_7$);
 Это относится не только к~неявной адресации (что логично), но и~к~непосредственной.
 При этом, если опкодом задаётся использование
 двух операндов,
-один из которых непосредственный, а~второй в~памяти,
+один из которых непосредственный, а~второй 
+% в~памяти,
+адресуется полем $R/M$,
 то в~освободившееся поле $Reg$ байта $Mod~R/M$ может быть записана часть опкода.
 % Также опкод включает поле направления, показывая
 % Код операции задаёт, в~частности, неявну
@@ -1589,7 +2111,7 @@ Base, & R/M  = Base ~(\text{иначе}) %\in \{A, B, C, D, si, di\}\\
 определяющее коэффициент,
 на который умножается индексный регистр (соответственно $1, 2, 4$ или $8$),
 далее следуют трёхбитные поля $Index$ и~$Base$, хранящие номера регистров.
-Значение $Index = 100$ считается специальным, в~этом случае в~формуле~\eqref{eq:command:zeta} используется $Index=0$.
+Значение поля $Index = 100$ считается специальным, в~этом случае в~формуле~\eqref{eq:command:zeta} используется $Index=0$.
 
 Таким образом, адрес операнда при $Mod=01$ или~$Mod=10$ может иметь вид
 \begin{equation}
@@ -1603,6 +2125,7 @@ Base + Displacement, & R/M  = Base ~(\text{иначе}) %\in \{A, B, C, D, si, di\}\\
 \end{array}
 \right.
 \end{equation}
+Первая строка отличается от последней тем, что $Base$ из поля $SIB$ может соответствовать регистру $sp$ (код $100$).
 
 При $Mod=00$ %адрес складывается
 используется косвенная адресация без смещения, 
@@ -1619,9 +2142,10 @@ Base, & R/M  = Base ~(\text{иначе}) %\in \{A, B, C, D, si, di\}\\
 \end{array}
 \right.
 \end{equation}
+Соответственно, регистр $bp$ (код $101$) не может быть базовым без смещения (но может быть базовым с~нулевым смещением при $Mod \in\{01, 10\}$ и~$Displacement=0$).
 
 Таким образом, 
-всего у~команды x86 может быть не более трёх операндов,
+всего у~команды x86 может быть не более трёх явных операндов,
 среди которых 
 не более одного непосредственного значения,
 не более одного  значения в~памяти
@@ -1644,9 +2168,9 @@ ${Base}$ и~${Index}$ "--- регистры.
 номера которых совпадают со специальными значениями полей.
 
 
-
+\index{REX, префикс}
 В~шестидесятичетырёхбитном режиме между историческими префиксами и~опкодом может находиться
-специальный однобайтовый префикс расширения регистров REX.
+специальный однобайтовый префикс расширения регистров $REX$.
 Его 
 младшие три бита (биты 0-2)
 используются для увеличения разрядности номеров регистров, % (добавления старшего бита к~номеру).
@@ -1654,7 +2178,7 @@ ${Base}$ и~${Index}$ "--- регистры.
 не изменяется (0),
 старшие четыре бита равны $0100$ и~служат для идентификации.
 
-Бит 2 префикса REX
+Бит 2 префикса $REX$
  добавляется к~полю $Reg$ байта $Mod~R/M$,
 бит 1 "--- к~полю $Index$ байта $SIB$,
 младший бит~0, в~зависимости от используемой адресации "--- к~%номеру регистра в~поле 
@@ -1662,20 +2186,45 @@ ${Base}$ и~${Index}$ "--- регистры.
 
 Таким образом, количество адресуемых регистров общего назначения возрастает до шестнадцати.
 Номера регистров $A{-}di$, указанные в~таблице~\ref{tab:command:reg},
-соответствуют отсутствию префикса REX или нулю  в~соответствующем бите REX (в~последнем случае с~учётом REX получаем четырёхбитовые коды~$0100{-}0111$).
-Единица в~REX в~сочетании с~трёхбитовым полем в~команде даёт номера регистров $1000{-}1111$, то есть $r8{-}r15$.
+соответствуют отсутствию префикса $REX$ или нулю  в~соответствующем бите $REX$ (в~последнем случае с~учётом $REX$ получаем четырёхбитовые коды~$0100{-}0111$).
+Единица в~$REX$ в~сочетании с~трёхбитовым полем в~команде даёт номера регистров $1000{-}1111$, то есть $r8{-}r15$.
 
-Изменяя бит 3 префикса REX, можно получить разрядность от 8 до 64 как для $r8{-}r15$, так и~для $A{-}di$.
-% В~шестидесятичетырёхбитном режиме %префикс расширения регистров REX 
+Изменяя бит 3 префикса $REX$, можно получить разрядность от 8 до 64 как для $r8{-}r15$, так и~для $A{-}di$.
+% В~шестидесятичетырёхбитном режиме %префикс расширения регистров $REX$ 
 % есть возможность дополнить коды регистров 
-% (за счёт использования специальных префиксов расширения регистров REX).
+% (за счёт использования специальных префиксов расширения регистров $REX$).
 % % добавить ещё восемь регистров.
-При использовании восьмибитной команды в~сочетании с~REX с~нулевым третьим битом (то есть разрядность не изменяется и~операнды занимают 8~бит)  коды регистров $0100{-}0111$ описывают младшие байты  регистров $sp{-}di$
+При использовании восьмибитной команды в~сочетании с~$REX$ с~нулевым третьим битом (то есть разрядность не изменяется и~операнды занимают 8~бит)  коды регистров $0100{-}0111$ описывают младшие байты  регистров $sp{-}di$
 "--- в~документации и~коде программы они обозначаются $spl{-}dil$.
 Таким образом, в~шестидесятичетырёхбитном режиме доступны как $ah{-}dh$, так и~$spl{-}dil$.
-При этом в~одной и~той же команде нельзя адресовать, например, $ah$ и~$sil$, так как для первого требуется обязательное отсутствие у~команды префикса REX, а~для второго "--- наличие REX с~нулевым третьим битом.
+При этом в~одной и~той же команде нельзя адресовать, например, $ah$ и~$sil$% или $ah$ и~$r8$
+, так как для первого требуется обязательное отсутствие у~команды префикса $REX$, а~для второго "--- наличие $REX$ с~нулевым третьим битом.
 % % Прочие регистры тридцатидвухбитного режима доступны как с~
 
+% http://support.amd.com/TechDocs/24594.pdf
+% In 64-bit mode, two groups of instructions default to 64-bit operand size without the need for a $REX$ prefix:
+% • Near branches
+%  —CALL, Jcc, JrCX, JMP, LOOP, and RET. 
+% • All instructions, except far branches, that implicitly reference the RSP
+% —CALL, ENTER, LEAVE, POP, PUSH, and RET (CALL and RET are in both groups of instructions).
+\index{Команды!call}
+\index{Команды!ret}
+\index{Команды!push}
+\index{Команды!pop}
+Кроме того, в~шестидесятичетырёхбитном режиме есть две группы команд, которые по умолчанию (без указания префикса $REX$) используют шестидесятичетырёхбитные операнды: 
+% и~не требуют для этого :
+это команды, работающие с~указателями (условные и~безусловные переходы) и~команды, неявно использующие указатель стека (по умолчанию это~$rsp$).
+Команды вызова и~возврата из функций относятся к~обеим группам, так что они по умолчанию используют шестидесятичетырёхбитные адреса и~шестидесятичетырёхбитный указатель стека~$rsp$.
+% То есть 
+% The 64-bit default operand size can be overridden to 16 bits using the 66h operand-size override. 
+% However, it is not possible to override the operand size to 32 bits because there is no 32-bit operand-size override prefix for 64-bit mode. See “Operand-Size Override Prefix” on page 7 for details. 
+Разрядность  операндов этих команд может быть понижена с~64 бит до 16 указанием соответствующего префикса, но способа понизить её до 32 бит не существует~\cite{amd64Instructions}.
+
+% General-Purpose Programming
+% 3.1.2.1  Default Operand Size
+% For most instructions, the default operand size in 64-bit mode is 32 bits . To access 16-bit operand sizes, an instruction must contain an operand-size prefix (66h), as described in Section 3.2.3, “Operand Sizes and Overrides,” on page 41. To access the full 64-bit operand size, most instructions must contain a $REX$ prefix. 
+Для большинства команд в~шестидесятичетырёхбитном режиме размер операнда по умолчанию "--- 32 бита.
+Разрядность операндов может быть понижена до 16 бит соответствующим префиксом или повышена до 64 префиксом $REX$ с~единичным третьим битом~\cite{amd64Application}.
 
 \section{Иерархическая декомпозиция ВС}
 
@@ -1795,8 +2344,8 @@ ${Base}$ и~${Index}$ "--- регистры.
 
 Микроархитектура %микро
 процессора "--- это 
+аппаратная организация и~логическая структура микропроцессора:
 \begin{itemize}
-\item аппаратная организация и~логическая структура микропроцессора;
 \item регистры "--- сверхбыстрые ячейки памяти внутри процессора;
 \item набор микрокоманд;
 \item управляющие схемы; % (УУ), 
@@ -1814,8 +2363,16 @@ ${Base}$ и~${Index}$ "--- регистры.
 микрокоманд,
 конвейер, кеширование команд и~данных, прогнозирование переходов и~т.\,п.
 
-Микроархитектурный уровень впервые отделился от уровня архитектуры команд 
-в~ЭВМ EDSAC-2 в~1957~г.
+Микроархитектурный уровень впервые начал отделяться от уровня архитектуры команд 
+в~ЭВМ EDSAC-2 в~1957~г.,
+когда впервые было применено микропрограммирование для реализации команды как последовательности микрокоманд.
+
+В~настоящее время микроархитектура процессора качественно отличается от архитектуры уровня команд.
+Так, на уровне микроархитектуры все современные процессоры семейства x86 (то есть процессоры с~CISC-набором команд)
+организованы по принципу RISC.
+Именно, они имеют набор  микрокоманд простой структуры и~множество регистров, которые поочерёдно играют роль восьми регистров общего назначения за счёт механизма переименования.
+Это позволяет ускорить выполнение программ, сохраняя при этом совместимость на уровне архитектуры команд.
+
 
 % % 
 % % \termin{Тракт данных:}
@@ -1947,7 +2504,7 @@ ${Base}$ и~${Index}$ "--- регистры.
 (открытие документа двойным щелчком в~Microsoft Windows %или любой графической оболочке 
 "--- тоже вызов программы с~параметром!)
 и~для завершения работы.
-Непосредственное обращение к~системным вызовам обычно скрыты от прикладного программиста функциями-обёртками.
+Непосредственное обращение к~системным вызовам обычно скрыты от прикладного программиста библиотечными функциями-обёртками.
 
 % Уровень операционной системы "--- самый молодой из рассматриваемых уровней абстракции: << а нет!
 Первой операционной системой 
@@ -1969,7 +2526,7 @@ GM-NAA I/O (General Motors \& North American Aviation Input/Output system)  для 
 % фирмой IBM совместно с ассоциацией Shape были созданы операционные системы SOS (Shape Operationg System) и FMS (Forta Monitor System). Эти системы явились уже непосредственными предшественниками системы ОС, появившейся в 1964~г. 
 % http://bip-ip.com/sistemnoe-programmnoe-obespechenie-o-2/
 
-В~конце 1950-х~гг. были разработаны первые широко используемые операционные системы FMS (Fortran Monitor System)~\cite{tanenbaum, osdata.com/kind/history}
+В~конце 1950-х~гг. были разработаны первые широко используемые операционные системы FMS (Fortran Monitor System)~\cite{tanenbaum-arch,osdata.com/kind/history}
 и~SOS (Share 709 System)~\cite{ibmSos, osdata.com/kind/history}
 для IBM 709,
 которые включали компиляторы (Фортран для FMS и~ассемблер для SOS) и~%особым образом 
@@ -2004,7 +2561,7 @@ GM-NAA I/O (General Motors \& North American Aviation Input/Output system)  для 
 % Разные компиляторы также поддерживают разный синтаксис.
 так что для одного и~того же процессора могут быть разработаны несколько ассемблеров.
 
-В~частности, команда записи значения \hex{CC\,CC\,CC\,CC} в~регистр с~кодом~$1$ ($ecx$),
+В~частности, команда записи значения \hex{CC\,CC\,CC\,CC} в~регистр с~кодом~$1$ для x86 (этому коду для тридцатидвухбитного регистра в~тексте программы соответствует имя $ecx$),
 то есть команда \hex{B9\,CC\,CC\,CC\,CC},
 будет иметь вид
 \lstinline!movl $0xCCCCCCCC, %ecx!.
@@ -2148,7 +2705,7 @@ GM-NAA I/O (General Motors \& North American Aviation Input/Output system)  для 
 % 
 % 5 -
 % Языки искусственного интеллекта ИИ, экспертных систем и баз знаний, естественные языки
-Повышение интеллектуального уровня ЭВМ и интерфейса с ними
+% Повышение интеллектуального уровня ЭВМ и интерфейса с ними
 
 \section{История} 
 \epigraph{\begin{stanza}[0mm]Действительность "--- не бред собачий.\\
@@ -2209,7 +2766,7 @@ GM-NAA I/O (General Motors \& North American Aviation Input/Output system)  для 
 Также пятым поколением называют компактные персональные ЭВМ.
 % http://fb.ru/article/190570/pokolenie-kompyuterov-kompyuter-buduschego-opisanie
 % http://fb.ru/article/159886/pokoleniya-evm-tablitsa-harakteristiki-i-istoriya-chto-ponimayut-pod-terminom-pokolenie-evm
-Таненбаум считает пятым поколением встраиваемые системы (микроконтроллеры, системы на одном кристалле)~\cite{tanenbaum},
+Таненбаум считает пятым поколением встраиваемые системы (микроконтроллеры, системы на одном кристалле)~\cite{tanenbaum-arch},
 что естественным образом продолжает устоявшееся деление.
 % Также пятым поколением иногда считают кластеры, объединяющие много процессоров?
 
@@ -2286,7 +2843,7 @@ GM-NAA I/O (General Motors \& North American Aviation Input/Output system)  для 
 % механическая десятичная аналитическая машина,
 % включавшая 
 Наиболее известная сейчас работа Чарльза Бэббиджа "---
-постоянно дорабатывавшийся им проект механической десятичной аналитической машины,
+постоянно дорабатывавшийся им проект механической десятичной аналитической машины (рис.~\ref{ris:babbage-lovelace-color}),
 % http://kryaker.dwg.ru/?p=1944
 % арифметическое устройство («мельницу»),
 % устройство управления,
@@ -2299,11 +2856,22 @@ GM-NAA I/O (General Motors \& North American Aviation Input/Output system)  для 
 % \end{itemize}
 % https://habrahabr.ru/post/82929/
 % http://www.f-mx.ru/kommunikacii_svyaz_cifrovye_pribory_i/analiticheskaya_mashina_charlza.html
+включающий
 управляющий барабан (УУ), хранилище (регистровую память),
 мельницу (арифметическое устройство "--- АУ).
-На вход машины в~последнем варианте проекта подавались два потока перфокарт: операционные карты (команды) и карты переменных (данные). 
 
 
+\begin{illustration}
+\includegraphics[width=\linewidth,keepaspectratio,valign=t]{babbage-lovelace-color}
+
+\caption{Аналитическая машина из позднего проекта Бэббиджа, изображённая современным художником.
+Цифрами обозначены: 1 "--- память, 2 "--- процессор, 3 "--- блок питания, 4 "--- принтер, 5 "--- программа, 6 "--- адреса переменных, 7 "--- непосредственные данные, 8 "--- микропрограммы.
+Рядом с~машиной изображены Чарльз Бэббидж и~Ада Лавлейс}
+\label{ris:babbage-lovelace-color}
+\end{illustration}
+
+На вход машины в~последнем варианте проекта подавались два потока перфокарт: операционные карты (команды) и карты переменных (данные),
+что в~современной классификации соответствует гарвардской архитектуре~\cite{the-marvellous-analytical-engine-how-it-works}. 
 
 % https://geektimes.ru/post/210412/
 В~1930-х~гг. над своим проектом вычислительной машины
@@ -2323,7 +2891,9 @@ GM-NAA I/O (General Motors \& North American Aviation Input/Output system)  для 
 \end{itemize}
 Цузе впервые ввёл понятие «да/нет-статуса», аналогичное современному биту, термин «машинное слово», объединил в~вычислителе арифметические и~логические операции.
 
-Первая демонстрационная модель Z1 была  механической с~электроприводом.
+
+
+Первая демонстрационная модель Z1 была  механической с~электроприводом (рис.~\ref{ris:z1}).
 Вместо использованных Бэббиджем шестерёнок логические и~арифметические операции
 были реализованы на скользящих металлических рейках.
 Z1 обрабатывал 22-битные числа с~плавающей запятой,
@@ -2333,8 +2903,16 @@ Z1 обрабатывал 22-битные числа с~плавающей запятой,
 В~системе команд Z1 не было условных переходов, так как их затруднительно выполнять на перфоленте.
 Цикл реализовывался склейкой перфоленты в~кольцо~\cite{586067-ru,586067}.
 
+\begin{illustration}
+\includegraphics[width=\linewidth,keepaspectratio,valign=t]{z1}
+
+\caption{Конрад Цузе рядом с~восстановленным Z1}
+\label{ris:z1}
+\end{illustration}
+
 В~отличие  от  проекта аналитической машины Бэббиджа, который так и~остался проектом, Z1 был реализован в~1938~г.
 и~является первым в~истории компьютером.
+
 
 Серийно выпускаться механические компьютеры общего назначения так и~не стали;
 но выпуск специализированных устройств (мультимедийных проигрывателей, калькуляторов, цифровых сигнальных процессоров)
@@ -2374,7 +2952,18 @@ Z1 обрабатывал 22-битные числа с~плавающей запятой,
 В~Германии на основе реле в~1939~г Цузе разработал компьютер Z2 с~механической памятью, по архитектуре практически полностью повторяющий Z1.
 % Программа Z2 записывалась уже не на бумажной перфоленте, а~на перфоленте из более прочной киноплёнки.
 В~1941~г. "---  Z3 с~полностью релейной памятью, к~системе команд которого было добавлено вычисление квадратного корня~\cite{586067-ru,586067}.
-Перфоленты для программ Z2 и~Z3 делались уже не из бумаги, а~из более прочной киноплёнки.
+Перфоленты для программ Z2 и~Z3 делались уже не из бумаги, а~из более прочной киноплёнки (рис.~\ref{ris:z3}).
+
+
+
+\begin{illustration}
+\includegraphics[width=\approvedImageWidth,keepaspectratio,valign=t]{z3}
+
+\caption{Составные части Z3}
+\label{ris:z3}
+\end{illustration}
+
+
 
 % https://3dnews.ru/263541
 % Четыре компьютера Конрада Цузе
@@ -2399,8 +2988,8 @@ Z1 обрабатывал 22-битные числа с~плавающей запятой,
 В~США независимо от Цузе,
 но на основе проекта Бэббиджа,
 %http://www.great-country.ru/articles/sssr/sov_delali/00003.html
-разрабатывались две линейки релейных вычислительных устройств "--- в фирме Bell (Д. Штибитц)
-и~в~Гарвардском университете совместно с~IBM (Г. Айкен).
+разрабатывались две линейки релейных вычислительных устройств "--- в фирме Bell (Д.\,Штибитц)
+и~в~Гарвардском университете совместно с~IBM (Г.\,Айкен).
 
 
 % http://www.boatanchor.ru/article/item.php?itemid=15
@@ -2437,7 +3026,9 @@ Harvard Mark I, или ASCC (1941~г.) с~релейным процессором и~механической памятью
 
 В~системе команд Mark I и~Mark II, так же как и~в~ранних компьютерах Цузе, не было условных переходов, 
 а~циклы выполнялись закольцовыванием перфоленты.
-Программы Harvard Mark I и~Mark II (также аналогично Z1-Z3) хранились на перфолентах отдельно от данных, что позже получило название гарвардской архитектуры.
+Программы Harvard Mark I и~Mark II %(также аналогично Z1-Z3)
+(аналогично позднему проекту Бэббиджа)
+хранились на перфолентах отдельно от данных, что позже получило название гарвардской архитектуры.
 % Mark I was disassembled in 1959
 
 % http://www.vokrugsveta.ru/telegraph/technics/276/
@@ -2476,7 +3067,7 @@ Harvard Mark I, или ASCC (1941~г.) с~релейным процессором и~механической памятью
 Первым счётным устройством на электронных лампах считаются,
 согласно различных источникам,
 британский калькулятор Colossus Mark I %(1943~г.)
-и~американский табулятор ENIAC %(США, 1943~г.).
+и~американский табулятор ENIAC. %(США, 1943~г.).
 Оба этих калькулятора были построены в~1943~г.
 
 
@@ -2495,7 +3086,7 @@ Colossus Mark II (1944~г.)
 % Табулятор ENIAC обрабатывал десятичные числа.
 Табулятор ENIAC был разработан в~школе Мура Пенсильванского Университета, США и~обрабатывал десятичные числа.
 % https://geektimes.ru/post/160595/
-Каждый десятичный разряд представлялся десятью двоичными, при этом включён был только один из них "--- соответствующий десятичной цифре.
+Каждый десятичный разряд представлялся десятью двоичными, при этом включён был только один из них "--- соответствующий нужной десятичной цифре.
 ENIAC иногда называют первой ЭВМ, но он не являлся вычислительной машиной (компьютером) в~современном понимании, 
 так как не имел уровня архитектуры команд.
 «Программирование» ENIAC выполнялось  перекоммутацией связей,
@@ -2679,7 +3270,7 @@ Senac-1 на параметронах в~Японии,
 
 Первые компьютеры, построенные с~использованием подобных схем, мало отличались от компьютеров, построенных только из отдельных транзисторов,
 то есть граница между вторым и~третьим поколением достаточно условна.
-Некоторые компьютеры собирались вначале из дискретных элементов, затем из интегральных схем.
+Некоторые модели компьютеров собирались вначале из дискретных элементов, затем из интегральных схем.
 
 С увеличением степени интеграции
 появилась возможность выполнить на одном кристалле
@@ -2927,7 +3518,7 @@ Apple II, IBM 5100, Tandy TRS-80, Commodore PET, Электроника НЦ-8010 и~т.\,д.
 % Улучшенная версия 8080 получила название 8085 из-за частоты 5 МГц.
 
 Процессор  8086 "--- родоначальник семейства x86
-"--- был шестнадцатибитным, из-за чего 16 бит при программировании для x86 обычно называют словом.
+"--- был шестнадцатибитным, из-за чего 16 бит при программировании для x86 обычно называют \termin{словом.}
 Он включал четыре шестнадцатибитных регистра общего назначения $ax, bx, cx, dx$, каждый из которых фактически был парой восьмибитных (в~частности, $ax=ah:al$),
 и~четыре неделимых шестнадцатибитных регистра $bp$, $sp$, $si$, $di$.
 % Хотя эти регистры и
@@ -2968,7 +3559,7 @@ $B$ "---	base		(базовый регистр).
 % , так что разрядность адреса в~регистре совпадает с~разрядностью шины адреса, 
 % (без использования сегментных регистров)
 (сегментные регистры присутствуют, но их значение равно нулю)
-по традиции области адресного пространства, где располагаются код, данные, стек и~т.\,д., называются сегментами.
+по традиции области адресного пространства, где располагаются код, данные, стек и~т.\,д., часто называются сегментами.
 
 Так как четырёх сегментов по 64 килобайта часто не хватало,
 программисту приходилось изменять значения сегментных регистров во время работы программы для доступа к~различным областям памяти.
@@ -3015,14 +3606,36 @@ $B$ "---	base		(базовый регистр).
 
 
 В~целом разработка 386 "--- наиболее существенный шаг в~развитии архитектуры семейства x86.
-В~настоящее время %обозначение x86 обозначает, 
-так называют,
+В~настоящее время «x86» обозначает, 
+% так называют,
 как правило, 386-совместимый процессор (такая архитектура обозначается i386 или IA-32).
+% 
+Дальнейшее развитие в~основном сводилось к~добавлению новых команд, наращиванию параллелизма и~увеличению частоты.
 
-Дальнейшее развитие в~основном сводилось к~добавлению новых команд, наращиванию параллелизма и~увеличения частоты.
-Разработанное компанией AMD шестидесятичетырёхбитное расширение  x86-64 (также называемое amd64, хотя в~настоящее время поддерживается и~процессорами Intel,
-но не IA-64) не слишком значительно отличается от тридцатидвухбитной архитектуры x86. 
+В~определённый момент четырёх гигабайт памяти, адресуемых 32-битным указателем в~плоской модели, оказалось недостаточно.
+В~первую очередь это проявилось на серверах и~специализированных высокопроизводительных рабочих станциях.
+Разработчики ПО и~аппаратного обеспечения не стали возрождать неудобную сегментную модель памяти, вместо этого начали продвигаться решения с~64-битными %регистрами и~
+виртуальными адресами.
 
+Результатом совместной разработки Intel и~Hewlett Packard стала архитектура IA-64, схожая с~суперкомпьютером Эльбрус и~свободная от недостатков, унаследованных от калькулятора 4004 и~шестнадцатибитного 8086.
+IA-64 несовместима с~набором команд x86.
+% VLIW
+Она не получила популярности в~основном из-за недостаточного количества портированного под неё ПО и~несовершенства компиляторов, а~также дороговизны и~некоторых конструктивных недоработок воплощавших её процессоров Itanium.
+В~мае 2017 г. официально объявили о~закрытии этой линейки.
+
+Ведущий конкурент Intel, компания AMD, предложила 
+расширение архитектуры IA-32,
+% и~длинный режим как 
+% расширение %тридцатидвухбитного защищённого режима 
+увеличивающее разрядность адресов до 64 бит
+и~дающее возможность увеличить разрядность данных с~помощью специального префикса~$REX$.
+\index{REX, префикс}%
+Именно это расширение, которое в~настоящее время поддерживается и~процессорами Intel
+"--- наиболее популярный способ увеличить адресуемую память персонального компьютера.
+
+Разработанная компанией AMD шестидесятичетырёхбитная архитектура  x86-64 (также называемая amd64 %, хотя в~настоящее время поддерживается и~процессорами Intel,
+и~Intel 64,
+но не IA-64) не слишком существенно отличается от тридцатидвухбитной x86. 
 
 
 
