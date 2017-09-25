@@ -22,148 +22,148 @@
 
 
 
-% \section{Уровень языка высокого уровня}
-\section{Языки высокого уровня}
-
-\begin{frame}{\insertsection}
-% \small
-\footnotesize
-\setlength{\parskip}{0.5\parskip}
-% \setlength{\itemsep}{0mm}
-
-% \setlength{\parskip}{0.\parskip}
-\termin{Прикладное программирование}
-% \bigskip
-
-\begin{tabularx}{1\linewidth}{@{}Lp{0.4\linewidth}@{}}
-Трансляция
-\begin{itemize}
-\item Фортран;
-% \item Алгол;
-\item C/Objective-C/C++;
-\item Pascal/Object Pascal/Delphi.
-\end{itemize}
-&
-Интерпретация
-\begin{itemize}
-\item sh/bash;
-\item Python;
-\item PHP.
-\end{itemize}
-\end{tabularx}
-Уровень виртуальной машины \itemizeball{} Java.
+% % \section{Уровень языка высокого уровня}
+% \section{Языки высокого уровня}
+% 
+% \begin{frame}{\insertsection}
+% % \small
+% \footnotesize
+% \setlength{\parskip}{0.5\parskip}
+% % \setlength{\itemsep}{0mm}
+% 
+% % \setlength{\parskip}{0.\parskip}
+% \termin{Прикладное программирование}
+% % \bigskip
+% 
+% \begin{tabularx}{1\linewidth}{@{}Lp{0.4\linewidth}@{}}
+% Трансляция
 % \begin{itemize}
-% \item Java.
+% \item Фортран;
+% % \item Алгол;
+% \item C/Objective-C/C++;
+% \item Pascal/Object Pascal/Delphi.
 % \end{itemize}
-
-\termin{Сверхвысокоуровневые языки программирования}
-\setlength{\parskip}{0.\parskip}
-\begin{itemize}
-\item  Python;
-\item Ruby;
-\item AWK/Perl.
-\end{itemize}
-\end{frame}
-
-
-\subsection{Стандарты C/C++}
-\newcommand{\Old}[1]{{%
-  \renewcommand{\terminblue}{\color{blue!20!gray!60}}
-  \color{blue!20!gray!70}
-  #1%
-}}
-\newcommand{\UnderConstruction}[1]{\Old{%
-  #1%
-}}
-\begin{frame}{\insertsubsection}
-\footnotesize
-\setlength{\leftmargini}{0ex}
-\setlength{\leftmarginii}{2ex}
-\setlistspacing{1}{0ex}
-
-\begin{itemize}
-\item C
-\begin{itemize}
-\Old{
-\item \termin{C89 (ANSI C)} ANSI X3.159-1989
-\item \termin{C90} ISO/IEC 9899:1990
-
-\item \termin{C99} ISO/IEC 9899:1999 %от 2007-11-15
-}
-\item \termin{C11} {ISO/IEC 9899:2011} %от 2011-12-19 
+% &
+% Интерпретация
+% \begin{itemize}
+% \item sh/bash;
+% \item Python;
+% \item PHP.
+% \end{itemize}
+% \end{tabularx}
+% Уровень виртуальной машины \itemizeball{} Java.
+% % \begin{itemize}
+% % \item Java.
+% % \end{itemize}
 % 
-% Последний бесплатный черновик "--- \termin{n1570} %от 2011-04-12
-(последний черновик "--- \termin{n1570})
-
-\end{itemize}
-
-% https://isocpp.org/std/the-standard
-\item C++
-\begin{itemize}
-\Old{
-\item \termin{C++98} ISO/IEC 14882:1998 
-\item \termin{C++11} ISO/IEC 14882:2011
-}
-\item \termin{C++14} ISO/IEC 14882:2014
-% 
-% Последний бесплатный черновик "--- \termin{n4296} %от 2014-11-19
-\rlap{(последний черновик "--- \termin{n4296})}
-
-\UnderConstruction{
-\item \termin{C++17} Черновик \termin{n4595}
-}
-\end{itemize}
-\end{itemize}
-\end{frame}
-
-
-\subsection{Компиляторы C++ (x86)}
-\begin{frame}{\insertsubsection}
-\footnotesize
-% \scriptsize
-\setlength{\leftmargini}{0ex}
-\setlength{\parskip}{0.\parskip}
-
-
-\begin{itemize}
-\item \termin{GNU Compiler Collection (GCC)} "--- более 45 платформ, большинство ОС (порт под MS Windows "---  \termin{MinGW}), %7 языков (в~том числе C и~C++, стандарт), 
-лицензия GNU GPL 3+ 
-\item \termin{Portable C Compiler (PCC)} "--- Unix-подобные ОС, %GNU/Linux, 
-MS Windows; лицензия BSD
-
-
-\item \termin{TenDRA} "--- x86, x86-64, IA-64; POSIX-совместимые ОС; лицензия BSD
-
-\item \termin{Oracle Solaris Studio} "--- x86, x86-64, SPARC; Solaris, OpenSolaris, GNU/Linux; собственническая лицензия
-
-\item \termin{Intel C++ compiler} "--- x86, x86-64,  IA-64 (Itanium), GNU/Linux, MacOS X, MS Windows, коммерческая собственническая лицензия
-
-\item \termin{Open Watcom} "--- DOS, OS/2 и MS Windows; лицензия  	
-Sybase Open Watcom Public License version 1.0, 
-%не полностью поддерживает стандарт С++
-неполная поддержка стандарта
-
-\item \termin{MS Visual C++} "--- x86, x86-64, IA-64 и~.NET, только MS Windows, коммерческая собственническая лицензия, %грубые 
-нарушения стандарта
-
-% \item \termin{Norcroft C Сompiler} "--- Intel Pentium для GNU/Linux, коммерческая собственническая лицензия
+% \termin{Сверхвысокоуровневые языки программирования}
+% \setlength{\parskip}{0.\parskip}
+% \begin{itemize}
+% \item  Python;
+% \item Ruby;
+% \item AWK/Perl.
+% \end{itemize}
+% \end{frame}
 % 
 % 
-% \hrulefill
-% \item \termin{Clang} "--- виртуальная RISC-машина LLVM
-
-\end{itemize}
-
-\end{frame}
+% \subsection{Стандарты C/C++}
+% \newcommand{\Old}[1]{{%
+%   \renewcommand{\terminblue}{\color{blue!20!gray!60}}
+%   \color{blue!20!gray!70}
+%   #1%
+% }}
+% \newcommand{\UnderConstruction}[1]{\Old{%
+%   #1%
+% }}
+% \begin{frame}{\insertsubsection}
+% \footnotesize
+% \setlength{\leftmargini}{0ex}
+% \setlength{\leftmarginii}{2ex}
+% \setlistspacing{1}{0ex}
+% 
+% \begin{itemize}
+% \item C
+% \begin{itemize}
+% \Old{
+% \item \termin{C89 (ANSI C)} ANSI X3.159-1989
+% \item \termin{C90} ISO/IEC 9899:1990
+% 
+% \item \termin{C99} ISO/IEC 9899:1999 %от 2007-11-15
+% }
+% \item \termin{C11} {ISO/IEC 9899:2011} %от 2011-12-19 
+% % 
+% % Последний бесплатный черновик "--- \termin{n1570} %от 2011-04-12
+% (последний черновик "--- \termin{n1570})
+% 
+% \end{itemize}
+% 
+% % https://isocpp.org/std/the-standard
+% \item C++
+% \begin{itemize}
+% \Old{
+% \item \termin{C++98} ISO/IEC 14882:1998 
+% \item \termin{C++11} ISO/IEC 14882:2011
+% }
+% \item \termin{C++14} ISO/IEC 14882:2014
+% % 
+% % Последний бесплатный черновик "--- \termin{n4296} %от 2014-11-19
+% \rlap{(последний черновик "--- \termin{n4296})}
+% 
+% \UnderConstruction{
+% \item \termin{C++17} Черновик \termin{n4595}
+% }
+% \end{itemize}
+% \end{itemize}
+% \end{frame}
+% 
+% 
+% \subsection{Компиляторы C++ (x86)}
+% \begin{frame}{\insertsubsection}
+% \footnotesize
+% % \scriptsize
+% \setlength{\leftmargini}{0ex}
+% \setlength{\parskip}{0.\parskip}
+% 
+% 
+% \begin{itemize}
+% \item \termin{GNU Compiler Collection (GCC)} "--- более 45 платформ, большинство ОС (порт под MS Windows "---  \termin{MinGW}), %7 языков (в~том числе C и~C++, стандарт), 
+% лицензия GNU GPL 3+ 
+% \item \termin{Portable C Compiler (PCC)} "--- Unix-подобные ОС, %GNU/Linux, 
+% MS Windows; лицензия BSD
+% 
+% 
+% \item \termin{TenDRA} "--- x86, x86-64, IA-64; POSIX-совместимые ОС; лицензия BSD
+% 
+% \item \termin{Oracle Solaris Studio} "--- x86, x86-64, SPARC; Solaris, OpenSolaris, GNU/Linux; собственническая лицензия
+% 
+% \item \termin{Intel C++ compiler} "--- x86, x86-64,  IA-64 (Itanium), GNU/Linux, MacOS X, MS Windows, коммерческая собственническая лицензия
+% 
+% \item \termin{Open Watcom} "--- DOS, OS/2 и MS Windows; лицензия  	
+% Sybase Open Watcom Public License version 1.0, 
+% %не полностью поддерживает стандарт С++
+% неполная поддержка стандарта
+% 
+% \item \termin{MS Visual C++} "--- x86, x86-64, IA-64 и~.NET, только MS Windows, коммерческая собственническая лицензия, %грубые 
+% нарушения стандарта
+% 
+% % \item \termin{Norcroft C Сompiler} "--- Intel Pentium для GNU/Linux, коммерческая собственническая лицензия
+% % 
+% % 
+% % \hrulefill
+% % \item \termin{Clang} "--- виртуальная RISC-машина LLVM
+% 
+% \end{itemize}
+% 
+% \end{frame}
 
 \section{Сборка программы}
 \subsection{Сборка программы (GCC)}
 % \begin{frame}{\insertsubsection}
 % 
 % \hfill
-% \includegraphics[width=\linewidth,height=\slideheigth-1\baselineskip,keepaspectratio,valign=t]{halfcompilecpp}
+% \includegraphics[width=\linewidth,height=\slideheight-1\baselineskip,keepaspectratio,valign=t]{halfcompilecpp}
 % \hfill
-% \includegraphics[width=\linewidth,height=\slideheigth-1\baselineskip,keepaspectratio,valign=t]{halfcompileS}
+% \includegraphics[width=\linewidth,height=\slideheight-1\baselineskip,keepaspectratio,valign=t]{halfcompileS}
 % \hfill\strut
 % % \centering
 % 
@@ -172,98 +172,100 @@ Sybase Open Watcom Public License version 1.0,
 
 % \begin{columns}
 % \begin{column}{0.6\linewidth}
-% \resizebox{\linewidth}{!}{
-\resizebox{!}{\slideheigth}{
-\tikzstyle{blockarrow}	= [-latex',thick,draw=blue]
-\footnotesize
-\begin{tikzpicture}[start chain=cpp going below,start chain=S going below,
-every on chain/.style=join,every join/.style=blockarrow,
-node distance=2ex and 4ex
-]
-\tikzstyle{block}	= [text width=16ex,text badly centered, minimum height=3ex, draw=black]
-\tikzstyle{file}	= [block,  fill=yellow!40!white]
-\tikzstyle{stage}	= [block, fill=blue,text=white]
-
-% \node (cpp) {\includegraphics[width=\linewidth,height=\slideheigth-1\baselineskip,keepaspectratio,valign=t]{halfcompilecpp}};
-\node[file,on chain=cpp] (prog1_cpp) {prog1.cpp};
-\node[stage,on chain=cpp] (cpp_preprocess) {Препроцессор};
-\node[file, on chain=cpp] (prog1_pp) {Временный файл (stdout)};
-\node[stage,on chain=cpp] (compiler) {Компилятор};
-\node[file,on chain=cpp] (prog1_s) {prog1.s};
-\node[stage,on chain=cpp] (cpp_asm) {Ассемблер};
-\node[file,on chain=cpp] (prog1_o) {prog1.o};
-\node[stage,on chain=cpp] (cpp_linker) {Компоновщик};
-% \coordinate[on chain=cpp] (cpp_linker);
-
-\node[file, right= of cpp_preprocess,text width=20ex] (cpp_headers) {Заголовочные файлы (\#include)};
-\path[blockarrow] (cpp_headers) -- (cpp_preprocess);
-
-
-% \node[text width=18ex] at (compiler-|cpp_headers) (mangling) {Декорирование \lstinline!int foo(int x)! $\to$ \lstinline!_Z3fooi!};
-
-\node[fit=(prog1_cpp) (cpp_headers), inner sep=0ex] (cpp_box) {};
-\coordinate[right=0ex of cpp_box] (cpp_egde);
-
-
-% \node[file,right= of prog1_cpp-|cpp_egde,on chain=S] (prog2_S) {prog2.S};
-% \node[stage,on chain=S] (S_preprocess) {Препроцессор};
-% \node[file, on chain=S] (prog2_pp) {Временный файл (stdout)};
-% \node[stage,on chain=S,right= of cpp_asm-|cpp_egde]  (S_asm) {Ассемблер};
-% \node[file,on chain=S] (prog2_o) {prog2.o};
-% \node[stage,on chain=S] (S_linker) {Компоновщик};
-% 
-% 
-% \path[blockarrow] (cpp_headers) -- (S_preprocess);
-% 
-% 
-% \node[stage,fit=(cpp_linker) (S_linker), inner sep=0ex,align=center] (linker) {\strut
-% 
-%   \vspace{-0.5\baselineskip}Компоновщик};
-\node[fit=(cpp_linker), inner sep=0ex,align=center] (linker) {};
-
-\node[file, right= of linker,text width=20ex] (obj_lib) {Объектные файлы библиотек};
-\path[blockarrow] (obj_lib) -- (linker);
-
-\node[file,below= of linker] (prog) {prog};
-\path[blockarrow] (linker) -- (prog);
-
-% \node[below= of prog-|cpp_linker]  {extern};
-
-% \node[below= of prog-|S_linker]  {.globl};
-
-% \begin{pgfonlayer}{background}
-% \node[rectangle,fit=(compiler) (mangling), fill=blue!20!white]  {};
-% \end{pgfonlayer} 
-
-% \node[left=of cpp_preprocess] {g++ -E main.cpp > main.E};
-
-\node[text width=28ex, left=of prog1_s] {Коллекция GCC:
-
-\termin{gcc} "---  компилятор~C;
-
-\termin{g++} "---  компилятор~C++.
-};
-
-\end{tikzpicture}
-}
-\centering
-% \end{column}
-% \begin{column}{0.39\linewidth}
+\resizebox{\linewidth}{!}{
+% \resizebox{!}{\slideheight}{
+% \tikzstyle{blockarrow}	= [-latex',thick,draw=blue]
 % \footnotesize
+% \begin{tikzpicture}[start chain=cpp going below,start chain=S going below,
+% every on chain/.style=join,every join/.style=blockarrow,
+% node distance=2ex and 4ex
+% ]
+% \tikzstyle{block}	= [text width=16ex,text badly centered, minimum height=3ex, draw=black]
+% \tikzstyle{file}	= [block,  fill=yellow!40!white]
+% \tikzstyle{stage}	= [block, fill=blue,text=white]
 % 
-% Коллекция GCC:
+% % \node (cpp) {\includegraphics[width=\linewidth,height=\slideheight-1\baselineskip,keepaspectratio,valign=t]{halfcompilecpp}};
+% \node[file,on chain=cpp] (prog1_cpp) {prog1.cpp};
+% \node[stage,on chain=cpp] (cpp_preprocess) {Препроцессор};
+% \node[file, on chain=cpp] (prog1_pp) {Временный файл (stdout)};
+% \node[stage,on chain=cpp] (compiler) {Компилятор};
+% \node[file,on chain=cpp] (prog1_s) {prog1.s};
+% \node[stage,on chain=cpp] (cpp_asm) {Ассемблер};
+% \node[file,on chain=cpp] (prog1_o) {prog1.o};
+% \node[stage,on chain=cpp] (cpp_linker) {Компоновщик};
+% % \coordinate[on chain=cpp] (cpp_linker);
 % 
-% % \begin{description}
+% \node[file, right= of cpp_preprocess,text width=20ex] (cpp_headers) {Заголовочные файлы (\#include)};
+% \path[blockarrow] (cpp_headers) -- (cpp_preprocess);
+% 
+% 
+% % \node[text width=18ex] at (compiler-|cpp_headers) (mangling) {Декорирование \lstinline!int foo(int x)! $\to$ \lstinline!_Z3fooi!};
+% 
+% \node[fit=(prog1_cpp) (cpp_headers), inner sep=0ex] (cpp_box) {};
+% \coordinate[right=0ex of cpp_box] (cpp_egde);
+% 
+% 
+% % \node[file,right= of prog1_cpp-|cpp_egde,on chain=S] (prog2_S) {prog2.S};
+% % \node[stage,on chain=S] (S_preprocess) {Препроцессор};
+% % \node[file, on chain=S] (prog2_pp) {Временный файл (stdout)};
+% % \node[stage,on chain=S,right= of cpp_asm-|cpp_egde]  (S_asm) {Ассемблер};
+% % \node[file,on chain=S] (prog2_o) {prog2.o};
+% % \node[stage,on chain=S] (S_linker) {Компоновщик};
+% % 
+% % 
+% % \path[blockarrow] (cpp_headers) -- (S_preprocess);
+% % 
+% % 
+% % \node[stage,fit=(cpp_linker) (S_linker), inner sep=0ex,align=center] (linker) {\strut
+% % 
+% %   \vspace{-0.5\baselineskip}Компоновщик};
+% \node[fit=(cpp_linker), inner sep=0ex,align=center] (linker) {};
+% 
+% \node[file, right= of linker,text width=20ex] (obj_lib) {Объектные файлы библиотек};
+% \path[blockarrow] (obj_lib) -- (linker);
+% 
+% \node[file,below= of linker] (prog) {prog};
+% \path[blockarrow] (linker) -- (prog);
+% 
+% % \node[below= of prog-|cpp_linker]  {extern};
+% 
+% % \node[below= of prog-|S_linker]  {.globl};
+% 
+% % \begin{pgfonlayer}{background}
+% % \node[rectangle,fit=(compiler) (mangling), fill=blue!20!white]  {};
+% % \end{pgfonlayer} 
+% 
+% % \node[left=of cpp_preprocess] {g++ -E main.cpp > main.E};
+% 
+% \node[text width=28ex, left=of prog1_s] {Коллекция GCC:
+% 
 % \termin{gcc} "---  компилятор~C;
 % 
 % \termin{g++} "---  компилятор~C++.
+% };
 % 
-% % \end{description}
-% \end{column}
-% \end{columns}
+% \end{tikzpicture}
+\input{book/drawings/compile-cpp-cpp}
+
+}
+% \centering
+% % \end{column}
+% % \begin{column}{0.39\linewidth}
+% % \footnotesize
+% % 
+% % Коллекция GCC:
+% % 
+% % % \begin{description}
+% % \termin{gcc} "---  компилятор~C;
+% % 
+% % \termin{g++} "---  компилятор~C++.
+% % 
+% % % \end{description}
+% % \end{column}
+% % \end{columns}
 \end{frame}
 
-\subsection{Макросы препроцессора}
+\subsection{Препроцессор}
 \begin{frame}[fragile]{\insertsubsection}
 \footnotesize
 \lstset{xleftmargin=0mm, numbers=none}
@@ -284,69 +286,68 @@ node distance=2ex and 4ex
 #else
 ...
 #endif
-
 \end{lstlisting}
 
 \end{frame}
 
-% \subsection{Макросы препроцессора: работа со строками}
-\begin{frame}[fragile]{\insertsubsection}
-\footnotesize
-\lstset{xleftmargin=0mm, numbers=none}
+% % \subsection{Макросы препроцессора: работа со строками}
+% \begin{frame}[fragile]{\insertsubsection}
+% \footnotesize
+% \lstset{xleftmargin=0mm, numbers=none}
+% 
+% Взятие строк в кавычки
+% \begin{lstlisting}
+% #define QUOTES(x) #x
+% cout <<  QUOTES(1+2) << " " << QUOTES(x) << " " << QUOTES(мяу) << " " << QUOTES("мяу") << endl;
+% 1+2 x мяу "мяу"
+% \end{lstlisting}
+% 
+% Склейка строк
+% \begin{lstlisting}
+% #define FOO(type) type x##type = 1, y##type; \
+% cout << typeid(x##type).name() << " " << x##type << endl;
+% \end{lstlisting}
+% \end{frame}
 
-Взятие строк в кавычки
-\begin{lstlisting}
-#define QUOTES(x) #x
-cout <<  QUOTES(1+2) << " " << QUOTES(x) << " " << QUOTES(мяу) << " " << QUOTES("мяу") << endl;
-1+2 x мяу "мяу"
-\end{lstlisting}
 
-Склейка строк
-\begin{lstlisting}
-#define FOO(type) type x##type = 1, y##type; \
-cout << typeid(x##type).name() << " " << x##type << endl;
-\end{lstlisting}
-\end{frame}
-
-
-\subsection{Шаблоны}
-\begin{frame}[fragile]{\insertsubsection}
-\footnotesize
-\lstset{xleftmargin=1ex}
-
-\begin{columns}
-\begin{column}{0.50\linewidth}
-\begin{lstlisting}
-template<typename T>
-int foo(T x)
-{
-...
-}
-\end{lstlisting}
-\begin{lstlisting}
-template<typename T>
-T bar(T x)
-{
-  T y = x + 12;
-  ....
-}
-\end{lstlisting}
-
-\end{column}
-\begin{column}{0.499\linewidth}
-\begin{lstlisting}
-int i = 0, j, k, n;
-double x = 1, y;
-
-j = foo(i);
-k = foo(x);
-
-n = bar(i);
-y = bar(x);
-\end{lstlisting}
-\end{column}
-\end{columns}
-\end{frame}
+% \subsection{Шаблоны}
+% \begin{frame}[fragile]{\insertsubsection}
+% \footnotesize
+% \lstset{xleftmargin=1ex}
+% 
+% \begin{columns}
+% \begin{column}{0.50\linewidth}
+% \begin{lstlisting}
+% template<typename T>
+% int foo(T x)
+% {
+% ...
+% }
+% \end{lstlisting}
+% \begin{lstlisting}
+% template<typename T>
+% T bar(T x)
+% {
+%   T y = x + 12;
+%   ....
+% }
+% \end{lstlisting}
+% 
+% \end{column}
+% \begin{column}{0.499\linewidth}
+% \begin{lstlisting}
+% int i = 0, j, k, n;
+% double x = 1, y;
+% 
+% j = foo(i);
+% k = foo(x);
+% 
+% n = bar(i);
+% y = bar(x);
+% \end{lstlisting}
+% \end{column}
+% \end{columns}
+% \end{frame}
 
 % \subsection{}
 \subsection{Компиляция}
@@ -368,6 +369,10 @@ int main()
 
 g++ -S main.cpp $\to$
 
+
+Декорирование имён
+
+
 \end{column}
 \begin{column}{0.499\linewidth}
 main.s
@@ -388,6 +393,36 @@ x:
 \end{lstlisting}
 \end{column}
 \end{columns}
+
+
+\end{frame}
+
+
+\subsection{Ассемблирование}
+
+
+\begin{frame}[fragile]{\insertsubsection}
+
+
+\lstinline!movl $0xCCCCCCCC, %ecx! $\to$ \lstinline!B9 CC CC CC CC! 
+(объектные файлы)
+
+\includegraphics[width=1\linewidth,height=0.7\slideheight,keepaspectratio,valign=t]{cmd_structure}\centering
+
+\end{frame}
+
+\subsection{Компоновка}
+
+
+\begin{frame}[fragile]{\insertsubsection}
+
+
+\lstinline!call _Z3fooi! $\to$ \lstinline!call адрес! 
+
+ (исполняемый файл)
+
+Поиск функций по именам
+
 \end{frame}
 
 
@@ -401,7 +436,8 @@ x:
 % а
 % \end{frame}
 
-\section{Представление целых беззнаковых чисел}
+\section{Представление целых чисел}
+% \section{Представление целых беззнаковых чисел}
 
 % \subsection{f}
 % \begin{frame}{\insertsubsection}
@@ -537,23 +573,10 @@ $$1101010_{2} = 0110\,1010_{2} = 6A_{16}$$
 % 
 % \end{frame}
 
-\subsection{Операции над беззнаковыми целыми числами}
-\begin{frame}{\insertsubsection}
-\begin{itemize}
-\item Побитовые (NOT, AND, OR, XOR).
-
-\item Арифметические.
-\item Беззнаковое расширение (дополнение ведущими нулями).
-
-\item Беззнаковый (логический) сдвиг.
-
-\end{itemize}
-\end{frame}
 
 
 
-
-\section{Представление целых знаковых чисел}
+% \section{Представление целых знаковых чисел}
 
 
 \colorlet{csMarker}{yellow!50}
@@ -613,8 +636,32 @@ $$1101010_{2} = 0110\,1010_{2} = 6A_{16}$$
 \end{frame}
 \endgroup
 
+\section{Операции над  целыми числами}
 
+% \subsection{Операции над беззнаковыми целыми числами}
+% \begin{frame}{\insertsubsection}
+% \begin{itemize}
+% \item Побитовые (NOT, AND, OR, XOR).
+% 
+% \item Арифметические.
+% \item Беззнаковое расширение (дополнение ведущими нулями).
+% 
+% \item Беззнаковый (логический) сдвиг.
+% 
+% \end{itemize}
+% \end{frame}
 
+\begin{frame}{\insertsection}
+\begin{itemize}
+\item Побитовые (NOT, AND, OR, XOR).
+
+\item Арифметические.
+\item Расширение 
+
+\item Сдвиги
+
+\end{itemize}
+\end{frame}
 
 \subsection{Расширение целых чисел}
 \begin{frame}{\insertsubsection}
@@ -685,7 +732,17 @@ $$1101010_{2} = 0110\,1010_{2} = 6A_{16}$$
 \end{frame}
 
 
+\subsection{Задание}
+\begin{frame}{\insertsubsection}
+\setlength{\leftmargini}{0ex}
+\begin{enumerate}
+\item Представьте число $19$ в~двоичном, шестнадцатеричном и~восьмеричном виде.
+\item Представьте число $-3$ в~дополнительном коде.
+\item Рассчитайте $19 + (-3)$.
 
+\end{enumerate}
+
+\end{frame}
 
 \section{Стандартные типы C++}
 
