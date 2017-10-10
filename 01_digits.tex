@@ -265,7 +265,7 @@
 % % \end{columns}
 \end{frame}
 
-\subsection{Препроцессор}
+\subsection{Предобработка}
 \begin{frame}[fragile]{\insertsubsection}
 \footnotesize
 \lstset{xleftmargin=0mm, numbers=none}
@@ -273,19 +273,19 @@
 #include <iostream>
 #include "myheader.h"
 
-#define N 13
-#define MAX(x, y) ((x) > (y) ? (x) : (y))
-#define INTEGER short
-
-// так делать плохо
-#define true 0
-
 #define FLAG
 #ifdef FLAG
 ...
 #else
 ...
 #endif
+
+#define NUM 13
+#define MAX(x, y) ((x) > (y) ? (x) : (y))
+#define INTEGER short
+
+// так делать плохо
+#define true 0
 \end{lstlisting}
 
 \end{frame}
@@ -370,7 +370,7 @@ int main()
 g++ -S main.cpp $\to$
 
 
-Декорирование имён
+Декорирование имён C++-функций
 
 
 \end{column}
@@ -407,7 +407,7 @@ x:
 \lstinline!movl $0xCCCCCCCC, %ecx! $\to$ \lstinline!B9 CC CC CC CC! 
 (объектные файлы)
 
-\includegraphics[width=1\linewidth,height=0.7\slideheight,keepaspectratio,valign=t]{cmd_structure}\centering
+\includegraphics[width=1\linewidth,height=0.7\slideheight,keepaspectratio,valign=t]{cmd_structure_color}\centering
 
 \end{frame}
 
@@ -636,6 +636,24 @@ $$1101010_{2} = 0110\,1010_{2} = 6A_{16}$$
 \end{frame}
 \endgroup
 
+
+\subsection{Задание}
+\begin{frame}{\insertsubsection}
+\setlength{\leftmargini}{0ex}
+\begin{enumerate}
+\item Представьте число $19$ в~двоичном виде.
+\item Представьте число $19$ в~шестнадцатеричном и~восьмеричном виде.
+\item Представьте число $-3$ в~дополнительном коде.
+% \item Рассчитайте $19 + (-3)$.
+% \item Рассчитайте $3 \And (-2)$.
+% \item Рассчитайте $5 \Or 3$.
+% % \item Рассчитайте $-\~$.
+\item Представьте число $-3$ в~дополнительном коде в~шестнадцатеричном и~восьмеричном виде.
+
+\end{enumerate}
+
+\end{frame}
+
 \section{Операции над  целыми числами}
 
 % \subsection{Операции над беззнаковыми целыми числами}
@@ -653,14 +671,28 @@ $$1101010_{2} = 0110\,1010_{2} = 6A_{16}$$
 
 \begin{frame}{\insertsection}
 \begin{itemize}
-\item Побитовые (NOT, AND, OR, XOR).
+\item Присваивание.
 
 \item Арифметические.
-\item Расширение 
+\item Расширение.
 
-\item Сдвиги
+\item Побитовые (NOT, AND, OR, XOR).
+\item Сдвиги.
 
 \end{itemize}
+\end{frame}
+
+\subsection{Задание}
+\begin{frame}{\insertsubsection}
+\setlength{\leftmargini}{0ex}
+
+Представьте вычисление выражения  в~виде последовательности двухадресных арифметических операций (\lstinline!+=, -=, /=, *=! и~т.\,д.)
+\begin{enumerate}
+\item $y = 1 + x + x^2 + x^3$
+\item $y = (1 - x)(1+x+x^2)$
+\item  $y = 1 + \frac{x^2 - 4}{2x + 2}$
+\end{enumerate}
+
 \end{frame}
 
 \subsection{Расширение целых чисел}
@@ -736,11 +768,96 @@ $$1101010_{2} = 0110\,1010_{2} = 6A_{16}$$
 \begin{frame}{\insertsubsection}
 \setlength{\leftmargini}{0ex}
 \begin{enumerate}
-\item Представьте число $19$ в~двоичном, шестнадцатеричном и~восьмеричном виде.
-\item Представьте число $-3$ в~дополнительном коде.
+% \item Представьте число $19$ в~двоичном, шестнадцатеричном и~восьмеричном виде.
+% \item Представьте число $-3$ в~дополнительном коде.
 \item Рассчитайте $19 + (-3)$.
+\item Рассчитайте $3 \And (-2)$.
+\item Рассчитайте $5 \Or 3$.
+% \item Рассчитайте $-\~$.
 
 \end{enumerate}
+
+\end{frame}
+
+\section{Вещественные числа}
+
+\subsection{Нормализованное представление вещественного числа}
+\begin{frame}{\insertsubsection}
+\begin{equation*}
+X = (-1)^{s} \cdot N^{p} \cdot \mu, 
+\end{equation*}
+\begin{equation*}
+s \in \{0, 1\}, p \in \Integerset, ~ 0,1_N \leqslant \mu < 1
+\end{equation*}
+
+\begin{equation*}
+\mu = \overline{0,m_1 m_2 m_3 m_4\ldots}, ~~ m_1 \neq 0.
+\end{equation*}
+
+
+\end{frame}
+
+\tikzstyle{block}	= [text badly centered, minimum height=4ex, draw=black,  fill=clMemoryLight, solidchaincell]
+\tikzstyle{blabel}	= [scale=0.7]
+
+\newcommand{\real}[5][]
+{
+  \node[block, minimum width= 42 ex, on chain, #1]  (m)  {$#4$};
+  \node[block, minimum width= 18 ex, on chain]  (p) {$#3$};
+  \node[block, minimum width= 4 ex, on chain]  (s) {$#2$};
+  
+%     \node[left = 2ex of s] {\asbuk{risletter})\stepcounter{risletter}};
+    \node[right = 2ex of m] {$#5$};
+%   \tikzset{node distance=2ex}
+
+  \foreach \nd/\s/\e in {m/0/n-1, p/n/n+w-1}
+%   \foreach \nd/\s/\e in {\pmbits}
+  {
+    \node[below right = of \nd.south west, blabel, anchor=north west] (be) {$\mathstrut\e$};
+    \node[below left = of \nd.south east, blabel, anchor=north east] (bs) {$\mathstrut\s$};
+%   \coordinate[left =  of \nd.south east, label=below:$\mathstrut\s$] (bs);
+  };
+  \node[below = of s, blabel]  {$\mathstrut n+w$};
+}
+% \setcounter{risletter}{1}
+
+
+
+\subsection{Значения с~плавающей запятой (IEEE~754)}
+\begin{frame}{\insertsubsection}
+
+
+\resizebox{\linewidth}{!}
+{
+\begin{tikzpicture}[
+start chain=going left,
+node distance=0ex,
+baseline=(current bounding box.north)
+]
+
+  \real{s}{p+\xi}{m_2 m_3 m_4\ldots m_{n+1}}{	
+    \begin{array}{c}
+      (-1)^s\cdot 2^p \cdot \overline{0,1m_2 m_3 m_4\ldots m_{n+1}}\\
+      p_{min} \leqslant p \leqslant p_{max}
+    \end{array}
+  }
+%   \foreach \p/\m/\letter/\pos in {p+\xi/m_2 m_3\ldots m_{n+1}/а)/,p+\xi/m_2 m_3\ldots m_{n+1}/а)/,}
+%   {
+%     \real[]{s}{\p}{\m}
+%   };
+\tikzstyle{nextm}	= [below = 6ex of m]
+
+%   \real[nextm]{s}{000\ldots000}{m_1 m_2 m_3\ldots m_{n}}
+  \real[nextm]{s}{000\ldots000}{m_2 m_3 m_4\ldots m_{n+1}}{	(-1)^s\cdot 2^{p_{min}} \cdot \overline{0,0m_2 m_3 m_4\ldots m_{n+1}}	}
+  \real[nextm]{s}{000\ldots000}{000\ldots 0}{	(-1)^s\cdot 0	}
+%   \real[nextm]{s}{000\ldots000}{000\ldots 0}{	\pm 0	}
+
+  \real[nextm]{s}{111\ldots111}{000\ldots 0}{	(-1)^s\cdot \infty	}
+%   \real[nextm]{s}{111\ldots111}{000\ldots 0}{	\pm \infty	}
+  \real[nextm]{x}{111\ldots111}{q x x\ldots x}{NaN}
+
+\end{tikzpicture}
+}
 
 \end{frame}
 
@@ -750,13 +867,13 @@ $$1101010_{2} = 0110\,1010_{2} = 6A_{16}$$
 \begin{frame}{\insertsubsection}
 Целые:
 % 
-char, signed char, short, int, long, long long,
+{char,} signed char, short, \textbf{int,} long, long long,
 % 
 unsigned char, unsigned short, unsigned, unsigned long, unsigned long long
 
 Указатели:
 % 
-void*, char*, ...
+\textbf{void*,} char*, short*, ...
 
 Разность указателей:
 % 
@@ -764,7 +881,8 @@ ptrdiff\_t
 
 Длина: size\_t
 
-% Вещественные:
+Вещественные:
+float, \textbf{double}, long double
 
 \end{frame}
 
@@ -863,7 +981,7 @@ char *pc = reinterpret_cast<char *>(&x);
 
 \end{frame}
 
-\section{Представление чисел в~коде}
+% \section{Представление чисел в~коде}
 
 \subsection{Литералы}
 \begin{frame}[fragile]{\insertsubsection}
@@ -892,28 +1010,28 @@ char *pc = reinterpret_cast<char *>(&x);
 \end{frame}
 
 
-\subsection{Ввод-вывод в~поток}
-\begin{frame}[fragile]{\insertsubsection}
-\footnotesize
-\setlength{\parskip}{0.5\parskip}
-
-
-<iomanip>
-
-Система счисления (префикс не добавляется):
-\begin{itemize}
-\item манипуляторы \lstinline!hex, oct, dec!
-\item манипулятор \lstinline!setbase(int base)! (фактически "--- 8, 10 и~16).
-\end{itemize}
-
-Регистр цифр \lstinline!A..F! и~символа \lstinline!E! в~экспоненциальной форме "--- манипуляторы \lstinline!uppercase! и~\lstinline!lowercase!.
-
-Ширина "---  \lstinline!setw(int w)! (только для следующего выводимого значения).
-
-Символ заполнения "--- \lstinline!setfill(int ch)!.
-
-
-\end{frame}
+% \subsection{Ввод-вывод в~поток}
+% \begin{frame}[fragile]{\insertsubsection}
+% \footnotesize
+% \setlength{\parskip}{0.5\parskip}
+% 
+% 
+% <iomanip>
+% 
+% Система счисления (префикс не добавляется):
+% \begin{itemize}
+% \item манипуляторы \lstinline!hex, oct, dec!
+% \item манипулятор \lstinline!setbase(int base)! (фактически "--- 8, 10 и~16).
+% \end{itemize}
+% 
+% Регистр цифр \lstinline!A..F! и~символа \lstinline!E! в~экспоненциальной форме "--- манипуляторы \lstinline!uppercase! и~\lstinline!lowercase!.
+% 
+% Ширина "---  \lstinline!setw(int w)! (только для следующего выводимого значения).
+% 
+% Символ заполнения "--- \lstinline!setfill(int ch)!.
+% 
+% 
+% \end{frame}
 
 
 % \section{Вещественные числа}
@@ -957,6 +1075,16 @@ char *pc = reinterpret_cast<char *>(&x);
 % malloc/free
 % \end{frame}
 
+% \section{Головная функция stdlib}
+% 
+% \begin{frame}{\insertsection}
+% 
+% \lstinline$int main()$ 
+% 
+% \lstinline$int main(int argc, char~ argv[])$
+% 
+% \end{frame}
+
 \section{}
 \subsection{Вопросы}
 \begin{frame}{\insertsubsection}
@@ -968,7 +1096,7 @@ char *pc = reinterpret_cast<char *>(&x);
 \item Какие способы представления знаковых чисел используются в~ЭВМ?
 \item Какие логические и~битовые операции вы~знаете?
 
-% \item Какие способы представления вещественных чисел используются в~ЭВМ?
+\item Какие способы представления вещественных чисел используются в~ЭВМ?
 \end{enumerate}
 
 \end{frame}

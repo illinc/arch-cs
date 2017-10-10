@@ -1,0 +1,1184 @@
+\input{commonpres}
+
+
+% \setbeamertemplate{itemize/enumerate body begin}{\footnotesize}
+% \setbeamertemplate{itemize/enumerate subbody begin}{\footnotesize}
+% \setbeamerfont{frametitle}{size=\linespread{1.0}\large}
+
+% \addtobeamertemplate{footnote}{}{\vspace{-30ex}}
+
+% \title{Введение в~язык ассемблера}
+\title{Введение в~GNU Assembler}
+\graphicspath{{fig/}{fig/tanenbaum/}{fig/asm-intro/}{fig/model/}}
+
+
+
+\begin{document}
+\maketitle
+
+\section{Синтаксис}
+
+
+% % \subsection{Сборка программы}
+% % \begin{frame}{\insertsubsection}
+% % 
+% % \hfill
+% % \includegraphics[width=\linewidth,height=\slideheigth-1\baselineskip,keepaspectratio,valign=t]{halfcompilecpp}
+% % \hfill
+% % \includegraphics[width=\linewidth,height=\slideheigth-1\baselineskip,keepaspectratio,valign=t]{halfcompileS}
+% % \hfill\strut
+% % % \centering
+% % 
+% % \end{frame}
+% \subsection{Сборка программы (GCC)}
+% \begin{frame}[fragile]{\insertsubsection}
+% 
+% \resizebox{\linewidth}{!}{
+% \tikzstyle{blockarrow}	= [-latex',thick,draw=blue]
+% \footnotesize
+% \begin{tikzpicture}[start chain=cpp going below,start chain=S going below,
+% every on chain/.style=join,every join/.style=blockarrow,
+% node distance=2ex and 4ex
+% ]
+% \tikzstyle{block}	= [text width=16ex,text badly centered, minimum height=3ex, draw=black]
+% \tikzstyle{file}	= [block,  fill=yellow!40!white]
+% \tikzstyle{stage}	= [block, fill=blue,text=white]
+% 
+% % \node (cpp) {\includegraphics[width=\linewidth,height=\slideheigth-1\baselineskip,keepaspectratio,valign=t]{halfcompilecpp}};
+% \node[file,on chain=cpp] (prog1_cpp) {prog1.cpp};
+% \node[stage,on chain=cpp] (cpp_preprocess) {Препроцессор};
+% \node[file, on chain=cpp] (prog1_pp) {Временный файл (stdout)};
+% \node[stage,on chain=cpp] (compiler) {Компилятор};
+% \node[file,on chain=cpp] (prog1_s) {prog1.s};
+% \node[stage,on chain=cpp] (cpp_asm) {Ассемблер};
+% \node[file,on chain=cpp] (prog1_o) {prog1.o};
+% \node[stage,on chain=cpp] (cpp_linker) {Компоновщик};
+% % \coordinate[on chain=cpp] (cpp_linker);
+% 
+% \node[file, right= of cpp_preprocess,text width=20ex] (cpp_headers) {Заголовочные файлы (\#include)};
+% \path[blockarrow] (cpp_headers) -- (cpp_preprocess);
+% 
+% 
+% % \node[text width=18ex] at (compiler-|cpp_headers) (mangling) {Декорирование \lstinline!int foo(int x)! $\to$ \lstinline!_Z3fooi!};
+% 
+% \node[fit=(prog1_cpp) (cpp_headers), inner sep=0ex] (cpp_box) {};
+% \coordinate[right=0ex of cpp_box] (cpp_egde);
+% 
+% 
+% \node[file,right= of prog1_cpp-|cpp_egde,on chain=S] (prog2_S) {prog2.S};
+% \node[stage,on chain=S] (S_preprocess) {Препроцессор};
+% \node[file, on chain=S] (prog2_pp) {Временный файл (stdout)};
+% \node[stage,on chain=S,right= of cpp_asm-|cpp_egde]  (S_asm) {Ассемблер};
+% \node[file,on chain=S] (prog2_o) {prog2.o};
+% \node[stage,on chain=S] (S_linker) {Компоновщик};
+% 
+% 
+% \path[blockarrow] (cpp_headers) -- (S_preprocess);
+% 
+% 
+% \node[stage,fit=(cpp_linker) (S_linker), inner sep=0ex,align=center] (linker) {\strut
+% 
+%   \vspace{-0.5\baselineskip}Компоновщик};
+%   
+% \node[file, right= of linker,text width=20ex] (obj_lib) {Объектные файлы библиотек};
+% \path[blockarrow] (obj_lib) -- (linker);
+% 
+% \node[file,below= of linker] (prog) {prog};
+% \path[blockarrow] (linker) -- (prog);
+% 
+% \node[below= of prog-|cpp_linker]  {extern};
+% 
+% \node[below= of prog-|S_linker]  {.globl};
+% 
+% % \begin{pgfonlayer}{background}
+% % \node[rectangle,fit=(compiler) (mangling), fill=blue!20!white]  {};
+% % \end{pgfonlayer} 
+% 
+% \end{tikzpicture}
+% }
+% \centering
+% 
+% \end{frame}
+
+
+
+
+
+
+
+
+% \subsection{AT\&T vs Intel}
+% \begin{frame}{\insertsubsection}
+% \setlength{\leftmargini}{0ex}
+% \begin{itemize}
+% \item Суффиксы команд и~префиксы операндов
+% 
+% \item\lstinline!byte ptr!, \lstinline!word ptr!, \lstinline!dword ptr!
+% 
+% 
+% \item Порядок операндов
+% 
+% \item Вычисление адреса:
+% 
+% \footnotesize
+% 
+% \lstinline!displacement(base_reg, offset_reg, scalar_multiplier)! 
+% 
+% "--- AT\&T
+% 
+% \lstinline![base_reg + displacement + offset_reg*scalar_multiplier]! 
+% 
+% "--- Intel
+% 
+% \end{itemize}
+% \end{frame}
+
+\subsection{Структура инструкции}
+
+% инструкция на языке ассемблера включает в себя метку,
+%    мнемонику и операнды. Способ записи операндов однозначно определяет
+%    способ их адресации. Мнемоника определяет операцию, выполняемую над
+%    операндами. 
+   
+\begin{frame}[fragile]{\insertsubsection}
+% \def\normalsize{\footnotesize}
+\lstset{basicstyle=\ttfamily\footnotesize}
+\footnotesize
+\setlength{\parskip}{0.25\parskip}
+% [caption=min.S]
+\begin{lstlisting}[numbers=none, xleftmargin=0mm]
+<инструкция>  ::=  [<метка>:] <мнемоника> <операнды>
+
+<мнемоника>  ::=  <базовая часть><суффикс размера>
+<мнемоника расширения> ::=  
+  <базовая часть><размер источника><размер приёмника>
+\end{lstlisting}
+% [метка:] мнемоника непосредственно источник приёмник
+
+{
+% \begin{columns}
+\scriptsize
+\renewcommand{\tabularxcolumn}[1]{m{#1}}
+
+% \begin{column}{0.49\linewidth}
+% Суффикс размера
+
+\begin{tabular}{|l|l|l|}
+\hline
+\multicolumn{3}{|c|}{Cуффиксы размера}\\\hline
+% \thead{Суффикс} 
+& \theadlong{Целые (бит)} & \theadlong{Вещественные (бит)} \\\hline
+    b & byte (8) &\\\hline
+    s & short (16) & single (32) \\\hline
+    w & word (16) &\\\hline
+    l & long (32) & double (64) \\\hline
+    q & quad (64) &\\\hline
+    t & & ten bytes (80) \\\hline
+\end{tabular}
+% \end{column}
+% 
+% \begin{column}{0.49\linewidth}
+% Двойной суффикс размера (расширения)
+% 
+\begin{tabular}{|l|l|}
+\hline
+\multicolumn{2}{|c|}{Двойные cуффиксы размера}
+% \\
+% \multicolumn{2}{|c|}{(для команд расширения)}
+\\\hline
+& \theadlong{Расширение (бит)} \\\hline
+    bw & byte (8) $\to$ short (16)	\\\hline
+    bl & byte (8) $\to$ long (32)	\\\hline
+    bq & byte (8) $\to$ quad (64)	\\\hline
+    wl & word (16) $\to$ long (32)	\\\hline
+    wq & word (16) $\to$ quad (64)	\\\hline
+    lq & long (32) $\to$ quad (64)	\\\hline
+\end{tabular}
+}
+% 
+% Префикс операнда
+% 
+% \begin{tabularx}{\linewidth}{|l|L|L|}
+% \hline
+% \%
+% &регистр
+% &
+% \%eax, \%dl
+% \\\hline
+% \$ &константа / адрес глобальной переменной
+% & \$5, \$0xFF, \$foo
+% \\\hline
+% 
+% &значение по указанному адресу / значение глобальной переменной
+% & foo
+% \\\hline
+% \end{tabularx}
+
+ 
+% \end{column}
+% \end{columns}
+
+% % чаще всего
+% \begin{lstlisting}[numbers=none]
+% [метка:] мнемоника источник приёмник
+% \end{lstlisting}
+% источник и~приёмник не могут оба находиться в~памяти
+
+\begin{lstlisting}[numbers=none, xleftmargin=0mm]
+<операнды>  ::=  <источник> <приёмник>
+\end{lstlisting}
+
+\end{frame}  
+
+
+\subsection{Операнды}
+
+\begin{frame}[fragile]{\insertsubsection}
+\setlength{\leftmargini}{-1ex}
+\small
+\setlength{\parskip}{0.5\parskip}
+
+\begin{itemize}
+\item  \termin{Непосредственные} (магические числа)
+
+\lstinline!$0, $13, $x, $0xFF, $(1+4*9)!
+
+\item \termin{В~регистре} (регистровая адресация)
+
+\lstinline!%eax, %r6, %dl, %esi, %rdi!
+
+\item \termin{В~памяти по фиксированному адресу} \rlap{(прямая адресация)}
+
+\lstinline!0, 13, x, 0xFF, 1+4*9!
+
+\item \termin{В~памяти по вычисляемому адресу} \rlap{(косвенно-регистровая)}
+
+\lstinline!4(%esp), (%edx, %esi, 4), (%edx, %esi), (,%esi, 4)!
+
+\end{itemize} 
+
+\vspace{-\baselineskip}
+
+\lstinline!displ(base, index, s)! $~~\to~~$ $*\big({base} + s \cdot {index} + displ\big)$
+
+
+\end{frame}  
+
+% % \section{Структура программы}
+% 
+\subsection{Основные директивы}
+\begin{frame}[fragile]{\insertsubsection}
+\footnotesize
+\setlength{\parskip}{0.5\parskip}
+
+\termin{.text} 
+продолжение сегмента кода
+
+\termin{.data} 
+начало/продолжение сегмента данных
+
+\termin{.globl (.global)}
+% \lstinline!.global symbol! делает symbol доступным из других модулей
+делает символ  доступным из других модулей
+
+% .func  $\ldots$  .endfunc включает отладочную информацию о~функции
+
+\frametitlelike{Директивы определения данных% (.data)
+}
+
+\begin{columns}
+\lstset{numbers=none}
+
+\begin{column}{0.39\linewidth}
+.byte %одно или несколько выражений, разделённых запятыми
+
+.short
+
+.int (.long)
+
+.quad
+
+.float
+(.single)
+
+.double %одно или несколько вещественных значений, разделённых запятыми
+
+\begin{lstlisting}
+foo: .int 0, 1, 2
+bar: .double -8.7
+\end{lstlisting}
+\end{column}
+\begin{column}{0.59\linewidth}
+
+.string (.asciz) %"строка" 
+\begin{lstlisting}
+msg: .string "Hello, world!\n"
+\end{lstlisting}
+
+.rept $\ldots$ .endr
+\begin{lstlisting}
+.rept 3     .long 0
+.long 0     .long 0
+.endr       .long 0
+\end{lstlisting}
+
+ 
+\end{column}
+\end{columns}
+\end{frame}
+% 
+% 
+% 
+% % \subsection{Распределение памяти GNU/Linux}
+% \subsection{Разделы памяти}
+% \begin{frame}{\insertsubsection}
+% \footnotesize
+% 
+% \begin{tabularx}{1\linewidth}{@{}LL@{}}
+% % \setlength{\parskip}{2ex}
+% 
+% \termin{.text} 
+% 
+% Код выполняемой программы
+% \bigskip
+% 
+% \termin{.data} 
+% 
+% Глобальные переменные программы
+% \bigskip
+% 
+% \termin{.bss}
+% 
+% Неинициализированные глобальные переменные
+% \bigskip
+% % .noinit 	Данные переменных программы 
+% 
+% Куча
+% (динамическая память)
+% \bigskip
+% 
+% Стек 
+% % Локальные переменные подпрограмм
+% 
+% &
+% Распределение памяти GNU/Linux
+% 
+% \includegraphics[width=\linewidth,height=\slideheight-1\baselineskip,keepaspectratio,valign=t]{linuxmem}\centering
+% 
+% \end{tabularx}
+% \end{frame}
+% 
+% 
+% \subsection{Другие элементы синтаксиса}
+% \begin{frame}[fragile]{\insertsection}
+% \lstset{basicstyle=\ttfamily\footnotesize}
+% \footnotesize
+% % \setlength{\parskip}{0.5\parskip}
+% 
+% Пробельные символы "--- пробел и~табуляция
+% 
+% Комментарии  "--- /* в~стиле C */, // в~стиле C++
+% % #<не выражение> устаревший
+% 
+% Оператор оканчивается переводом строки или точкой с~запятой.
+% Перед оператором может быть метка.
+% \begin{lstlisting}[numbers=none]
+% the_label:     .directive    ...
+% another_label:           // Пустой оператор
+%            instruction   operand_1, operand_2, ...
+% \end{lstlisting}
+% 
+% \end{frame}
+
+
+
+
+
+% 
+% \section{Переменные}
+% \subsection{Регистры общего назначения}
+% \begingroup
+% \renewcommand{\tabularxcolumn}[1]{p{#1}} 
+% \begin{frame}{\insertsubsection}
+% % регистры общего назначения, 
+% % указатель команд, 
+% % регистр флагов и~сегментные регистры. 
+% \setlength{\leftmargini}{0ex}
+% % \small
+% % \footnotesize
+% \setbeamertemplate{itemize/enumerate body begin}{\footnotesize}
+% \setbeamertemplate{itemize/enumerate subbody begin}{\footnotesize}
+% 
+%  
+% \raisebox{-2.15\baselineskip}[0mm][0mm]{%
+% \noindent\begin{tabularx}{1\linewidth}{@{}L@{~}l@{}}
+% &
+% \includegraphics[width=0.7\linewidth,height=\slideheight,keepaspectratio,valign=t]{Registers}
+% \end{tabularx}
+% }
+% \vspace{-4\baselineskip}
+% 
+% % \begin{itemize}
+% % \item {Регистры общего назначения} 
+%  \begin{itemize}
+% \item   \Reg{a, b, c, d;}  
+% \item    \Reg{si, di, bp;}
+% \item   {указатель стека} \Reg{sp}.
+%  \end{itemize}    
+%    
+% % \item Сегментные %регистры 
+% %   \Reg{cs, ds, ss, es, fs, gs.}
+% % 
+% % \item  Регистры состояния и~управления:
+% % \begin{itemize}
+% % \item   регистр флагов \Reg{eflags/flags};
+% % 
+% % \item       указатель команды \Reg{eip/ip}.
+% % \end{itemize}   
+% % 
+% % \item   Регистры сопроцессора x87 \Reg{st(0)...st(7)}/расширения MMX \rlap{\Reg{mm0...mm7}}
+% % 
+% % \item        Регистры расширения XMM \rlap{(128-разрядные \Reg{xmm0...xmm7})}
+% % \end{itemize}
+% 
+% \end{frame}
+% \endgroup
+
+
+
+\section{Основные команды}
+\subsection{Пересылка данных}
+\begin{frame}[fragile]{\insertsubsection}
+\lstset{basicstyle=\ttfamily\small}
+\small
+\lstset{xleftmargin=0em}
+
+% \lstinline!mov источник, приёмник! \\
+% "--- присваивание \lstinline!приёмник = источник!
+% \begin{lstlisting}[numbers=none]
+% movl $4, %eax	// eax = 4
+% movb $42, %al	// al = 42
+% movl %eax, (%esi)	// *esi = eax
+% movl %eax, 4(%esi)	// *(esi+4 байта) = eax
+% movl $some_var, %eax	// eax = &some_var
+% movl $some_var+4, %eax	// eax = &some_var+4 байта
+% movl some_var, %eax	// eax = some_var
+% movl %eax, foo	// foo = eax
+% \end{lstlisting}
+
+\centering
+
+\textbf{Пересылка и~обмен}
+
+\begin{tabularx}{\linewidth}{|>{\ttfamily}l|L|}
+\hline
+% \multicolumn{2}{c}{\textbf{Пересылка и~обмен}}\\\hline
+mov src, dest & $dest = src$
+\\\hline
+lea smem, dreg & $dreg = \&smem$
+\\\hline
+xchg srm, dest & Обмен значений $srm$ и~$dest$
+\\\hline
+\end{tabularx}
+
+\textbf{Работа со стеком}
+
+\begin{tabularx}{\linewidth}{|>{\ttfamily}l|L|}
+% \multicolumn{2}{c}{}\\
+% \multicolumn{2}{c}{\textbf{Работа со стеком}}\\
+\hline
+push src& Помещение $src$ в~стек %(уменьшает указатель стека)
+
+${\usecopeq sp -= sizeof(src);} ~~ {*}sp = src$
+\\\hline
+pop dest & Выталкивание значения из стека в~$dest$ %(увеличивает указатель стека)
+
+$dest = {*}sp; ~~ {\usecopeq sp += sizeof(dest)}$
+\\\hline
+% \multicolumn{2}{|c|}{\textbf{Вызов и~возврат из функций}}\\\hline
+% call proc
+%  & Вызов подпрограммы "--- помещает в~стек адрес следующей инструкции (адрес возврата) и~переходит по адресу $proc$
+% \\\hline
+% ret [imm] & Возврат из подпрограммы "--- снимает со стека адрес возврата и~помещает его в~указатель команд.
+% 
+% Если указан параметр $imm$, снимает со стека ещё $imm$ байтов.
+% \\\hline
+
+
+
+\end{tabularx}
+
+\end{frame}
+
+\subsection{Передача управления}
+\begin{frame}[fragile]{\insertsubsection}
+\lstset{basicstyle=\ttfamily\small}
+\small
+\lstset{xleftmargin=0em}
+
+\begin{tabularx}{\linewidth}{|>{\ttfamily}l|L|}
+% \multicolumn{2}{c}{}\\
+% \multicolumn{2}{c}{\textbf{Работа со стеком}}\\
+\hline
+jmp label& Переход $ip = label$  (аналог \lstinline!goto label!)
+\\\hline
+jCC label & Условный переход
+\\\hline
+call label
+ & Вызов подпрограммы $push~ \Big(ip+sizeof(call)\Big); ~~ ip = label$
+\\\hline
+ret [imm] & Возврат из подпрограммы $pop~ip$
+
+Если указан параметр, снимает со стека ещё $imm$ байтов 
+$pop~ip;~~\usecopeq sp += imm$
+\\\hline
+
+
+
+\end{tabularx}
+
+\end{frame}
+
+\section{Арифметические и~битовые команды}
+% \subsection{Арифметика}
+% \begingroup
+% \ttfamily
+\subsection{Арифметика: сложение и~вычитание}
+% \begin{frame}[fragile]{\insertsubsection}
+% \lstset{basicstyle=\ttfamily\footnotesize}
+% \footnotesize
+% 
+% \begin{tabularx}{\linewidth}{l|L}
+% \lstinline!add источник, приёмник! & приёмник += источник\\
+% \lstinline!adc источник, приёмник! & приёмник += (источник + CF)\\\hline
+% \lstinline!sub источник, приёмник! & приёмник -= источник\\
+% \lstinline!sbb источник, приёмник! & приёмник -= (источник + CF)\\\hline
+% \lstinline!inc приёмник! & ++приёмник\\
+% \lstinline!dec приёмник! & -{}-приёмник\\\hline
+% \end{tabularx}
+% \normalfont
+% 
+% Флаги:
+% \vspace{-\baselineskip}
+% \setlistspacing{1}{0ex}
+% \begin{description}
+% \item[CF] беззнаковое переполнение (перенос)
+% \item[ZF] результат равен нулю
+% \item[SF] старший (знаковый) бит результата
+% \item[OF] знаковое переполнение
+% \end{description}
+% \end{frame}
+
+
+\begin{frame}[fragile]{\insertsubsection}
+\lstset{basicstyle=\ttfamily\small}
+\small
+\lstset{xleftmargin=0em}
+
+\begin{tabularx}{\linewidth}{|>{\ttfamily}l|L|}
+\hline
+add src, dest & $\usecopeq dest += src$
+\\\hline
+sub src, dest & $\usecopeq dest -= src$
+\\\hline
+inc dest & ${+}{+}dest$ 
+\\\hline
+dec dest & ${-}{-}dest$
+\\\hline
+neg dest & Изменение знака $dest = -dest$
+\\\hline
+cmp src, dest & Вычитание $dest - src$ без изменения $dest$ (только %установка флагов)
+флаги)
+% & 
+\\\hline
+\end{tabularx}
+
+\begin{tabularx}{\linewidth}{@{}lL@{}}
+Флаги:&
+\setlength{\leftmargini}{0ex}
+\vspace{-\baselineskip}
+\setlistspacing{1}{0ex}
+\begin{description}[OF]
+\item[CF] беззнаковое переполнение %(перенос из старшего разряда)
+\item[ZF] результат равен нулю
+\item[SF] старший (знаковый) бит результата
+\item[OF] знаковое переполнение
+\color{blue!20!black!60}
+  \renewcommand{\terminblue}{\color{blue!30!gray!60}}
+\item[\terminblue AF] перенос из младшей тетрады
+\item[\terminblue PF] чётное число единиц младшего байта
+\end{description}
+\end{tabularx}
+
+\end{frame}
+
+
+
+\subsection{Арифметика: умножение и~деление}
+\begin{frame}[fragile]{\insertsubsection}
+\lstset{basicstyle=\ttfamily\scriptsize}
+% \scriptsize
+% \small
+\footnotesize
+% \begin{tabularx}{\linewidth}{l@{}|L}
+% \lstinline!mul множитель! & edx:eax = eax * множитель32
+% 
+% dx:ax = ax * множитель16
+% 
+% ax = al * множитель8\\
+% \lstinline!imul множитель! & 
+% \\\hline
+% \lstinline!div делитель! & eax = edx:eax/делитель32, \rlap{edx = edx:eax\%делитель32}
+% 
+% ax = dx:ax/делитель16, \rlap{dx = dx:ax\%делитель16}
+% 
+% al = ax/делитель8, ah = ax\%делитель8\\
+% \lstinline!idiv делитель! & \\\hline
+% \end{tabularx}
+% \begin{tabularx}{\linewidth}{l|L}
+% \lstinline!imul источник, приёмник! & приёмник *= источник\\
+% \lstinline!imul константа, источник, приёмник! & приёмник = источник*константа\\\hline
+% 
+% \end{tabularx}
+
+\begin{tabularx}{\linewidth}{|>{\ttfamily}l|L|}
+\hline
+mul srm & Беззнаковое умножение $D{:}A = A\cdot srm$
+\\\hline
+imul srm & Знаковое умножение $D{:}A = A\cdot srm$
+\\\hline
+imul srm, dreg & Умножение $\usecopeq dreg *= srm ~~(dreg = dreg\cdot srm)$
+\\\hline
+imul imm, srm, dreg & Знаковое умножение $dreg = imm\cdot srm$
+\\\hline
+
+div srm & 
+Беззнаковое деление с~остатком
+$\left\{\begin{array}{@{}l}
+A = (D{:}A)/srm \\
+D = (D{:}A)\%srm \\
+\end{array}\right.$
+\\\hline
+idiv srm & 
+Знаковое деление с~остатком
+$\left\{\begin{array}{@{}l}
+A = (D{:}A)/srm \\
+D = (D{:}A)\%srm \\
+\end{array}\right.$
+\\\hline
+\end{tabularx}
+
+\begin{tabularx}{\linewidth}{@{}lL@{}}
+Флаги:&
+\termin{CF=OF} разрядность результата превышает разрядность операндов
+\end{tabularx}
+
+\end{frame}
+% \endgroup
+
+\subsection{Поразрядные операции}
+\begin{frame}[fragile]{\insertsubsection}
+\lstset{basicstyle=\ttfamily\scriptsize}
+% \scriptsize
+% \small
+\footnotesize
+
+\begin{tabularx}{\linewidth}{|>{\ttfamily}l|L|}
+\hline
+not dest & Побитовая инверсия\hfill $dest = {\sim}dest$
+\\\hline
+and src, dest & Побитовое «и»\hfill $dest ~{\&}{=}~  src ~~(dest = dest \And{} src)$
+\\\hline
+test src, dest & Побитовое «и» $dest \And{} src$ без изменения $dest$ (только %установка флагов)
+флаги)
+\\\hline
+or src, dest & Побитовое «или» \hfill  $dest ~{|}{=}~  src ~~(dest = dest \Or{} src)$
+\\\hline
+xor src, dest & Побитовое «исключающее или» \hfill $dest ~{\Xor{}}{=}~  src ~~ (dest = dest \Xor{} src)$
+\\\hline
+\end{tabularx}
+
+\begin{tabularx}{\linewidth}{@{}lL@{}}
+Флаги:&
+\setlength{\leftmargini}{0ex}
+\vspace{-\baselineskip}
+\setlistspacing{1}{0ex}
+\begin{description}[OF]
+\item[ZF] результат равен нулю
+\item[SF] старший (знаковый) бит результата
+\color{blue!20!black!60}
+  \renewcommand{\terminblue}{\color{blue!30!gray!60}}
+\item[\terminblue PF] чётное число единиц младшего байта
+\end{description}
+\termin{CF=OF=0} 
+
+\end{tabularx}
+
+
+\end{frame}
+
+\subsection{Сдвиги% и~выделение бита
+}
+\begin{frame}[fragile]{\insertsubsection}
+\lstset{basicstyle=\ttfamily\scriptsize}
+% \scriptsize
+% \small
+\footnotesize
+
+\begin{tabularx}{\linewidth}{|>{\ttfamily}l|L|}
+\hline
+shr times, dest & $dest = (unsigned)dest >> times$
+\\\hline
+sar times, dest & $dest = (signed)dest >> times$
+\\\hline
+\adjustbox{valign=t}{\begin{tabular}{@{}l@{}}
+shl times, dest 
+\\
+sal times, dest
+\end{tabular}}
+& $dest = dest << times$
+\\\hline
+ror times, dest & Циклический сдвиг $dest$ вправо
+\\\hline
+rol times, dest & Циклический сдвиг $dest$ влево
+\\\hline
+rcr times, dest & Циклический сдвиг через флаг переноса $dest \cup CF$ вправо
+\\\hline
+rcl times, dest & Циклический сдвиг через флаг переноса $dest \cup CF$ влево
+\\\hline% 
+% 
+% shl src, dest  &\multirow{ 2}{0.7\linewidth}{ Сдвиг влево (shl и~sal "--- синонимы) \hfill \lstinline!dest := dest << src! 
+% % 
+% Освободившиеся младшие разряды заполняются нулями, старшие теряются, кроме последнего, который попадает в~\lstinline!carry flag!}
+% \\
+% sal src, dest&\\\hline
+% \multicolumn{2}{|c|}{\textbf{Загрузка $idx$-го бита числа во~флаг $CF$}}\\\hline
+% \multicolumn{2}{|c|}{$idx$ "--- регистр или непосредственное значение, для младшего бита $idx=0$}\\\hline
+% bt idx, dest & $CF = dest[idx]$
+% \\\hline
+\end{tabularx}
+
+\begin{tabularx}{\linewidth}{@{}lL@{}}
+Флаги:&
+\termin{CF} "--- выдвинутый бит
+\end{tabularx}
+
+$times$ "--- \lstinline!%cl! или непосредственное значение
+
+% $idx$ "--- регистр или непосредственное значение, для младшего бита $idx=0$
+
+\end{frame}
+
+% \subsection{Битовые операции}
+% \begin{frame}[fragile]{\insertsubsection}
+% \lstset{basicstyle=\ttfamily\footnotesize}
+% \footnotesize
+% \ttfamily
+% 
+% \begin{tabularx}{\linewidth}{l|L}
+% \lstinline!shr cдвиг, приёмник! & приёмник >{}>= cдвиг \rlap{(беззнаковый)}\\
+% \lstinline!sar cдвиг, приёмник! & приёмник >{}>= cдвиг (знаковый)\\
+% \lstinline!ror cдвиг, приёмник! & циклический сдвиг вправо\\
+% \hline
+% \lstinline!shl cдвиг, приёмник! & приёмник <{}<= cдвиг\\
+% \lstinline!sal cдвиг, приёмник! & приёмник <{}<= cдвиг\\
+% \lstinline!rol cдвиг, приёмник! & циклический сдвиг влево\\
+% \hline
+% \lstinline!and источник, приёмник! & приёмник \&= источник\\
+% \lstinline!or источник, приёмник! & приёмник |= источник\\
+% \lstinline!xor источник, приёмник! & приёмник \lstinline!^=! источник\\
+% \lstinline!not приёмник! & приёмник = $\sim$приёмник\\
+% \end{tabularx}
+% 
+% \end{frame}
+
+% 29.09.2016^^^^
+
+% \subsection{push, pop}
+% \begin{frame}[fragile]{\insertsubsection}
+% \lstset{basicstyle=\ttfamily\scriptsize}
+% \scriptsize
+% \setlength{\parskip}{0.5\parskip}
+% \begin{columns}
+% \lstset{numbers=none}
+% 
+% \begin{column}{0.5\linewidth}
+% 
+% \lstinline!push источник! \\
+% "--- помещение источника в~стек \phantom{wwwwwwwwwwwww}
+% \bigskip
+% 
+% % \begin{lstlisting}[numbers=none]
+% % pushl $13
+% % \end{lstlisting}
+% \lstinline!pushl $13! эквивалентно
+% \begin{lstlisting}[numbers=none]
+% subl $4, %esp	// esp -= sizeof(int)
+% movl $13, (%esp)// *esp = 13
+% \end{lstlisting}
+% 
+% % \begin{lstlisting}[numbers=none]
+% % pushl foo
+% % \end{lstlisting}
+% \lstinline!pushl foo! эквивалентно
+% \begin{lstlisting}[numbers=none]
+% subl $4, %esp	// esp -= sizeof(int)
+% movl foo, %eax	// eax= foo
+% movl %eax, (%esp)// *esp = eax
+% \end{lstlisting}
+% 
+% 
+% \end{column}
+% \begin{column}{0.5\linewidth}
+% 
+% \lstinline!pop приёмник! \\
+% "--- извлечение значения из стека и~помещение его в~приёмник
+% \bigskip
+% 
+% 
+% \lstinline!popl %eax! эквивалентно
+% \begin{lstlisting}
+% movl (%esp), %eax // eax = *esp
+% addl $4, %esp	// esp += sizeof(int)
+% \end{lstlisting}
+% 
+% \lstinline!popl foo! эквивалентно
+% \begin{lstlisting}
+% movl (%esp), %eax // eax = *esp
+% movl %eax, foo	// foo = eax
+% addl $4, %esp	// esp += sizeof(int)
+% \end{lstlisting}
+% \end{column}
+% \end{columns}
+% 
+% В Linux стек выравнен по long (соглашение).
+% 
+% Команды push и pop работают только с операндами размером 4 или 2 байта.
+% 
+% \end{frame}
+
+% 
+% \section{Подпрограммы}
+% 
+% \subsection{Вызов подпрограммы}
+% \begin{frame}{\insertsubsection}
+% \begin{enumerate}
+% \item Передача параметров
+% \item Сохранение адреса возврата
+% \item Передача управления вызываемой подпрограмме
+% \item Выполнение вызываемой подпрограммы
+% \item Подготовка возвращаемого значения
+% \item Возвращение управления вызывающей программе
+% \end{enumerate}
+% \end{frame}
+% 
+% \subsection{Требования}
+% \begin{frame}{\insertsubsection}
+% \begin{enumerate}
+% \item Передача управления на произвольный адрес
+% \item Возврат управления назад после завершения подпрограммы
+% \item Вложенные вызовы подпрограмм
+% \item Сохранение и~восстановление регистров вызывающей программы
+% \item Передача заданного количества аргументов
+% \item Передача и~возврат структур
+% \item Выделение и~освобождение памяти под локальные переменные подпрограмм
+% \end{enumerate}
+% \end{frame}
+% 
+% \subsection{Передача и~возврат управления}
+% \begin{frame}[fragile]{\insertsubsection}
+% \lstset{basicstyle=\ttfamily\footnotesize}
+% \footnotesize
+% 
+% \begin{columns}
+% \lstset{numbers=none}
+% 
+% \begin{column}{0.65\linewidth}
+% Передача управления в~подпрограмму addr:
+% 
+% \lstinline!call addr!
+% 
+% указатель команд сохраняется в~стеке,
+% управление передаётся addr
+% \end{column}
+% \begin{column}{0.34\linewidth}
+% \lstset{xleftmargin=0ex}
+% \begin{lstlisting}
+% pushl %eip
+% jmp addr 
+% ///*@@*/ movl $addr, %eip
+% \end{lstlisting}
+% \end{column}
+% \end{columns}
+% \medskip
+% 
+% \begin{columns}
+% \lstset{numbers=none}
+% 
+% \begin{column}{0.68\linewidth}
+% Возврат из подпрограммы:
+% 
+% \lstinline!ret!
+% 
+% \lstinline!ret n!
+% 
+% управление передаётся адресу, снятому со~стека (если указан аргумент n, со~стека затем снимается ещё n байт)
+% \end{column}
+% \begin{column}{0.31\linewidth}
+% \begin{lstlisting}
+% popl %eip
+% \end{lstlisting}
+% \end{column}
+% \end{columns}
+% \vspace{-1.5\parskip}
+% 
+% \hfill\includegraphics[width=\linewidth,height=0.3\slideheight,keepaspectratio,valign=t]{nested-call}
+% \centering
+% 
+% \end{frame}
+% 
+% 
+% \subsection{Параметры и~возвращаемое значение}
+% \begin{frame}[fragile]{\insertsubsection}
+% \footnotesize
+% \setlength{\parskip}{0.25\parskip}
+% \setlength{\leftmargini}{0.5\leftmargini}
+% 
+% \termin{Соглашение о~вызовах} "--- протокол передачи аргументов:
+% \vspace{-1\parskip}
+% \begin{enumerate}
+% \item способ передачи (через регистры, через стек, смешанный);
+% \item порядок размещения аргументов (Pascal "--- первый аргумент помещается в~стек первым, C "--- последним);
+% \item кто очищает стек и~сохраняет/восстанавливает регистры (и~какие);
+% \item инструкции вызова и возврата;
+% \item как передаётся указатель this (для ООП).
+% \end{enumerate}
+% 
+% Возвращаемое значение:
+% \vspace{-1\parskip}
+% \begin{enumerate}
+% \item целое или указатель "--- \lstinline!%eax! (long long "--- \lstinline!%edx:%eax!);
+% \item вещественное значение "--- регистр сопроцессора \lstinline!st(0)!.
+% \end{enumerate}
+% 
+% \end{frame}
+% 
+% 
+% 
+% \subsection{Соглашения о~вызовах (32 бита)}
+% \begin{frame}[fragile]{\insertsubsection}
+% % \footnotesize
+% \scriptsize
+% \setlength{\parskip}{0.5\parskip}
+% \setlength{\leftmargini}{0.5\leftmargini}
+% 
+% \renewcommand{\tabularxcolumn}[1]{m{#1}}
+% \begin{tabularx}{\linewidth}{|M{3.5em}|M{5.5em}|M{3.5em}|L|%L|
+% }
+% \hline
+% &\theadlong{Параметры в~регистрах}
+% &\theadlong{Порядок}
+% &\theadlong{Очистка стека}
+% % &\theadlong{Дополнения}
+% \\\hline
+% \rowcolor{csMarker}cdecl&&
+%  C&
+%  вызывающая программа
+%  %&
+%  \\\hline
+% pascal&&
+%  Pascal&
+%  функция
+%  %&
+% \\\hline
+% winapi (stdcall)&&
+%  C&
+%  функция
+%  %&
+%  \\\hline
+% \rowcolor{csMarker}Gnu&&
+%  C&
+% %  hybrid
+% this "--- функция, \mbox{остальные "---  вызывающая программа}
+% %  &
+% % Стек иногда выравнивается на 16 бит
+% \\\hline
+% Gnu fastcall&
+% ecx, edx
+% &
+%  C&
+% функция
+% \\\hline
+% Gnu regparm (3)&
+% eax, edx, ecx
+% &
+%  C&
+% функция
+% \\\hline
+% Borland fastcall&
+% ecx, edx
+% &
+% Pascal&
+% функция
+% \\\hline
+%  Microsoft fastcall&
+%  ecx, edx&
+%  C&
+%  функция
+% %  &
+% %  return pointer on stack if
+% % not member function
+% \\\hline
+% % \\\hline
+% \end{tabularx}
+% 
+% \tiny
+% gcc.gnu.org/onlinedocs/gcc-3.4.5/gcc/Function-Attributes.html\\
+% Agner Fog.
+% Calling conventions
+% for different C++ compilers and operating systems.
+% 
+% \end{frame}
+% 
+% 
+% 
+% \section{Вызов подпрограммы в~GAS}
+% \begin{frame}[fragile]{\insertsection}
+% 
+% Соглашение о~вызове: Gnu %(cdecl)
+% 
+% Регистры, значение которых не~должно изменяться подпрограммой:
+% \vspace{-1\parskip}
+% % \section{Подпрограммы в~GAS}
+% % \subsection{Регистры, значение которых не~должно изменяться подпрограммой}
+% % \begin{frame}[fragile]{\insertsubsection}
+% \begin{enumerate}
+% \item\lstinline!%ebx!
+% \item\lstinline!%esi!
+% \item\lstinline!%edi!
+% \item\lstinline!%ebp!
+% \item Сегментные регистры \lstinline!%ds, %es! и~\lstinline!%ss!
+% % \item Вершина стека \lstinline!%esp! нет
+% % \item\lstinline!%r12—%r15! в~64-битном режиме
+% \end{enumerate}
+% % Прочие могут изменяться подпрограммами.
+% \end{frame}
+% % 
+% % \subsection{Регистры, значение которых можно изменять}
+% % \begin{frame}[fragile]{\insertsubsection}
+% % \begin{enumerate}
+% % \item\lstinline!%eax! "--- возвращаемое значение (целое до 4 байт или указатель)
+% % \item\lstinline!%edx! "--- старшие 4 байта возвращаемого значения (long long)
+% % \end{enumerate}
+% % \end{frame}
+% 
+% 
+% \subsection{Приветствие (GAS, stdlib)}
+% 
+% % \subsection{Приветствие (GAS, GNU/Linux)}
+% \begin{frame}[fragile]{\insertsubsection}
+% \lstset{basicstyle=\ttfamily\footnotesize}
+% 
+% \begin{lstlisting}
+% .data
+%     msg:
+%     .string "Hello, world!\n"
+% .global main // точка входа в программу
+% main:
+%     pushl $msg	// Адрес строки в стек
+%     call printf
+%     popl %eax	// Вычищаем параметр из стека
+%   
+%     movl $0,%eax
+%     ret
+% \end{lstlisting}
+% 
+% \vspace{-2\baselineskip}
+% \lstset{xleftmargin=14em}
+% \terminblue
+% \begin{lstlisting}[numbers=none]
+% int main(){
+%     printf("Hello, world!\n");
+%     return 0;
+% }
+% \end{lstlisting}
+% \end{frame}
+% 
+% \subsection{Форматированный вывод (GAS, stdlib)}
+% 
+% % \subsection{Приветствие (GAS, GNU/Linux)}
+% \begin{frame}[fragile]{\insertsubsection}
+% \lstset{basicstyle=\ttfamily\footnotesize}
+% 
+% \begin{lstlisting}
+% .data
+% fmt: .string "Переменные: %d %d\n"
+% foo: .int 13
+% .global main // точка входа в программу
+% main:
+%   pushl foo	// Значение foo в стек
+%   pushl $19	// Значение 19 в стек
+%   pushl $fmt	// Адрес строки fmt в стек
+%   call printf
+%   addl $3*4, %esp // Три четырёхбайтовых числа из стека
+%   movl $0,%eax
+%   ret    
+% \end{lstlisting}
+% 
+% \vspace{-2\baselineskip}
+% \lstset{xleftmargin=12em}
+% \terminblue
+% \begin{lstlisting}[numbers=none]
+% int foo = 13;
+% int main(){
+%   printf("Переменные: %d %d\n", 
+%     19, foo);
+%   return 0;
+% }
+% \end{lstlisting}
+% \end{frame}
+% 
+
+% *****************************************************************************
+\section{}
+\subsection{Вопросы}
+\begin{frame}{Вопросы}
+% \setlength{\leftmargini}{0ex}
+% \setlength{\parskip}{0.25\parskip}
+% \begin{enumerate}
+% \item Что включает инструкция на языке ассемблера?
+% 
+% \item Какие команды используются для вызова и~возврата из подпрограмм?
+% 
+% \item Какие вы знаете соглашения о~вызове?
+% 
+% \item Как передаются параметры в~функцию (соглашение cdecl)?
+% 
+% \item Как возвращается значение функции?
+% 
+% \item Какая команда используется для присваивания?
+% 
+% \item Какие команды используются для работы со стеком?
+% 
+% \item Какие команды используются для арифметических вычислений?
+% 
+% 
+% \end{enumerate}
+% 
+
+\begin{enumerate}
+
+\item 	$x + 9$
+\item $4x$
+
+\item $1 + 3(x-1)$
+
+\item $5x$ без использования команды умножения
+
+
+\end{enumerate}
+
+\end{frame}
+
+\makethanks
+\end{document}
