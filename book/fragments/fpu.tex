@@ -1374,68 +1374,69 @@ FPU включает несколько семейств команд сравнения вещественных чисел.
 
 % \subsubsection{Соответствие битов слова состояния FPU и~$flags$}
 
-
-
-В~таблице~\ref{tab:fpu-status} представлено краткое описание структуры слова состояния, а~также соответствие старшего байта слова состояния сопроцессора $sw$ и~младшего байта регистра флагов основного процессора~$flags$.
-
-% \colorlet{csControl}{green!50}
-% \colorlet{csExceptionStatus}{green!7!yellow!7!white}
-% \colorlet{csSystem}{blue!20!red!10}
-
-
-\begin{table}[!ht]
-\caption{Слово состояния FPU}
-\label{tab:fpu-status}
-\footnotesize
-
-\begin{tabularx}{1\linewidth}{@{}c@{~}|l@{~}|L@{~}|c@{~}|l@{~}|l@{~}}
-% № 	& 	&Название 	\\\hline
-\multicolumn{3}{c}{$sw$}\\\hhline{---~~~}
-\rowcolor{clFlagExceptionStatus}0 	&IE 	& Недействительная операция %(#I)	
-&\multicolumn{3}{c}{\cellcolor{white}}\\\hhline{---~~~}
-\rowcolor{clFlagExceptionStatus}1 	&DE 	& Денормализованный операнд %(#D)	
-&\multicolumn{3}{c}{\cellcolor{white}}\\\hhline{---~~~}
-\rowcolor{clFlagExceptionStatus}2 	&ZE 	& Деление на ноль %(#Z)	
-&\multicolumn{3}{c}{\cellcolor{white}}\\\hhline{---~~~}
-\rowcolor{clFlagExceptionStatus}3 	&ОЕ 	& Переполнение %(#O)	
-&\multicolumn{3}{c}{\cellcolor{white}}\\\hhline{---~~~}
-\rowcolor{clFlagExceptionStatus}4 	&UE 	& Антипереполнение %(#U)	
-&\multicolumn{3}{c}{\cellcolor{white}}\\\hhline{---~~~}
-\rowcolor{clFlagExceptionStatus}5 	&РЕ 	& Неточный результат %(#P)	
-&\multicolumn{3}{c}{\cellcolor{white}}\\\hhline{---~~~}
-\rowcolor{clFlagExceptionStatus}6 	&SF 	& Стековая ошибка	&\multicolumn{3}{c}{\cellcolor{white}}\\\hhline{---~~~}
-\rowcolor{clFlagExceptionStatus}7 	&ES 	& Бит суммарной ошибки&\multicolumn{3}{c}{\cellcolor{white}$flags$, fnstsw + sahf} %&&\multirow{-8}{*}{f(n)stsw/sahf}&
-\\\hline
-\rowcolor{clFlagStatus}8 	&C0 	&&0 	&CF 	&Carry Flag\\\hline
-\rowcolor{clFlagStatus}9 	&C1 	&&\multicolumn{3}{c}{{\cellcolor{white}}игнорируется}\\\hline
-\rowcolor{clFlagStatus}10 	&C2 	&&2 	&PF 	&Parity Flag\\\hline
-\rowcolor{clFlagSystem}11 	& 	&&\multicolumn{3}{c}{{\cellcolor{white}}игнорируется}\\%\hhline{-~~---}
-\rowcolor{clFlagSystem}12 	& 	&&\cellcolor{clFlagStatus}4 	&\cellcolor{clFlagStatus}AF 	&\cellcolor{clFlagStatus}Auxiliary Carry Flag\\
-\rowcolor{clFlagSystem}13 	&\multirow{-3}{*}{TOP} 	&\multirow{-3}{*}{Указатель вершины стека сопроцессора}&\multicolumn{3}{c}{{\cellcolor{white}}игнорируется}\\\hline
-\rowcolor{clFlagStatus}14 	&C3 	& 	&6 	&ZF 	&Zero Flag\\\hline
-\rowcolor{clFlagExceptionStatus}15 	&В 	&Дублирует ES	&7 	&SF 	&Sign Flag \\\hline
-\end{tabularx}
-\end{table}
-
-\pagebreak[3]
-%слово состояния $sw$ могло быть выгружено в~память или регистр $ax$ командами fstsw (проверяет на наличие отложенных необработанных исключений) и~fnstsw. После выгрузки $sw$ в~регистр $ax$ его старший байт загружал
-
-% Таким образом, после выполнения команды сравнения (%и~%пары команд 
-% % \lstinline!fstsw %ax + sahf! %в~ранних моделях %сопроцессоров  
-% % или при использовании совместимых с~ними 
-% при использовании совместимых с~ранними моделями 
-% команд %f*com[p[p]]
-% без суффикса~\lstinline!i! 
-% необходимы также \lstinline!fnstsw %ax! + \lstinline!sahf!)
-% результат  можно 
-% анализировать как результат сравнения беззнаковых целых чисел.
 % 
 % 
-% После этого значение $C3$ помещается в~аналогичный ему по смыслу флаг нуля $ZF$ ($st(0) - src = 0$), $C0$ "--- в~флаг переноса~$CF$ ($st(0) - src < 0$),
-% то есть результат можно анализировать как результат сравнения беззнаковых целых чисел.
-% Бит несравнимости $C2$ попадает на место флага чётности~$PF$. 
-
-Как видно из таблицы, при загрузке старшего байта~$sw$ во~$flags$
+% В~таблице~\ref{tab:fpu-status} представлено краткое описание структуры слова состояния, а~также соответствие старшего байта слова состояния сопроцессора $sw$ и~младшего байта регистра флагов основного процессора~$flags$.
+% 
+% % \colorlet{csControl}{green!50}
+% % \colorlet{csExceptionStatus}{green!7!yellow!7!white}
+% % \colorlet{csSystem}{blue!20!red!10}
+% 
+% 
+% \begin{table}[!ht]
+% \caption{Слово состояния FPU}
+% \label{tab:fpu-status}
+% \footnotesize
+% 
+% \begin{tabularx}{1\linewidth}{@{}c@{~}|l@{~}|L@{~}|c@{~}|l@{~}|l@{~}}
+% % № 	& 	&Название 	\\\hline
+% \multicolumn{3}{c}{$sw$}\\\hhline{---~~~}
+% \rowcolor{clFlagExceptionStatus}0 	&IE 	& Недействительная операция %(#I)	
+% &\multicolumn{3}{c}{\cellcolor{white}}\\\hhline{---~~~}
+% \rowcolor{clFlagExceptionStatus}1 	&DE 	& Денормализованный операнд %(#D)	
+% &\multicolumn{3}{c}{\cellcolor{white}}\\\hhline{---~~~}
+% \rowcolor{clFlagExceptionStatus}2 	&ZE 	& Деление на ноль %(#Z)	
+% &\multicolumn{3}{c}{\cellcolor{white}}\\\hhline{---~~~}
+% \rowcolor{clFlagExceptionStatus}3 	&ОЕ 	& Переполнение %(#O)	
+% &\multicolumn{3}{c}{\cellcolor{white}}\\\hhline{---~~~}
+% \rowcolor{clFlagExceptionStatus}4 	&UE 	& Антипереполнение %(#U)	
+% &\multicolumn{3}{c}{\cellcolor{white}}\\\hhline{---~~~}
+% \rowcolor{clFlagExceptionStatus}5 	&РЕ 	& Неточный результат %(#P)	
+% &\multicolumn{3}{c}{\cellcolor{white}}\\\hhline{---~~~}
+% \rowcolor{clFlagExceptionStatus}6 	&SF 	& Стековая ошибка	&\multicolumn{3}{c}{\cellcolor{white}}\\\hhline{---~~~}
+% \rowcolor{clFlagExceptionStatus}7 	&ES 	& Бит суммарной ошибки&\multicolumn{3}{c}{\cellcolor{white}$flags$, fnstsw + sahf} %&&\multirow{-8}{*}{f(n)stsw/sahf}&
+% \\\hline
+% \rowcolor{clFlagStatus}8 	&C0 	&&0 	&CF 	&Carry Flag\\\hline
+% \rowcolor{clFlagStatus}9 	&C1 	&&\multicolumn{3}{c}{{\cellcolor{white}}игнорируется}\\\hline
+% \rowcolor{clFlagStatus}10 	&C2 	&&2 	&PF 	&Parity Flag\\\hline
+% \rowcolor{clFlagSystem}11 	& 	&&\multicolumn{3}{c}{{\cellcolor{white}}игнорируется}\\%\hhline{-~~---}
+% \rowcolor{clFlagSystem}12 	& 	&&\cellcolor{clFlagStatus}4 	&\cellcolor{clFlagStatus}AF 	&\cellcolor{clFlagStatus}Auxiliary Carry Flag\\
+% \rowcolor{clFlagSystem}13 	&\multirow{-3}{*}{TOP} 	&\multirow{-3}{*}{Указатель вершины стека сопроцессора}&\multicolumn{3}{c}{{\cellcolor{white}}игнорируется}\\\hline
+% \rowcolor{clFlagStatus}14 	&C3 	& 	&6 	&ZF 	&Zero Flag\\\hline
+% \rowcolor{clFlagExceptionStatus}15 	&В 	&Дублирует ES	&7 	&SF 	&Sign Flag \\\hline
+% \end{tabularx}
+% \end{table}
+% 
+% \pagebreak[3]
+% %слово состояния $sw$ могло быть выгружено в~память или регистр $ax$ командами fstsw (проверяет на наличие отложенных необработанных исключений) и~fnstsw. После выгрузки $sw$ в~регистр $ax$ его старший байт загружал
+% 
+% % Таким образом, после выполнения команды сравнения (%и~%пары команд 
+% % % \lstinline!fstsw %ax + sahf! %в~ранних моделях %сопроцессоров  
+% % % или при использовании совместимых с~ними 
+% % при использовании совместимых с~ранними моделями 
+% % команд %f*com[p[p]]
+% % без суффикса~\lstinline!i! 
+% % необходимы также \lstinline!fnstsw %ax! + \lstinline!sahf!)
+% % результат  можно 
+% % анализировать как результат сравнения беззнаковых целых чисел.
+% % 
+% % 
+% % После этого значение $C3$ помещается в~аналогичный ему по смыслу флаг нуля $ZF$ ($st(0) - src = 0$), $C0$ "--- в~флаг переноса~$CF$ ($st(0) - src < 0$),
+% % то есть результат можно анализировать как результат сравнения беззнаковых целых чисел.
+% % Бит несравнимости $C2$ попадает на место флага чётности~$PF$. 
+% 
+% Как видно из таблицы, 
+При загрузке старшего байта~$sw$ во~$flags$
 флаг отрицательности~$C0$ помещается во флаг беззнакового переполнения~$CF$,
 флаг нуля~$C3$ "--- в~аналогичный ему по смыслу $ZF$,
 а~флаг несравнимости $C2$ "--- во флаг чётности $PF$. 
@@ -1443,9 +1444,9 @@ FPU включает несколько семейств команд сравнения вещественных чисел.
 % 
 Таким образом, результат можно анализировать как результат сравнения беззнаковых целых чисел.
 
-
-% После этого флаги $C3$ и~$C0$ помещались в~биты $ZF$ и~$CF$, а~бит $C2$ "--- в~бит~$PF$. 
-% Другие флаги младшего байта~$flags$ получали фактически неопределённое значение.
+% 
+% % После этого флаги $C3$ и~$C0$ помещались в~биты $ZF$ и~$CF$, а~бит $C2$ "--- в~бит~$PF$. 
+% % Другие флаги младшего байта~$flags$ получали фактически неопределённое значение.
 
 Результат современных команды сравнения, напрямую устанавливающих флаги $ZF, CF, PF$ и~обнуляющих остальные флаги состояния в~регистре~$flags$,
 можно анализировать как результат сравнения беззнаковых целых чисел без дополнительных действий.
