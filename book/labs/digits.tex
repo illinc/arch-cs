@@ -11,9 +11,6 @@
 \begin{tasks}
 
 
-\item \bonus{+2 балла за платформу}  
-При подготовке к~работе соберите и~запустите программу (программы) из заданий \reflocal{task:prog:start}--\reflocal{task:prog:end}, используя платформу и/или компилятор, отличные от доступных на ВЦ.  Результаты измерений с~пояснениями внести в~конспект (дополнить таблицы результатов заданий \reflocal{task:prog:start}--\reflocal{task:prog:end}).
-
 \item 
 \labellocal{task:intcode}
 % \addcontentsline{toc}{subsection}{Задание}%
@@ -44,6 +41,7 @@
 двоичное (16 бит) и~шестнадцатеричное представления %десятичного 
 шестнадцатибитных
 чисел $x$ и~$y$, а~также беззнаковую интерпретацию этого представления в~десятичном виде.
+
 \begin{variants}[ss]
 $x = -34, y = 2^{15}+7$
 \next
@@ -96,7 +94,6 @@ $x = -7, y = 2^{16}-2$
 
 \item 
 \labellocal{task:bitwise}
-\labellocal{task:prog:start}
 Разработайте программу на языке C++, выполняющую над беззнаковыми шестнадцатибитными целыми числами следующие поразрядные операции (результат должен печататься в~десятичной и~шестнадцатеричной формах): 
 \begin{itemize}
 \item бинарные
@@ -113,6 +110,7 @@ $\Neg(x)$ (дополнение до двух, $x + \Neg(x) = 2^{\text{разрядность }x}$);
 % 
 % \item \bonus{+2 балла} ROL (циклический сдвиг влево) и~ROR (циклический сдвиг вправо). 
 \end{itemize}
+
 \begin{variants}[bitwise]
 $\left\{\begin{array}{ll}
 x = \text{\lstinline!0xFFEE!}\\
@@ -154,40 +152,30 @@ y = \text{\lstinline!0x0013!}\\
 
 \item\bonus{+1 балл} 
 Разработайте программу на языке C++ (или дополните программу из~задания~\reflocal{task:bitwise}), которая расширяет шестнадцатибитное представление числа~$x$ до
-32-битового, рассматривая числа как
+тридцатидвухбитного, рассматривая числа как
 \begin{itemize}
 \item знаковые (signed);
 \item беззнаковые (unsigned).
 \end{itemize}
+
+\begin{variants}[expand]
+$x = \text{\lstinline!0xFF00!}$
+\next
+$x = \text{\lstinline!0xF123!}$
+\next
+$x = \text{\lstinline!0x8001!}$
+\next
+$x = \text{\lstinline!0xABCD!}$
+\next
+$x = \text{\lstinline!0xEE22!}$
+\end{variants}
+
+Результат должен печататься в~десятичной и~шестнадцатеричной формах.
+
 \descrcomment{Расширение числа происходит, в~частности, при присваивании
 % : \lstinline!int i; short s = -1; i = s;!
 "--- если размер приёмника больше размера источника.
 }
-
-
-
-
-\item
-\labellocal{task:platforms}
-\labellocal{task:char}
-Определите и~выпишите в~отчёт, как хранятся в~памяти компьютера: % на различных платформах
-
-\begin{itemize}
-\item %Определите и~выпишите в~отчёт, как хранятся в~памяти компьютера 
-целое
-число 0x12345678; по результату исследования определите порядок следования байтов в~словах  для вашего процессора:
-\begin{itemize}
-\item Little-Endian (от младшего к старшему, порядок Intel);
-\item Big-Endian (от старшего к младшему, порядок Motorola);
-\end{itemize}
-
-
-\item строки \lstinline!"abcd"! и~\lstinline!"абвг"! (массив из \lstinline!char!);
-
-\item «широкие» строки \lstinline!L"abcd"! и~\lstinline!L"абвг"! (массив из \lstinline!wchar_t!).
-\end{itemize}
-
-% В~отчёт необходимо включить шестнадцатеричный дамп области памяти, где хранятся символы строк и~значение числа.
 
 \item
 \bonus{+1 балл} 
@@ -208,6 +196,31 @@ y = \text{\lstinline!0x0013!}\\
 % 2) 
 % Для задания шестнадцатеричной константы перед числом указывается \lstinline!0x! или \lstinline!0X!.
 
+
+
+
+\item
+\labellocal{task:prog:start}
+\labellocal{task:platforms}
+\labellocal{task:char}
+Определите и~выпишите в~отчёт, как хранятся в~памяти компьютера: % на различных платформах
+
+\begin{itemize}
+\item %Определите и~выпишите в~отчёт, как хранятся в~памяти компьютера 
+целое
+число 0x12345678; по результату исследования определите порядок следования байтов в~словах  для вашего процессора:
+\begin{itemize}
+\item Little-Endian (от младшего к старшему, порядок Intel);
+\item Big-Endian (от старшего к младшему, порядок Motorola);
+\end{itemize}
+
+
+\item строки \lstinline!"abcd"! и~\lstinline!"абвг"! (массив из \lstinline!char!);
+
+\item «широкие» строки \lstinline!L"abcd"! и~\lstinline!L"абвг"! (массив из \lstinline!wchar_t!).
+\end{itemize}
+
+% В~отчёт необходимо включить шестнадцатеричный дамп области памяти, где хранятся символы строк и~значение числа.
 
 \item
 \labellocal{task:prog:end}
@@ -247,6 +260,9 @@ y = \text{\lstinline!0x0013!}\\
 % Различия платформ должны 
 
 
+
+\item \bonus{+2 балла за платформу}  
+При подготовке к~работе соберите и~запустите программу (программы) из заданий \reflocal{task:prog:start}--\reflocal{task:prog:end}, используя платформу и/или компилятор, отличные от доступных на ВЦ.  Результаты измерений с~пояснениями внести в~конспект (дополнить таблицы результатов заданий \reflocal{task:prog:start}--\reflocal{task:prog:end}).
 
 
 \end{tasks}
@@ -408,7 +424,9 @@ $-4$ балла "--- неудобочитаемый отчёт.
 
 
 
-
+\ifthenelse{\equal{\pressversion}{1}}
+{}
+{
 
 \section{Справочные материалы}
 
@@ -447,6 +465,8 @@ Arithmetic.
 
 \end{enumerate}
 \endgroup
+
+}
 
 % \subsection{Коды ASCII}
 % \label{sec:ascii}

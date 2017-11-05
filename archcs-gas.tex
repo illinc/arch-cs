@@ -5,9 +5,11 @@
 %  bash makebook
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\def\pressversion{1}
 
 \input{commonpath}
 \input{\COMMONPATH/1disser}
+\input{\COMMONPATH/3times}
 \input{\COMMONPATH/3subj-book}
 \input{4archcompsys}
 \def\blackandwhiteschemas{0}
@@ -15,6 +17,7 @@
 \graphicspath{{fig/}{fig/digits/}{fig/fpu/}}
 
 \geometry{margin=20mm}
+
 
 \newcommand\stdOs{GNU/Linux}
 \newcommand\stdDist{Ubuntu}
@@ -39,6 +42,11 @@
 
 
 \makeatletter
+\hypersetup{pdftitle={\@title}}
+
+
+
+
 \renewcommand\maketitle{
 \begin{center}
 \thispagestyle{empty}
@@ -56,11 +64,11 @@
 методических указаний к~лабораторным работам \par
 \vspace{1.5em}
 
-{\Competencia\par}
+% {\Competencia\par}
 
 \vspace{4em}
        {{  \@author} \par}
-       \MyEmail
+%        \MyEmail
        
 \vfill
 \vfill
@@ -91,6 +99,32 @@
 % \vfill
 \setcounter{tocdepth}{2}
 
+\newlength{\originalbaselineskip}
+\setlength{\originalbaselineskip}{\baselineskip}
+
+% \let\originalsection\section
+% \renewcommand{\section}[2][]{
+%   \ifthenelse{\isempty{#1}}{
+%   \originalsection[#2]{#2}
+%   }{
+%   \originalsection[#1]{#2}
+%   }
+%   \setlength{\baselineskip}{\originalbaselineskip}
+% }
+% \let\originalsubsection\subsection
+% % \renewcommand{\subsection}[2][#2]{\originalsubsection[#1]{#2}\setlength{\baselineskip}{\originalbaselineskip}}
+% \renewcommand{\subsection}[2][]{
+%   \ifthenelse{\isempty{#1}}{
+%   \originalsubsection[#2]{#2}
+%   }{
+%   \originalsubsection[#1]{#2}
+%   }
+%   \setlength{\baselineskip}{\originalbaselineskip}
+% }
+
+\newcommand{\baselineskipcorrection}[1]{\addtolength{\baselineskip}{#1}}
+\newcommand{\baselineskipreset}[1]{\setlength{\baselineskip}{\originalbaselineskip}}
+
 % % \makeatletter
 % % \pretocmd{\chapter}{\addtocontents{toc}{\protect\addvspace{-15\p@}}}{}{}
 % % \makeatother
@@ -100,8 +134,23 @@
 
 
 \section*{Аннотация}
+\makeatletter
+«{\@title}» (учебное пособие).
+\makeatother
 
-Данное учебное пособие предназначено для студентов бакалавриата направлений 09.03.04 Программная инженерия и~01.03.04 Прикладная математика.
+% Данное учебное пособие предназначено для студентов бакалавриата направлений 
+Приведён систематизированный курс одной из основной дисциплин специализированной подготовки бакалавров по направлениям
+09.03.04 «Программная инженерия» и~01.03.04 «Прикладная математика»
+с~точки зрения прикладного программирования и~парадигмы кроссплатформенности.
+
+Рассмотрены основы архитектуры вычислительных систем как системной дисциплины, а~также обзор архитектуры популярных процессоров семейства x86, в~том числе шестидесятичетырёхбитных,
+представление основных типов данных в~памяти компьютера,
+основные команды набора x86
+и~синтаксис AT\&T.
+Обозначена проблематика прикладного кроссплатформенного программирования, объединяющего язык высокого уровня и~язык Ассемблера.
+
+Строгий стиль изложения сопровождается доступными для понимания пояснениями и~многочисленными примерами, а также контрольными вопросами к каждой главе, необходимыми для глубокого усвоения материала.
+Книга адресована студентам технических специальностей, соискателям степени бакалавра по указанным направлениям, слушателям институтов повышения квалификации; может быть использована для самообразования.
 
 Приложение~\ref{sec:app:labs} содержит методические указания к~лабораторным работам.
 

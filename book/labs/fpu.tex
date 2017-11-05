@@ -67,6 +67,8 @@ $-2$ балла за \emph{каждое} использование команды \lstinline!finit!.
 
 Инициализация процессора, в~том числе и~модуля FPU, выполняется операционной системой в~процессе загрузки.
 
+$-2$ балла за несбалансированный стек FPU после завершения вычислений.
+
 
 $-2$ балла за потерю точности из-за округления промежуточных расчётов в~заданиях~\reflocal{task:inline} и~\reflocal{task:func}.
 
@@ -126,6 +128,7 @@ x=2.123t$&               $(x+3)^2 -\sin^2(x)$&                      $|\tg(\frac{
 
 
 \theoryrefs
+\theoryref{sec:regdata-fpu}
 \theoryref{sec:asm-fpu}
 
 
@@ -145,6 +148,9 @@ x=2.123t$&               $(x+3)^2 -\sin^2(x)$&                      $|\tg(\frac{
 
 \end{enumerate}
 
+\ifthenelse{\equal{\pressversion}{1}}
+{}
+{
 
 \section{Справочные материалы}
 
@@ -161,3 +167,4 @@ x=2.123t$&               $(x+3)^2 -\sin^2(x)$&                      $|\tg(\frac{
 
 \end{enumerate}
 \endgroup
+}

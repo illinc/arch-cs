@@ -38,14 +38,14 @@ neg dest & Изменение знака $dest = -dest$
 % \begin{tabular}{@{}l@{}}
 % lea\\imm(src1,src2,scale),\\dest 
 % \end{tabular}
-lea $\delta$(r1,r2,$\gamma$), dreg
+lea $\delta$(r1,r2,$\sigma$), dreg
 & Вычисление эффективного адреса часто используется для~расчёта  линейной комбинации
-$dreg = r1 + \gamma\cdot r2 + \delta$ 
+$dreg = r1 + \sigma\cdot r2 + \delta$ 
 % (не изменяет флагов)
 
-$dreg, r1, r2$ "---  регистры, 	$\gamma$ "--- 1, 2, 4 или 8, $\delta$ "--- константа 
-
-\lstinline!lea! не изменяет флагов
+$dreg, r1, r2$ "---  регистры, 	$\sigma$ "--- 1, 2, 4 или 8, $\delta$ "--- константа 
+% 
+% \lstinline!lea! не изменяет флагов
 \\\hline
 \multicolumn{2}{|c|}{\textbf{Умножение и~деление}}\\\hline
 mul srm & Беззнаковое умножение $D{:}A = A\cdot srm$
@@ -135,7 +135,8 @@ D = (D{:}A)\%srm \\
 \multicolumn{2}{|c|}{\textbf{Масштабирование (битовый сдвиг)}}\\\hline
 shr times, dest & Беззнаковое деление  $\usecopeq {dest}/={2^{times}}$ (остаток не вычисляется)
 \\\hline
-sar times, dest & Знаковое деление $\usecopeq dest/=2^{times}$ (остаток не вычисляется)
+sar times, dest & Знаковое деление $\usecopeq dest/=2^{times}$ (остаток не вычисляется и~предполагается неотрицательным, см. раздел~\ref{sec:digits:sar}
+)
 \\\hline
 \begin{tabular}{@{}l@{}}
 shl times, dest 

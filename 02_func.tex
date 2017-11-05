@@ -44,11 +44,11 @@
 \begin{frame}{\insertsubsection}
 \begin{enumerate}
 \item Передача параметров
-\item \textterminblue{Сохранение адреса возврата}
-\item \textterminblue{Передача управления вызываемой подпрограмме}
+\item {Сохранение адреса возврата}
+\item {Передача управления вызываемой подпрограмме}
 % \item Выполнение вызываемой подпрограммы
 \item Подготовка возвращаемого значения
-\item \textterminblue{Возвращение управления вызывающей программе}
+\item {Возвращение управления вызывающей программе}
 \end{enumerate}
 \end{frame}
 
@@ -307,7 +307,7 @@ $rbx, rbp,$ $r12{-}r15$
 \begin{lstlisting}
 .globl main // точка входа (stdlib)
 main:
-     xorl %eax,%eax // A ^= A, то есть A = 0
+     xorl %eax, %eax // A ^= A, то есть A = 0
      ret // return A
 \end{lstlisting}
 % Сборка (полученный файл a.out включает stdlib и~занимает 4.6 Кб)
@@ -355,7 +355,7 @@ main:
     call printf
     popl %eax	// Вычищаем параметр из стека
   
-    movl $0,%eax
+    xorl %eax, %eax
     ret
 \end{lstlisting}
 
@@ -388,7 +388,7 @@ main:
   pushl $fmt	// Адрес строки fmt в стек
   call printf
   addl $3*4, %esp // Три четырёхбайтовых числа из стека
-  movl $0,%eax
+  xorl %eax, %eax
   ret    
 \end{lstlisting}
 
