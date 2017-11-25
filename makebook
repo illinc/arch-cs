@@ -23,5 +23,6 @@ ps2pdf -dUseFlatCompression=true ${MAINFILE}.pdf
 
 #cp ${MAINFILE}.pdf "../../АрхВС лаб/${MAINFILE}-labs.pdf"
 cp ${MAINFILE}.pdf.pdf "../../${MAINFILE}-labs.pdf"
+cp ${MAINFILE}.pdf.pdf "${MAINFILE}-book.pdf"
 
 

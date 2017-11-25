@@ -1,4 +1,4 @@
-\tikzstyle{blockarrow}	= [-latex',thick,draw=blue]
+\tikzstyle{blockarrow}	= [-latex',thick,draw=clCompileArrow]
 % \footnotesize\singlespacing
 % \lstset{basicstyle=\ttfamily\footnotesize\singlespacing}
 \begin{tikzpicture}[start chain=cpp going below,start chain=S going below,
@@ -6,8 +6,8 @@ every on chain/.style=join,every join/.style=blockarrow,
 node distance=2ex and 4ex
 ]
 \tikzstyle{block}	= [text width=16ex,text badly centered, minimum height=3ex, draw=black]
-\tikzstyle{file}	= [block,  fill=yellow!40!white]
-\tikzstyle{stage}	= [block, fill=blue,text=white]
+\tikzstyle{file}	= [block, compilefile]
+\tikzstyle{stage}	= [block, compilestage]
 
 % \node (cpp) {\includegraphics[width=\linewidth,height=\slideheigth-1\baselineskip,keepaspectratio,valign=t]{halfcompilecpp}};
 \node[file,on chain=cpp] (prog1_cpp) {prog1.cpp};
@@ -70,7 +70,7 @@ node distance=2ex and 4ex
 % %   \coordinate[left=0ex of cpp.south west] (cpp_egde);
 % %   \coordinate[right=0ex of S.south east] (S_egde);
 %   \node[rectangle,fit=(cpp.south west) (S.south east) (linking_start), inner sep=0ex, minimum height=11.8mm,fill=yellow] (linking) {};
-\node[rectangle,fit=(compiler) (mangling) (compiler2), fill=blue!20!white]  {};
+\node[rectangle,fit=(compiler) (mangling) (compiler2), compilemanglingback]  {};
 
 \end{pgfonlayer} 
 

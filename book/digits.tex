@@ -147,7 +147,7 @@ $)
 Полученное соответствие называется \termin{кодовой таблицей}.
 
 Наиболее известны кодовые таблицы, сопоставляющие коды знакам письменных языков "--- цифрам, буквам кириллицы, латиницы, знакам препинания и~т.\,д. (чаще всего под термином «символ» подразумевается именно знак письменности).
-В~частности, старейшая из принятых в~настоящее время кодовая таблица ASCII (American Standard Code for Interchange of Information) описывает цифры, строчные и~заглавные буквы латиницы, некоторое количество знаков препинания и~специальных символов (так называемые ASCII-символы) и~сопоставляет им коды в~диапазоне от~$0$ до~$127$~\cite{asciitable}.
+В~частности, старейшая из принятых в~настоящее время кодовая таблица ASCII (American Standard Code for Interchange of Information)\index{ASCII} описывает цифры, строчные и~заглавные буквы латиницы, некоторое количество знаков препинания и~специальных символов (так называемые ASCII-символы) и~сопоставляет им коды в~диапазоне от~$0$ до~$127$~\cite{asciitable}.
 Все более современные кодовые таблицы, включающие кириллицу и~другие национальные знаки, описывает ASCII-символы этими же кодами.
 % Соответствие ASCII-символов ASCII-кодам 
 
@@ -2406,11 +2406,15 @@ $\ldots$&	$\ldots$	&$\ldots$     &	$\ldots$&	$\ldots$&	$\ldots$	\\
 \item положительные значения от~$1$ до~$127$, представленные в~натуральном двоичном коде,
 % , с~нулевым старшим битом;
 которым соответствуют коды от~$0000\,0001$ до~$0111\,1111$;
-\item соответствующие им отрицательные значения от~$-1$ до~$-127$
+
+\item {\sloppy
+соответствующие им отрицательные значения от~$-1$ до~$-127$
 % с~единичным старшим битом.
 % Таким образом, старший бит нуля и~положительных чисел равен нулю, старший бит отрицательных чисел "--- единице.
 % \item код $128$,
-"--- коды от~$1111\,1111$ ($0-1$) до~$1000\,0001$ ($0-127$);
+"--- коды от~$1111\,1111$ ($0-1$) до~$1000\,0001$ ($0-127$).
+
+}
 \end{itemize}
 Старший бит называется знаковым, так как у~нуля и~положительных чисел он равен нулю, у~отрицательных "--- единице.
 Соответственно, код $1000\,0000$, который можно в~принципе трактовать и~как~$128$, и~как~$0-128=-128$, считается кодом отрицательного числа $-128$.
@@ -3359,29 +3363,131 @@ $x$ (8 бит)	&	$1111\,1111$			&	\hex{FF}	&	$-1$	&	$255$	\\
 
 В~случае логического сдвига вправо (в~сторону младших разрядов) освободившийся старший разряд инициализируется нулём (рис.~\ref{ris:digits-shr-sar}, а).
 В~случае арифметического сдвига вправо "--- копией знакового бита (рис.~\ref{ris:digits-shr-sar}, б).
+% \begin{illustration}
+% \begin{tabular}{@{}cc@{}}
+% \includegraphics[height=0.25\linewidth,valign=c]{shr}&
+% \includegraphics[height=0.25\linewidth,valign=c]{sar}\\
+% а) & б) \\
+% \end{tabular}
+% \caption{Логический (а) и~арифметический (б) сдвиги вправо}
+% \label{ris:digits-shr-sar}
+% \end{illustration}
+
+
+\tikzstyle{bit}	= [text badly centered, minimum height=3ex, draw=black, minimum width=3ex]
+\tikzstyle{bitlabel}	= [scale=0.8]
+
+\newlength{\letterbottomdistance}
+\setlength{\letterbottomdistance}{1.5em}
+
+\newcommand{\bytercf}[3][]
+{
+  \coordinate[on chain, #1] (bstart);
+  \foreach[count=\i] \bitv in {#2}
+  {
+    \node[solidchaincell, bit, on chain,  fill=clRegisterLight]  (b\i) {$\bitv$}; % node distance — первым!
+    \coordinate[right=1.5ex of b\i.west] (to_b\i);
+    \coordinate[left= 0.7ex of b\i.east] (from_b\i);
+  };
+  \node[right = 3.3em of b8, bit, fill=clCalcLight] (cf) {$#3$};
+  \node[above=0em of cf]  {$CF$};  
+  \node[fit=(b1) (b8) (cf), inner sep=0ex] (byte_box) {};
+}
+
+
 \begin{illustration}
-\begin{tabular}{@{}cc@{}}
-\includegraphics[height=0.25\linewidth,valign=c]{shr}&
-\includegraphics[height=0.25\linewidth,valign=c]{sar}\\
-а) & б) \\
-\end{tabular}
+
+\resizebox{\linewidth}{!}{
+\begin{tikzpicture}[
+start chain=bits going right,
+baseline=(current bounding box.north)
+]
+  \tikzmath{int \j;}
+
+\bytercf{,,,,,,,}{}
+  \coordinate[right = of cf] (shrend);
+
+\node[left=0.5em of b1] (zero) {$0$};  
+  \path[blockarrow] (zero) -- (to_b1);
+  \foreach \i in {1,...,7}
+  {
+  \tikzmath{\j = \i+1;}
+  \path[blockarrow] (from_b\i) -- (to_b\j);
+  };
+  \path[blockarrow] (from_b8) -- (cf.center);
+  \foreach \i/\b in {1/N,8/0}
+  {
+  \node[above=0em of b\i, bitlabel]  {$\b$};  
+  };
+  
+\bytercf[below = 3em of bstart]{1,1,1,1,1,0,1,1}{?}
+\node[right=0em of b8]  {$=251$};  
+\coordinate[below=0.5ex of b4] (src);
+
+\bytercf[below = 3em of bstart]{0,1,1,1,1,1,0,1}{1}
+\node[right=0em of b8]  {$=125$};  
+\coordinate[above=0.5ex of b4] (dest);
+
+\path[draw, double equal sign distance,-implies, thick] (src) -- node[pos=0.35,auto] {$\mathrm{shr}$} (dest);
+\node[below =\letterbottomdistance of byte_box] {а)};
+
+
+
+
+
+\bytercf[right = 1.7em of shrend]{,,,,,,,}{}
+   \coordinate[above= 0.7ex of b1.south] (from_sign);
+   \coordinate[below left = 2ex of b1.south west] (from_sign_corner);
+
+
+  \path[blockarrow] (from_sign) |- (from_sign_corner) |- (to_b1);
+  \foreach \i in {1,...,7}
+  {
+  \tikzmath{\j = \i+1;}
+  \path[blockarrow] (from_b\i) -- (to_b\j);
+  };
+  \path[blockarrow] (from_b8) -- (cf.center);
+  \foreach \i/\b in {1/N,8/0}
+  {
+  \node[above=0em of b\i, bitlabel]  {$\b$};  
+  };
+  
+\bytercf[below = 3em of bstart]{1,1,1,1,1,0,1,1}{?}
+\node[right=0em of b8]  {$=-5$};  
+\coordinate[below=0.5ex of b4] (src);
+
+\bytercf[below = 3em of bstart]{1,1,1,1,1,1,0,1}{1}
+\node[right=0em of b8]  {$=-3$};  
+\coordinate[above=0.5ex of b4] (dest);
+
+\path[draw, double equal sign distance,-implies, thick] (src) -- node[pos=0.4,auto] {$\mathrm{sar}$} (dest);
+\node[below =\letterbottomdistance of byte_box] {б)};
+
+\end{tikzpicture}
+}
+
 \caption{Логический (а) и~арифметический (б) сдвиги вправо}
 \label{ris:digits-shr-sar}
 \end{illustration}
+
 
 Логический сдвиг вправо соответствует беззнаковому делению на~$2$ с~остатком, % (остаток "--- бит $CF$),
 арифметический "--- знаковому.
 % 
 Знаковое деление при этом выполняется по правилам математики, подразумевающим неотрицательный остаток даже при отрицательном делимом, то есть при делении %$-1$
-минус единицы на $2$ частное равно $-1$, а~остаток "--- единице.
+минус единицы на $2$ частное равно минус единице, а~остаток "--- плюс единице.
 
-Остаток в~обоих случаях 
-% Неотрицательный остаток как для знакового, так и~для беззнакового сдвига вправо на один бит (деления на $2$)
+Остаток 
+% в~обоих случаях 
+% Неотрицательный остаток 
+как для знакового, так и~для беззнакового 
+% сдвига вправо на один бит (деления на $2$)
+деления на $2$ сдвигом на один бит
 равен биту $CF$ (вышедшему за разрядную сетку младшему биту исходного числа).
 
 Сдвиг вправо на $n$ разрядов соответствует делению на $2^n$, причём в~случае арифметического сдвига отрицательных чисел также выполняется «математическое» деление, подразумевающее неотрицательный остаток.
 
-Во многих языках  программирования (в~частности, в~C/C++) считается, что при делении знаковых чисел остаток может быть отрицательным, то есть  при делении минус единицы на $2$ частное будет равно нулю, а~остаток "--- $(-1)$.
+Во многих языках  программирования (в~частности, в~C/C++) считается, что при делении знаковых чисел остаток может быть отрицательным, то есть  при делении минус единицы на $2$ частное будет равно нулю, а~остаток "--- минус единице.
 Команды знакового деления ЭВМ реализуют именно эту схему.
 
 % Результат «программистского» деления отрицательного числа $x$ на $2^n$ равен результату «математического» (рассчитываемого сдвигом 
@@ -3400,16 +3506,71 @@ $x ~\mathrm{sar}~ n$).
 
 В~случае  сдвига влево  (в~сторону старших разрядов)
 освободившийся младший бит инициализируется нулём (рис.~\ref{ris:digits-shl-sal}).
+% \begin{illustration}
+% % \begin{tabular}{c}
+% \includegraphics[height=0.25\linewidth,valign=c]{shl-sal}
+% % \end{tabular}
+% \caption{Арифметический (логический) сдвиг влево}
+% \label{ris:digits-shl-sal}
+% \end{illustration}
+
+\newcommand{\bytelcf}[3][]
+{
+  \coordinate[on chain, #1] (bstart);
+  \foreach[count=\i] \bitv in {#2}
+  {
+    \node[solidchaincell, bit, on chain,  fill=clRegisterLight]  (b\i) {$\bitv$}; % node distance — первым!
+    \coordinate[left=1.5ex of b\i.east] (to_b\i);
+    \coordinate[right= 0.7ex of b\i.west] (from_b\i);
+  };
+  \node[left = 3.3em of b1, bit, fill=clCalcLight] (cf) {$#3$};
+  \node[above=0em of cf]  {$CF$};  
+  \node[fit=(b1) (b8) (cf), inner sep=0ex] (byte_box) {};
+}
+
 \begin{illustration}
-% \begin{tabular}{c}
-\includegraphics[height=0.25\linewidth,valign=c]{shl-sal}
-% \end{tabular}
+\resizebox{0.5\linewidth}{!}{
+\begin{tikzpicture}[
+start chain=bits going right,
+baseline=(current bounding box.north)
+]
+  \tikzmath{int \j;}
+
+\bytelcf{,,,,,,,}{}
+  \coordinate[right = of cf] (shrend);
+
+\node[right=0.5em of b8] (zero) {$0$};  
+  \path[blockarrow] (zero) -- (to_b8);
+  \foreach \i in {2,...,8}
+  {
+  \tikzmath{\j = \i-1;}
+  \path[blockarrow] (from_b\i) -- (to_b\j);
+  };
+  \path[blockarrow] (from_b1) -- (cf.center);
+  \foreach \i/\b in {1/N,8/0}
+  {
+  \node[above=0em of b\i, bitlabel]  {$\b$};  
+  };
+  
+\bytelcf[below = 3em of bstart]{0,0,0,0,0,1,0,1}{?}
+\node[right=0em of b8]  {$=5$};  
+\coordinate[below=0.5ex of b4] (src);
+
+\bytelcf[below = 3em of bstart]{0,0,0,0,1,0,1,0}{0}
+\node[right=0em of b8]  {$=10$};  
+\coordinate[above=0.5ex of b4] (dest);
+
+\path[draw, double equal sign distance,-implies, thick] (src) -- node[pos=0.4,auto] {$\mathrm{shl/sal}$} (dest);
+  
+  \node[below=0em of cf]  {};  %  для поля внизу
+
+\end{tikzpicture}
+}
 \caption{Арифметический (логический) сдвиг влево}
 \label{ris:digits-shl-sal}
 \end{illustration}
-
 Арифметический и~логический сдвиги влево не различаются.
-Сдвиг влево эквивалентен умножению на $2$ (так как разрядность результата равна разрядности исходной цепочки, неважно "--- знаковому или нет).
+Сдвиг влево на один бит эквивалентен умножению на $2$ (так как разрядность результата равна разрядности исходной цепочки, неважно "--- знаковому или нет).
 Коррекция операндов не требуется.
 
 Битовые сдвиги выполняются гораздо быстрее, чем умножение и~деление с~помощью специализированных команд.
@@ -3418,29 +3579,144 @@ $x ~\mathrm{sar}~ n$).
 
 \subsubsection{Циклические сдвиги}
 
-В~случае простого циклического сдвига освободившаяся ячейка с~одной стороны замещается разрядом, вышедшим с~другой стороны за разрядную сетку (рис.~\ref{ris:digits-ror-rol}).
+В~случае простого циклического сдвига освободившаяся ячейка с~одной стороны замещается разрядом, вышедшим с~другой стороны за разрядную сетку (рис.~\ref{ris:digits-ror-rol}, а) и~б).
+
+% \begin{illustration}
+% \includegraphics[height=0.25\linewidth,valign=c]{ror-rol}
+% 
+% \caption{Простой циклический сдвиг}
+% \label{ris:digits-ror-rol}
+% \end{illustration}
 
 \begin{illustration}
-\includegraphics[height=0.25\linewidth,valign=c]{ror-rol}
+\resizebox{\linewidth}{!}{
+\begin{tikzpicture}[
+start chain=bits going right,
+baseline=(current bounding box.north)
+]
+  \tikzmath{int \j;}
 
-\caption{Простой циклический сдвиг}
+
+\bytelcf{,,,,,,,}{}
+  \coordinate[right = of b8] (shrend);
+  
+   \coordinate[above= 0.7ex of b1.south] (from_last);
+   \coordinate[below right = 2ex of b8.south east] (from_last_to_cycle_corner);
+  \path[blockarrow] (from_last) |- (from_last_to_cycle_corner) |- (to_b8);
+
+  \foreach \i in {2,...,8}
+  {
+  \tikzmath{\j = \i-1;}
+  \path[blockarrow] (from_b\i) -- (to_b\j);
+  };
+  \path[blockarrow] (from_b1) -- (cf.center);
+  \foreach \i/\b in {1/N,8/0}
+  {
+  \node[above=0em of b\i, bitlabel]  {$\b$};  
+  };
+% \node[below =\letterbottomdistance of byte_box] {а) rol};
+  \node[below =\letterbottomdistance of byte_box] {а)};
+
+
+
+\bytercf[right = 1.7em of shrend]{,,,,,,,}{}
+   \coordinate[above= 0.7ex of b8.south] (from_last);
+   \coordinate[below left = 2ex of b1.south west] (from_last_to_cycle_corner);
+  \path[blockarrow] (from_last) |- (from_last_to_cycle_corner) |- (to_b1);
+
+  \foreach \i in {1,...,7}
+  {
+  \tikzmath{\j = \i+1;}
+  \path[blockarrow] (from_b\i) -- (to_b\j);
+  };
+  \path[blockarrow] (from_b8) -- (cf.center);
+  \foreach \i/\b in {1/N,8/0}
+  {
+  \node[above=0em of b\i, bitlabel]  {$\b$};  
+  };
+% \node[below =\letterbottomdistance of byte_box] {б) ror};
+\node[below =\letterbottomdistance of byte_box] {б)};
+
+\end{tikzpicture}
+}
+% \caption{Простой циклический сдвиг: а) влево, rol, б) вправо, ror}
+\caption{Простой циклический сдвиг: а) влево, б) вправо}
 \label{ris:digits-ror-rol}
 \end{illustration}
 
 В~случае циклического сдвига через флаг переноса освободившаяся ячейка инициализируется значением флага переноса $CF$, 
-а~ячейка $CF$ замещается разрядом, вышедшим за разрядную сетку (рис.~\ref{ris:digits-rcr-rcl}).
+а~ячейка $CF$ замещается разрядом, вышедшим за разрядную сетку (рис.~\ref{ris:digits-rcr-rcl}, а) и~б).
 Таким образом, результат зависит не только от операндов, но и~от текущего значения~$CF$.
 
+% \begin{illustration}
+% \includegraphics[height=0.25\linewidth,valign=c]{rcr-rcl}
+% \caption{Циклический сдвиг через флаг переноса}
+% \label{ris:digits-rcr-rcl}
+% \end{illustration}
+
 \begin{illustration}
-\includegraphics[height=0.25\linewidth,valign=c]{rcr-rcl}
-\caption{Циклический сдвиг через флаг переноса}
+\resizebox{\linewidth}{!}{
+\begin{tikzpicture}[
+start chain=bits going right,
+baseline=(current bounding box.north)
+]
+  \tikzmath{int \j;}
+
+
+\bytelcf{,,,,,,,}{}
+  \coordinate[right = of b8] (shrend);
+  
+   \coordinate[above= 0.7ex of cf.south] (from_last);
+   \coordinate[below right = 2ex of b8.south east] (from_last_to_cycle_corner);
+  \path[blockarrow] (from_last) |- (from_last_to_cycle_corner) |- (to_b8);
+
+  \foreach \i in {2,...,8}
+  {
+  \tikzmath{\j = \i-1;}
+  \path[blockarrow] (from_b\i) -- (to_b\j);
+  };
+  \path[blockarrow] (from_b1) -- (cf.center);
+  \foreach \i/\b in {1/N,8/0}
+  {
+  \node[above=0em of b\i, bitlabel]  {$\b$};  
+  };
+% \node[below =\letterbottomdistance of byte_box] {а) rcl};
+  \node[below =\letterbottomdistance of byte_box] {а)};
+
+
+
+\bytercf[right = 1.7em of shrend]{,,,,,,,}{}
+   \coordinate[above= 0.7ex of cf.south] (from_last);
+   \coordinate[below left = 2ex of b1.south west] (from_last_to_cycle_corner);
+  \path[blockarrow] (from_last) |- (from_last_to_cycle_corner) |- (to_b1);
+
+  \foreach \i in {1,...,7}
+  {
+  \tikzmath{\j = \i+1;}
+  \path[blockarrow] (from_b\i) -- (to_b\j);
+  };
+  \path[blockarrow] (from_b8) -- (cf.center);
+  \foreach \i/\b in {1/N,8/0}
+  {
+  \node[above=0em of b\i, bitlabel]  {$\b$};  
+  };
+% \node[below =\letterbottomdistance of byte_box] {б) rcr};
+\node[below =\letterbottomdistance of byte_box] {б)};
+
+\end{tikzpicture}
+}
+% \caption{Циклический сдвиг через флаг переноса: а) влево, rcl, б) вправо, rcr}
+\caption{Циклический сдвиг через флаг переноса: а)~влево, б)~вправо}
 \label{ris:digits-rcr-rcl}
 \end{illustration}
 
-Таким образом, простой циклический сдвиг $N$-разрядного числа циклически перемещает разряды $N$-битной цепочки,
-а~сдвиг через флаг переноса "--- $(N+1)$-битной цепочки ($\text{операнд} + CF$).
+Если  простой циклический сдвиг $N$-разрядного числа циклически перемещает разряды $N$-битной цепочки,
+то~сдвиг через флаг переноса "--- $(N+1)$-битной цепочки ($\text{операнд} + CF$).
 
-Циклические сдвиги широко используются в~криптографии.
+Циклические сдвиги
+не эквивалентны какой-либо арифметической операции. Они
+широко используются в~криптографии.
+% и~при этом, как, правило, не реализованы в~языках высокого уровня в~виде операторов.
 
 
 

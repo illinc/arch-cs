@@ -1,4 +1,4 @@
-\tikzstyle{blockarrow}	= [-latex',thick,draw=blue]
+\tikzstyle{blockarrow}	= [-latex',thick,draw=clCompileArrow]
 \schemafont
 \lstset{basicstyle=\ttfamily\schemafont}
 
@@ -8,8 +8,10 @@ node distance=2ex and 4ex
 ]
 \tikzstyle{invisblock}	= [text width=16ex,text badly centered, minimum height=3ex]
 \tikzstyle{block}	= [invisblock, draw=black]
-\tikzstyle{file}	= [block,  fill=yellow!40!white]
-\tikzstyle{stage}	= [block, fill=blue,text=white]
+
+\tikzstyle{file}	= [block, compilefile]
+\tikzstyle{stage}	= [block, compilestage]
+
 \tikzstyle{stagenum}	= [stage, text width=2ex, circle, node distance=28ex]
 \tikzstyle{filecomment}	= [invisblock,text width=20ex]
 
@@ -84,7 +86,7 @@ node distance=2ex and 4ex
 % %   \coordinate[left=0ex of cpp.south west] (cpp_egde);
 % %   \coordinate[right=0ex of S.south east] (S_egde);
 %   \node[rectangle,fit=(cpp.south west) (S.south east) (linking_start), inner sep=0ex, minimum height=11.8mm,fill=yellow] (linking) {};
-\node[rectangle,fit=(compiler) (mangling), fill=blue!20!white]  {};
+\node[rectangle,fit=(compiler) (mangling), compilemanglingback]  {};
 
 \end{pgfonlayer} 
 

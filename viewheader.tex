@@ -3,10 +3,18 @@
 
   \ifthenelse{\equal{\blackandwhiteschemas}{1}}
   {
+    \lstset{
+	commentstyle=\usefont{T2A}{cmtt}{m}{sl},              % Comments font
+	keywordstyle=,        % Keywords font ('*' = uppercase)
+	stringstyle=
+	}
   }
   {
-  \colorlet{clLink}{blue!90!black}
-\hypersetup{citecolor=clLink,linkcolor=clLink}
+    \colorlet{clLink}{blue!90!black}
+    \hypersetup{citecolor=clLink,linkcolor=clLink}
+    \lstset{
+	keywordstyle=
+	}
   }
   
 \newcounter{figletter} % для рисунков а) б) 
@@ -73,6 +81,7 @@
 \colorpairlet{Export}{black}{codestronghighlight}
 \colorpairlet{Funcname}{black}{codehighlight}
 
+
 \newcommand{\colordarklet}[2]
 {
   \ifthenelse{\equal{\blackandwhiteschemas}{1}}
@@ -109,3 +118,36 @@
 \colorlightlet{FlagControl}{green!50}
 \colorlightlet{FlagExceptionStatus}{green!7!yellow!7!white}
 \colorlightlet{FlagSystem}{blue!20!red!10}
+
+
+\newcommand{\colornodelet}[4]
+{
+  \ifthenelse{\equal{\blackandwhiteschemas}{1}}
+  {
+      \colorlet{cl#1Stroke}{black}
+      \colorlet{cl#1Fill}{white}
+      \colorlet{cl#1Text}{black}
+  }
+  {
+      \colorlet{cl#1Stroke}{#2}
+      \colorlet{cl#1Fill}{#3}
+      \colorlet{cl#1Text}{#4}
+  }
+}
+\newcommand{\colornodeuse}[1]{draw=cl#1Stroke, fill=cl#1Fill,text=cl#1Text}
+
+\colordarklet{CompileArrow}{blue}
+% \colornodelet{CompileStage}{black}{blue}{white}
+\colornodelet{CompileFile}{black}{yellow!40!white}{black}
+
+\tikzstyle{compilefile}	= [fill=clCompileFileFill]
+
+\ifthenelse{\equal{\blackandwhiteschemas}{1}}
+{
+  \tikzstyle{compilestage}= [fill=white,text=black, thick, double]
+  \tikzstyle{compilemanglingback}	= [draw=black, dashed]
+}
+{
+  \tikzstyle{compilestage}= [fill=blue,text=white]
+  \tikzstyle{compilemanglingback}	= [fill=blue!20!white]
+}
