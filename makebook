@@ -18,11 +18,19 @@ pdflatex ${MAINFILE}
 
 pdflatex ${MAINFILE} 
 
-ps2pdf -dUseFlatCompression=true ${MAINFILE}.pdf
+COMPILEDFILE="${MAINFILE}.pdf"
+
+ps2pdf -dUseFlatCompression=true ${COMPILEDFILE}
+COMPRESSEDFILE="${MAINFILE}.pdf.pdf"
+
+MINSIZEFILE=${COMPILEDFILE}
 
 
 #cp ${MAINFILE}.pdf "../../АрхВС лаб/${MAINFILE}-labs.pdf"
-cp ${MAINFILE}.pdf.pdf "../../${MAINFILE}-labs.pdf"
-cp ${MAINFILE}.pdf.pdf "${MAINFILE}-book.pdf"
+#cp ${MAINFILE}.pdf.pdf "../../${MAINFILE}-labs.pdf"
+cp ${MINSIZEFILE} "../../${MAINFILE}-labs.pdf"
+
+#cp ${MAINFILE}.pdf.pdf "${MAINFILE}-book.pdf"
+cp ${MINSIZEFILE} "${MAINFILE}-book.pdf"
 
 

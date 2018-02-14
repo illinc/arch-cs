@@ -157,7 +157,7 @@ $B$ "---	base		(базовый регистр).
 Начиная с~этой модели, стали выпускаться урезанные варианты процессоров.
 Так, 8086\index{Intel 8086}  с~восьмибитной шиной данных получил название 8088.\index{Intel 8088} 
 
-На основе 8086\index{Intel 8086}  был построен компьютер  IBM PC\index{IBM PC}, 
+На основе \modifyone[8088\index{Intel 8088}]{8086\index{Intel 8086}}  был построен компьютер  IBM PC\index{IBM PC}, 
 так что большинство последующих  процессоров Intel (и~неинтеловских x86-совместимых процессоров)
 % основанные на нём более
 % поддерживают 
@@ -254,7 +254,157 @@ IA-64 несовместима с~набором команд x86.
 \end{itemize}
 % (рис.~\ref{ris:cpu-modes})
 \begin{illustration}
-\includegraphics[width=\wideImageWidth,valign=c]{cpu-modes}
+% \includegraphics[width=\approvedImageWidth,valign=c]{cpu-modes}
+
+\tikzstyle{textnode}	= [scale=0.5]
+\tikzstyle{arrownode}	= [auto, textnode]
+
+% \tikzstyle{regim}	= [circle, draw, ultra thick,  fill=clCalcLight, text width=6em, text badly centered]
+\tikzstyle{regim}	= [textnode, circle, draw,  thick,  fill=clCalcLight, text width=6em, text badly centered, inner sep=0em]
+\tikzstyle{change}	= [arrowline%, very thick
+]
+\tikzstyle{reset}	= [change, draw, dashed]
+\def\angledelta{5}
+
+\tikzstyle{sysinterr}	= [change, draw, decorate, thin, decoration={snake,amplitude=0.04em}]
+
+
+% \resizebox{\wideImageWidth}{!}
+\resizebox{\linewidth}{!}
+{
+% \singlespacing
+
+\schemafont
+% \scriptsize
+% \tiny
+
+\begin{tikzpicture}[
+% start chain=Mem going above,
+% node distance=12em,
+% every node/.style={scale=0.5}
+node distance=6em,
+x = 6em, y = 6em,
+% baseline=(current bounding box.north)
+]
+  
+
+
+  \node[regim, double] (real)  {Реальный режим};
+  \node[regim, left=of real] (smm)  {Режим системного управления};
+  
+  \node[regim, above=of real] (protected)  {Защищённый режим};
+  \node[regim, right=of protected] (v8086)  {Режим виртуального 8086};
+
+  \coordinate[above=1.4 of protected] (longmodecenter);
+  \node[regim, left=0.5 of longmodecenter] (m64)  {64-битный режим};
+  \node[regim, right=0.5 of longmodecenter] (m32)  {32-битный р%   Р
+  ежим совместимости};
+
+\begin{pgfonlayer}{background}
+  \node[ellipse, fit=(m64) (m32), inner sep = 0.5em, fill=gray!20, draw,name path=longmodeborder] (longmode) {};
+\end{pgfonlayer} 
+
+
+
+
+\foreach \i/\outangle/\inangle/\pos/\popt in {%longmode.-5/30/-60, 
+smm.-60/-30/-150/3pt/, 
+% protected.-150/-160/160/-7pt/, 
+v8086.-90/-90/60/3pt/reverse path}
+{
+%   \draw[reset] (\i) to[in = \inangle,out=\outangle] node [arrownode, sloped] {Перезагрузка} (real);
+% \draw[postaction={decorate,decoration={text along path,text align=center,text={Diatessaron},raise=5pt}}](sol)to[bend right=800] (fa'){};
+\draw[reset, postaction={decorate,decoration={text along path,\popt,text align=center,text={|\fontsize{6}{8}\selectfont|Перезагрузка},raise=\pos}}](\i) to[out=\outangle, in=\inangle] (real){};
+}
+  \coordinate[right= 0.5 of v8086] (long_reset_right);
+  \coordinate[below right= 0.4 of v8086] (long_reset_below_right);
+\draw[reset, postaction={decorate,decoration={text along path,reverse path,text align=center,text={|\fontsize{6}{8}\selectfont|Перезагрузка},raise=3pt}}]
+(longmode.-10)
+% to[out=-10,in=90] (long_reset_right) to[out=-90,in=40]
+to[out=-10,in=45] (long_reset_below_right) to[out=-135,in=40]
+(real.40){};
+
+\coordinate (protected_reset_control_1) at ($0.5*(protected)+0.5*(real)+(-1,0.4)$);
+\coordinate (protected_reset_control_2) at ($0.5*(protected)+0.5*(real)+(-1,-0.4)$);
+\draw[reset, postaction={decorate,decoration={text along path,reverse path,text align=center,text={|\fontsize{6}{8}\selectfont|Перезагрузка},raise=3pt}}]
+(protected.-160)
+.. controls (protected_reset_control_1) and (protected_reset_control_2) ..
+(real.160){};
+
+\foreach \in/\inangle/\out/\outangle/\textto/\textfrom/\linestyle in {
+% real/90/protected/-90/$cr0.PE=1$/$cr0.PE=0$,
+protected/0/v8086/180/$flags.VM=1$/$flags.VM=0$/,
+m32/-180/m64/0/$cs.L=1$/$cs.L=0$/%,
+% m64/0/m32/180/$cs.L=0$/$cs.L=1$
+% protected/90/longmode/-90/{$\begin{array}{@{}c@{}}efer.LME=1,\\cr4.PAE=1\\\text{затем}~cr0.PG=1\end{array}$}/{$\begin{array}{@{}c@{}}cr0.PG=0,\\\text{затем}~efer.LME=0\end{array}$}
+% smm/0/real/180///sysinterr,
+% smm/45/protected/-135///sysinterr%,
+% % smm/90/longmode/-160///sysinterr
+}
+{
+  \draw[change,\linestyle] (\in.\inangle+\angledelta) -- node[arrownode] {\textto} (\out.\outangle-\angledelta);
+  \draw[change,\linestyle] (\out.\outangle+\angledelta) -- node[arrownode] {\textfrom} (\in.\inangle-\angledelta);
+}
+  \draw[change] (real.90+2*\angledelta) -- node[arrownode] {$cr0.PE=1$} (protected.-90-2*\angledelta);
+  \draw[change] (protected.-90+2*\angledelta) -- node[arrownode] {$cr0.PE=0$} (real.90-2*\angledelta);
+
+\coordinate (protected_to_long) at (protected.90+2*\angledelta);
+\coordinate (protected_from_long) at (protected.90-2*\angledelta);
+
+\path[name path=P1] (protected_to_long) -- (protected_to_long|-longmode);
+\path[name path=P2] (protected_from_long) -- (protected_from_long|-longmode);
+
+\path [name intersections={of=P1 and longmodeborder, by={long_from_protected}}];
+\path [name intersections={of=P2 and longmodeborder, by={long_to_protected}}];
+
+  \draw[change] (protected_to_long) -- node[arrownode,pos=0.63] {$\begin{array}{@{}c@{}}efer.LME=1,\\cr4.PAE=1,\\\text{затем}\\cr0.PG=1\end{array}$} (long_from_protected);
+  \draw[change] (long_to_protected) -- node[arrownode,pos=0.37] {$\begin{array}{@{}c@{}}cr0.PG=0,\\\text{затем}\\efer.LME=0\end{array}$} (protected_from_long);
+
+  \draw[change] (m32.-135+\angledelta) -- node[arrownode] {} (long_to_protected);
+  \draw[change] (long_from_protected) -- node[arrownode, sloped] {$cs.L=0$} (m32.-135-\angledelta);
+  
+%   \coordinate (longmode_from_smm) at (longmode.-155);
+%   \coordinate[right = 0.3em of longmode_from_smm] (longmode_to_smm);
+%   \draw[change,sysinterr] (smm.90+\angledelta) -- (longmode_from_smm);
+% %   \begin{pgfonlayer}{background}
+% %   \draw[change,sysinterr] (longmode_to_smm) -- (smm.90-\angledelta);
+% %   \end{pgfonlayer} 
+% \path[name path=Pls] (longmode_to_smm) -- (smm.90-\angledelta);
+% \path [name intersections={of=Pls and longmodeborder, by={longborder_to_smm}}];
+%   \draw[change,sysinterr] (longborder_to_smm) -- (smm.90-\angledelta);
+%   
+% %   \draw[sysinterr] (smm.-45+\angledelta) to[out=-45, in = -95] (v8086.-90-\angledelta);
+% %   \draw[sysinterr] (v8086.-90+\angledelta) to[out=-85, in = -45] (smm.-45-\angledelta);
+%   
+%   \draw[sysinterr] (smm.-45+\angledelta) to[out=-45, in = -90] (v8086.-90-2*\angledelta);
+%   \draw[sysinterr] (v8086.-90+2*\angledelta) to[out=-90, in = -45] (smm.-45-\angledelta);
+
+\tikzstyle{smmarrownode}	= [textnode, pos=1.2]
+  \draw[change, revarrowline] (smm.120) -- node[smmarrownode] {$SMI\#$} +(90:0.3);
+  \draw[change] (smm.60) -- node[smmarrownode] {$RSM\mathstrut$} +(90:0.3);
+
+  \draw[change] (v8086.120) -- node[smmarrownode] {$SMI\#$} +(90:0.3);
+  \draw[change, revarrowline] (v8086.60) -- node[smmarrownode] {$RSM\mathstrut$} +(90:0.3);
+
+  \draw[change] (protected.135) -- node[smmarrownode] {$SMI\#$} +(135:0.3);
+  \draw[change, revarrowline] (protected.45) -- node[smmarrownode] {$RSM\mathstrut$} +(45:0.3);
+
+\tikzstyle{smmarrownode}	= [textnode, pos=1.55]
+  \draw[change] (real.20) -- node[smmarrownode] {$SMI\#$} +(0:0.3);
+  \draw[change, revarrowline] (real.-20) -- node[smmarrownode] {$RSM\mathstrut$} +(0:0.3);
+
+  \path[name path=P1] (m32.20) --  +(0:1);
+  \path[name path=P2] (m32.-20) -- +(0:1);
+
+\path [name intersections={of=P1 and longmodeborder, by={long_to_smm}}];
+\path [name intersections={of=P2 and longmodeborder, by={long_from_smm}}];
+  \draw[change] (long_to_smm) -- node[smmarrownode] {$SMI\#$} +(0:0.3);
+  \draw[change, revarrowline] (long_from_smm) -- node[smmarrownode] {$RSM\mathstrut$} +(0:0.3);
+  
+%   \node[left = 0.3 of smm] {};	% для увеличения ширины рисунка
+  
+\end{tikzpicture}
+}
 
 \caption{Режимы работы современных процессоров}
 \label{ris:cpu-modes}
@@ -359,15 +509,104 @@ IA-64 несовместима с~набором команд x86.
 На рис.~\ref{ris:linuxmem} представлено возможное распределение виртуальных адресов процесса в~тридцатидвухбитной операционной системе  GNU/Linux.
 
 \begin{illustration}
-\includegraphics[width=\wideImageWidth,valign=c]{linuxmem}
+% \includegraphics[width=\wideImageWidth,valign=c]{linuxmem}
+
+\tikzstyle{arrowstyle}	= [draw=black, fill=clCalcLight, minimum width=4ex, text width=2ex, minimum height=2ex, single arrow, single arrow head indent=0.3ex,]
+\def\arrowup{\tikz \node[rotate=90, arrowstyle] {};\par}
+\def\arrowdown{\par\tikz \node[rotate=-90, arrowstyle] {};}
+% \def\comma{,}
+
+\tikzstyle{block}	= [text width=44ex,text badly centered, minimum height=2ex, draw=black, solidchaincell]
+
+\tikzstyle{mem}	= [block,  fill=clMemoryLight]
+% \tikzstyle{blabel}	= [scale=0.7]
+\tikzstyle{blabel}	= []
+\tikzstyle{offsetlabel}	= [blabel, text width=44ex, text badly ragged]
+
+% \resizebox{\approvedImageWidth}{!}
+% \resizebox{\wideImageWidth}{!}
+\resizebox{\linewidth}{!}
+{
+\singlespacing
+
+\schemafont
+
+\begin{tikzpicture}[
+start chain=Mem going above,
+% node distance=0ex,
+% baseline=(current bounding box.north)
+]
+\foreach \h/\nm/\s/\lb/\comm/\lstart/\lend in {
+% 3ex/null/block///\hex{0}/, 
+6ex/null/block///, 
+4ex/text/mem/Сегмент~кода (Text)/{Двоичный код процесса (в~частности, \texttt{/bin/sl})}/\hex{0x\,0804\,8000}/end\_code,
+4ex/data/mem/Сегмент данных (Data)/{Инициализированные %в~программе 
+глобальные~и~статические переменные (в~частности,~~\texttt{static char* s = "test";})}/start\_data/end\_data,
+4ex/bss/mem/BSS/{Ненициализированные глобальные~и~статические переменные (в~частности,~~\texttt{static char* s;})}//,
+4ex/rndbrkoffset/block///, 
+4ex/heap/mem/\arrowup Куча/{Динамические переменные (в~частности,~~\texttt{new~char[80]})}/start\_brk/brk,
+6ex/heapmmapoffset/block///program~break/, 
+4ex/mmap/mem/{Файлы, отображаемые в~память}/в том числе динамические библиотеки\arrowdown//,
+% 9ex/mmapstackoffset/block///, 
+4ex/mmapstackoffset/block///, 
+5ex/freestack/block///, 
+4ex/stack/mem/Стек\strut/\arrowdown//,
+4ex/stackkerneloffset/block///, 
+4ex/kernel/mem/Ядро операционной системы/{Прикладные программы не могут ни~читать, ни~перезаписывать память в~данном диапазоне}/\hex{0x\,C000\,0000} \texttt{==~TASK\_SIZE}/\hex{0x\,FFFF\,FFFF}
+}
+{
+  \node[\s, minimum height=\h, on chain=Mem] (\nm)  {\textbf{\lb}
+  
+  \comm
+  
+  };
+  
+  \node[blabel, right = 0ex of \nm.south east, anchor = south west] (start\nm)  {\texttt{\lstart}};
+  \node[blabel, right = 0ex of \nm.north east, anchor = north west] (end\nm)  {\texttt{\lend}};
+
+}
+  \node[blabel, right = 0ex of null.south east]   {\hex{0}};
+
+\draw [decorate,decoration={brace,amplitude=1ex}]
+(null.north east) -- (null.south east)
+node [black,midway, auto, offsetlabel, xshift=3ex] {Смещение для предотвращения разыменования нулевых и~некорректных указателей};
+
+\draw [decorate,decoration={brace,amplitude=1ex}]
+(stack.north east) -- (freestack.south east)
+node [black,midway, auto, offsetlabel, xshift=1ex, text width=5em] {Предельный размер стека \texttt{RLIMIT\_STACK }};
+
+\node[right = 5em of mmap, offsetlabel, %yshift=-3ex, 
+text width=13em] (rndoffsetcomment) {Случайные смещения для~предотвращения хакерских атак на~соответствующие сегменты};
+
+
+\foreach \nm/\out in {rndbrkoffset/-90,mmapstackoffset/100,stackkerneloffset/90}
+{
+  \draw [decorate,decoration={brace,amplitude=1ex}]
+  (\nm.north east) -- (\nm.south east) coordinate [midway, xshift=1ex] (brace\nm);
+  
+  \draw[arrowline] (rndoffsetcomment) to[in = 0,out=\out] (brace\nm);
+}
+
+\foreach \nstart/\nend/\comment in {null.south west/kernel.south west/3 Гб,kernel.south west/kernel.north west/1 Гб}
+{
+  \draw [decorate,decoration={brace,amplitude=2ex}]
+  (\nstart) -- (\nend) node [midway, auto, xshift=-2ex] {\comment};
+  
+}
+\end{tikzpicture}
+}
+
 
 \caption{Распределение памяти процесса в~тридцатидвухбитной операционной системе GNU/Linux}
+% \picturecensoredfloatmark
 \label{ris:linuxmem}
 \end{illustration}
 
+
 Конкретное расположение сегментов в~адресном пространстве процесса
 может различаться для различных операционных систем.
-Состав также может различаться, но 
+Состав %\picturecensored[областей]{} 
+также может различаться, но 
 % сегменты кода, данных, кучи и~стека есть всегда.
 основные сегменты "--- кода, данных, кучи и~стека "--- присутствуют всегда.\index{Стек}
 % Иногда стек 
@@ -377,6 +616,10 @@ IA-64 несовместима с~набором команд x86.
 а~для сегментов, доступных программе на запись (данные, стек, куча) запрещено исполнение.
 
 Нулевой адрес и~ближайшие к~нему считаются некорректными для выявления и~предотвращения ошибок (разыменования переменных, которые указателями не являются).
+
+\modifyone[Кроме того, между динамически растущими сегментами (данных и~кучи, кучи и~стека, стека и~пространства ядра)
+добавляются «зазоры» случайного размера для затруднения атак на соответствующие области памяти.
+Размеры этих смещений определяются при загрузке программы в память.]{}
 
 Часть адресного пространства процесса (в~тридцатидвухбитных системах по умолчанию 1 Гб, в~шестидесятичетырёхбитных "--- 512 Гб)  занимает ядро операционной системы~\cite{nuclight-kva}.
 % Эта память доступна дл"--- общая для всех процессов на данном компьютере
@@ -415,22 +658,25 @@ IA-64 несовместима с~набором команд x86.
 При этом адрес, по которому могут быть загружены код и~статические данные, в~принципе может  варьироваться (это особенно актуально для разделяемых библиотек).
 В~этом случае требуется каким-то образом сохранить работоспособность программы и~доступность данных.
 
-В~тридцатидвухбитном режиме это достигается 
+\modifyone[Для кода программы]{В~тридцатидвухбитном режиме} это достигается 
 % путём коррекции фиксированных адресов в~программе при загрузке исполняемого файла в~память
 % и~использованием для кода по возможности относительных адресов.
-использованием для кода относительных адресов
+использованием \modifyone[]{для кода} относительных адресов
 (так называемых команд ближнего перехода, содержащих не сам адрес, а~его смещение относительно текущего значения указателя команд $ip$). 
 % (команды передачи управления содержат не адрес, а).
-Для данных возможны два варианта. Первый "---  коррекция фиксированных адресов в~программе при загрузке исполняемого файла в~память (это мешает совместному использованию библиотек, так как, если несколько программ попытаются загрузить библиотеку по разным адресам, получится разный код).
+
+Для данных
+\modifyone[в~тридцатидвухбитном режиме адресация относительно $ip$ невозможна. Соответственно, используются]{возможны} два варианта. Первый "---  коррекция фиксированных адресов в~программе при загрузке исполняемого файла в~память (это мешает совместному использованию библиотек, так как, если несколько программ попытаются загрузить библиотеку по разным адресам, получится разный код).
 Второй "---  копирование текущего значения $ip$ в~регистр общего назначения обходным путём и~ручной расчёт смещений относительно полученного значения.
 
-В~шестидесятичетырёхбитном режиме\index{Шестидесятичетырёхбитный режим}%
+В~шестидесятичетырёхбитном режиме\index{Шестидесятичетырёхбитный режим}
  добавлена возможность задавать 
 для данных
 адрес в~виде смещения относительно текущего значения $ip$.
 % также и~для данных.
-Для Mac OS X адресация глобальных и~статических переменных относительно  $ip$ обязательна, для других операционных систем "--- рекомендуется.
+Для Mac OS~X адресация глобальных и~статических переменных относительно  $ip$ обязательна, для других операционных систем "--- рекомендуется.
 
+% \clearpage
 
 \subsection{Куча}
 % \epigraph{\begin{limerick}
@@ -520,8 +766,9 @@ delete[] p_array;
 % (обычно~$bp$).
 
 
-Команды семейства x86 могут записывать в~стек элементы размером от шестнадцати бит, но в~GNU/Linux стек выравнен по long,
+Команды семейства x86 могут записывать в~стек элементы размером от шестнадцати бит, но в~GNU/Linux стек \modifyone[по соглашению]{} выравнен по $long$,
 то есть на 32~бита (рис.~\ref{ris:stack}).
+% \modifyone[Соответственно, если программисту требуется передать через стек шестнадцатибитное значение, он должен расширить его до $long$.]{}
 
 \begin{illustration}
 \resizebox{\wideImageWidth}{!}{
@@ -634,6 +881,16 @@ int main(int argc,
 часть или все аргументы функции $main()$ могут находиться в~регистрах общего назначения;
 но в~тридцатидвухбитном режиме они все передаются через стек.
 
+\modifyone[
+Размер каждого из параметров, а~также общий размер блока локальных переменных, по соглашению о~выравнивании 
+должны быть кратны 32 битам.
+% должен быть кратен 32 битам.
+% в~стеке
+% , в~соответствии с~соглашением о~выравнивании стека в~GNU/Linux, 
+% кратен 32 битам.
+% Размер каждой отдельной локальной переменной может быть произвольным, но общий размер области стека, содержащей эти переменные, также кратен 32 битам.
+]{}
+
 После вызова функции~$fact(3)$ в~стек добавляется ещё один слой данных (рис.~\ref{ris:stack-func}, б):
 параметр $n=3$, адрес возврата из~$fact(3)$ (в~данном случае это адрес команды, записывающей результат в~переменную~$x$ в~$main()$)
 и~локальная переменная~$f$.
@@ -711,7 +968,7 @@ int main(int argc,
 модифицирует специальный регистр~$ip$ (указатель команд), но не содержит его имени. % (а~её машинный код состоит из кода операции).
 % Команда \lstinline!jmp!
 \index{Регистры!общего назначения}%
-Напротив, команда загрузки значения в~регистр общего назначения \lstinline!mov $13, %eax! содержит его имя в~явном виде,
+Напротив, команда загрузки значения в~регистр общего назначения \lstinline!mov $13, %eax! содержит его имя \modifyone[($eax$)]{} в~явном виде,
 \index{Команды!mov}%
 а~соответствующий машинный код 
 \hex{B8\,00\,00\,00\,0D} 
@@ -725,10 +982,13 @@ int main(int argc,
 % унаследованные от него
 адресуемые регистры 
 имели ещё и~какое-либо специальное назначение.
-% В~частности, регистр~$A$ %(и~только он) 
-% используется командами знакового расширения, умножения и~деления.
+\modifyone[В~частности, регистр~$A$ ($rax/eax/ax/al$) %(и~только он) 
+"--- регистр-аккумулятор.
+Он используется командами знакового расширения, деления %, некоторыми командами умножения 
+и~множеством других команд как неявный аргумент.]{}
 Со временем %большинство возможностей
 специализация % регистров общего назначения 
+\modifyone[адресуемых регистров]{}
 сглаживается,
 но многие команды, унаследованные от оригинального набора, обращаются к~неявному аргументу в~конкретном регистре общего назначения.
 
@@ -846,7 +1106,9 @@ int main(int argc,
 {
 \begin{tikzpicture}[
 start chain=going below,
-node distance=5ex]
+% node distance=7ex and 5ex y x
+node distance=5ex
+]
  
   \foreach \rname/\rbase in {A/a, B/b, C/c, D/d}
   {
@@ -910,6 +1172,7 @@ $sp$ можно адресовать как регистр общего назначения% (что широко используется )
 , использовать его иначе, чем 
 как указатель вершины стека, категорически не рекомендуется.
 % Кроме того, во многих случаях номер $sp$ в~команде трактуется как «регистр не задан».
+\modifyone[Кроме того, как будет показано в~разделе~\ref{sec:addressing-common}, возможности адресации~$sp$ ограничены.]{}
 Таким образом, будем считать регистрами общего назначения следующие семь "--- %регистров
 $A, B, C, D, si, di$ и~$bp$.
 
@@ -935,7 +1198,7 @@ $A, B, C, D, si, di$ и~$bp$.
 % доступны все 64 бита регистров.
 % Кроме того,
 % увеличена разрядность не только самих регистров, но и~их~номеров в~команде, нет !!!
-может быть использован специальный префикс $REX$ (расширения регистров),
+может быть использован специальный префикс $REX$ (расширения регистров\modifyone[, подробнее в~разделе~\ref{sec:command:rex}]{}),
 который добавляет ещё один бит к~номерам регистров в~команде,
 так что
 % добавляется 
@@ -1080,7 +1343,7 @@ node distance=5ex]
 Младшие части регистров $r8{-}r15$  имеют имена $r8b {-} r15b$ (размер этих регистров равен одному байту "--- 8 бит),
 $r8w{-}r15w$ (размер равен слову "--- 16 бит),
 $r8d{-}r15d$ (размер равен двойному слову "--- 32 бита).
-
+% 
 Также префикс $REX$ позволяет адресовать младшие байты регистров $si, di, bp$ и~$sp$ "--- они имеют имена $sil, dil, bpl$ и~$spl$~\cite{intelBasic} и~доступны наравне с~$al{-}dl$ и~$r8b {-} r15b$.
 
 Старшие байты младшего слова (разряды $8{-}15$, аналогично $ah{-}dh$) не имеют собственных имён ни для каких регистров, кроме $A{-}D$.
@@ -1173,11 +1436,25 @@ $mm0-mm7$ "--- мантиссы  $r_0- r_7$);
 
 
 \subsection{Регистры сопроцессора}
-\epigraph{\begin{stanza}
-    А руки всегда непохожи на ноги...\\
-\end{stanza}}
-{О.\,Арефьева}
-
+\epigraphcensored[
+\epigraph{\begin{stanza}[0mm]
+Да, я "--- разомкнутый круг, обретаю смыкание круга!
+\end{stanza}}{\Orgia}]
+{
+% \epigraph{\begin{stanza}
+%     А руки всегда непохожи на ноги...\\
+% \end{stanza}}
+% {О.\,Арефьева}
+\epigraph{\begin{limerick}
+Пожилой джентльмен из Торонто\\
+Собирался достичь горизонта "---\\
+И с тех пор много лет\\
+Он спешит ему вслед\\
+И вот-вот возвратится в Торонто.\\
+\end{limerick}
+}
+{А. Белкин}
+}
 
 % 
 % Восемь 80-разрядных регистров, образующих стек (кольцевой буфер).
@@ -1303,7 +1580,8 @@ baseline=(mant0.base)
 включает %флаг $IE$, соответствующей незамаскированному исключению,   
 семь флагов, показывающих корректность операций ($IE{-}SF$) и~флаг $ES$, показывающий, что сбой не только был, но и привёл к~прерыванию.
 Старший байт включает
-флаги $C0{-}C3$, хранящие результаты сравнения чисел,
+флаги $C0{-}C3$, хранящие
+\modifyone[признаки последней операции FPU (в~частности, устаревшие команды сравнения чисел помещают в~них результат сравнения),]{результаты сравнения чисел,}
 % Также слово состояния содержит 
 а~также трёхбитный текущий номер вершины стека $top$.
 Последний бит~$B$ в~настоящее время не используется.
@@ -1364,35 +1642,59 @@ baseline=(mant0.base)
 }
 {\Lear}
 Во время работы сопроцессора возможны ситуации, когда по какой-то причине невозможно корректно выполнить требуемые вычисления.
-Подобные ситуации называются исключительными ситуациями, или просто исключениями FPU.
+\unmodifyone[Они]{Подобные ситуации} называются исключительными ситуациями, или просто исключениями FPU.
 
 
-Рассмотрим исключения FPU подробнее.
+% \newcommand{\fpuex}[1]{\paragraph{#1}}
+\newcommand{\fpuex}[1]{\textbf{#1} "---}
 
-\paragraph{\#I} Недействительная операция (Invalid operation).
+\unmodifyone[Все исключения]{Рассмотрим исключения FPU подробнее.}
+\modifyone[Любое из них приводит к~общему исключению недействительной операции (\textbf{\#I}).]{}
+
+\fpuex{\#I} недействительная операция (Invalid operation).
 Может быть стековой ошибкой~\textbf{\#IS}  или недопустимой арифметической операцией~\textbf{\#IA}.
 
+\subsubsection{Стековая ошибка}
 
-\paragraph{\#IS} Стековая ошибка (Stack Fault) "--- попытка записи в~полностью заполненный стек или чтения из пустой ячейки стека FPU.
+\fpuex{\#IS} стековая ошибка (Stack Fault) "--- попытка записи в~полностью заполненный стек или чтения из пустой ячейки стека FPU.
 
+\subsubsection{Недопустимые арифметические операции}
+
+\newcommand{\fpuexia}[1]{\hspace*{0pt}\rlap{\fpuex{#1}}\phantom{\fpuex{\#О}}}
 
 Недействительной арифметической операцией~\textbf{(\#IA)} считается операция, проводимая над некорректными аргументами.
 В~этом случае может также возникнуть одна из следующих пяти ситуаций.
 
-\paragraph{\#D} Денормализованный операнд (Denormalized operand) "--- выполнение арифметической операции над денормализованным числом или загрузке такого числа в~стек.
+\fpuexia{\#D} денормализованный операнд (Denormalized operand) "--- выполнение арифметической операции над денормализованным числом или загрузк\modifyone[а]{е} такого числа в~стек\modifyone[~FPU]{}.
 
-\paragraph{\#Z} Деление на ноль (Zero Divide) "--- деление на ноль.
+\fpuexia{\#Z} деление на ноль (Zero Divide) "--- деление на ноль.
 
-\paragraph{\#О} Переполнение  порядка (Overflow) "--- порядок результата выходит за максимально допустимое значение.
-% 
+\fpuexia{\#О} переполнение  порядка (Overflow) "--- порядок результата выходит за максимально допустимое значение.
+
 Для команд выгрузки из стека \lstinline!f*st! переполнение возможно в~том случае, если размер порядка приёмника недостаточен.
+\index{Команды!fst[p]}%
+\index{Команды!fist[p]}%
+\index{Команды!fbst[p]}%
 
-\paragraph{\#U} Антипереполнение, или исчезновение порядка (Underflow) "--- порядок результата выходит за минимально допустимое значение (денормализованный результат).
+\fpuexia{\#U} антипереполнение, или исчезновение порядка (Underflow) "--- порядок результата выходит за минимально допустимое значение (денормализованный результат).
 
-\paragraph{\#Р} Неточный результат (Precision) "--- результат невозможно точно представить в~формате назначения (например, $\frac{1}{3}$, $\sqrt{2}$).
+\modifyone[Для команд выгрузки из стека \lstinline!f*st! антипереполнение возможно в~том случае, если выгружаемое значение слишком близко к~нулю и~не может быть корректно представлено в~формате приёмника.]{}
+\index{Команды!fst[p]}%
+\index{Команды!fist[p]}%
+\index{Команды!fbst[p]}%
+
+\fpuexia{\#Р} неточный результат (Precision) "--- результат невозможно точно представить в~формате назначения (например, $\frac{1}{3}$, $\sqrt{2}$).
 
 Команды вычисления трансцендентных функций (\lstinline!fsin!, \lstinline!fcos!, \lstinline!fsincos!, \lstinline!fptan!, \lstinline!fpatan!, \lstinline!f2xm1!, \lstinline!fyl2x!, \lstinline!fyl2xp1!) всегда приводят к~неточному результату.
-
+\index{Команды!FPU!трансцендентные}%
+\index{Команды!fptan}%
+\index{Команды!fsincos}%
+\index{Команды!fsin}%
+\index{Команды!fcos}%
+\index{Команды!f2xmi}%
+\index{Команды!fyl2x}%
+\index{Команды!fyl2xp1}%
+\index{Команды!fpatan}%
 
 
 
@@ -1403,7 +1705,7 @@ baseline=(mant0.base)
 % На подобные ситуации FPU может реагировать двояко: помещать на место результата специальное значение (нечисло) или инициировать прерывание вычислений.
 
 Если в~языках высокого уровня термин «исключение» подразумевает прерывание нормального хода программы и~переход к~обработчику,
-то FPU на некоторые (арифметические) исключения может реагировать двояко: помещать на место результата специальное значение (нечисло) или инициировать прерывание вычислений.
+то FPU на некоторые (арифметические) исключения может реагировать двояко: помещать на место результата специальное значение (\modifyone[вещественную неопределённость\index{Неопределённость вещественная}]{нечисло}) или инициировать прерывание вычислений.
 
 Поведением FPU управляют шесть масок исключений ($IM{-}PM$),
 расположенных в~первых шести битах управляющего слова~$cw$.
@@ -1423,7 +1725,7 @@ baseline=(mant0.base)
 Аналогично $flags$, биты слова состояния сопроцессора представляют те или иные характеристики последней операции сопроцессора~\cite{intelBasic, club155}.
 
 На рис.~\ref{ris:fpu-sw-cw} показано расположение семи флагов ошибок разных видов, флага суммарной ошибки
-и~флагов $C0{-}C3$, хранящих результат сравнения чисел специальными командами.
+и~флагов $C0{-}C3$, \modifyone[куда, в~частности, помещают результат устаревшие команды сравнения.]{хранящих результат сравнения чисел специальными командами.}
 % 
 Команды вещественной арифметики не выставляют флаги $C0{-}C3$ аналогично командам сравнения, но могут использовать эти биты иначе.
 
@@ -1465,11 +1767,12 @@ baseline=(mant0.base)
 % \newcommand{\flagbit}[1]{\hspace*{0pt}\rlap{\textbf{#1}}\hspace{6em}}
 \newcommand{\flagbit}[1]{\hspace*{0pt}\rlap{\textbf{#1}}\phantom{\textbf{ОE (бит 3)}}}
 
+\bottompagebreak
 % \begin{description}
 \flagbit{IE (бит 0)} "--- флаг недействительной операции.
 
 Устанавливается в~единицу при выполнении недопустимой стековой (в~этом случае устанавливается также флаг $SF$) или арифметической операции.
-В~последнем случае могут быть установлены также флаги $DE$, $ZE$, $OE$, $UE$ или $PE$.
+В~последнем случае могут быть установлены также \unmodifyone{флаги }$DE$, $ZE$, $OE$, $UE$ или $PE$.
 
 \flagbit{DE (бит 1)} "--- флаг денормализованного операнда.
 
@@ -1488,12 +1791,12 @@ baseline=(mant0.base)
 
 % \begin{description}[WW (бит W)]
 \flagbit{ES (бит 7)} "--- флаг суммарной ошибки (Error Summary Status).
-
+% 
 Он равен единице, если возникает хотя бы одно незамаскированное исключение.
 % Таким образом, если не замаскировано ни одно из исключений, 
 % \end{description}
 
-В~некоторых источниках говорится, что $ES$ равен единице  в~том случае, когда в~разрядах $0...6$ есть хотя бы одна единица~\cite{mikroprocessorniesistemi2002}.
+В~некоторых источниках говорится, что $ES$ равен единице  в~том случае, когда в~разрядах 0...6 есть хотя бы одна единица~\cite{mikroprocessorniesistemi2002}.
 Это в~общем случае неверно.
 Если какое-то исключение замаскировано% (например, в~C++ деление на ноль не приводит к~исключению)
 , $ES$ не дублирует состояние соответствующего флага.
@@ -1519,6 +1822,13 @@ baseline=(mant0.base)
 
 \section{Флаги}
 \label{sec:flags}
+\epigraphcensored[
+\epigraph{\begin{stanza}[0mm]
+Мечтой увенчанный язык\\
+Плохой товарищ, где нет чисел,\\
+К числа жезлу наш ум привык.\\
+\end{stanza}}
+{\Khlebnikov}]{
 \epigraph{\begin{limerick}
     Жил один старичок в Девоншире,\\
     Он распахивал окна пошире\\
@@ -1528,6 +1838,7 @@ baseline=(mant0.base)
 \end{limerick}
 }
 {\Lear}
+}
 
 Во время выполнения многих команд формируется не только  результат в~виде числа, но и~те или иные признаки результата (в~частности, корректен ли он)
 "--- флаги состояния.
@@ -1556,6 +1867,17 @@ baseline=(mant0.base)
 и~слово состояния FPU $sw$, связанное с~командами математического сопроцессора FPU.
 
 \subsection{Флаги основного процессора}
+\epigraphcensored[
+\epigraph{\begin{limerick}
+    Жил один старичок в Девоншире,\\
+    Он распахивал окна пошире\\
+    И кричал: «Господа!\\
+    Трумбаду, трумбада!» "---\\
+    Ободряя народ в Девоншире.
+\end{limerick}
+}
+{\Lear}
+]{
 \epigraph{\begin{limerick}
 Дева юная та, чья история\\
 Вся таинственность и аллегория,\\
@@ -1564,7 +1886,8 @@ baseline=(mant0.base)
 И строчила трактат по истории.\\
 \end{limerick}
 }
-{\Lear}  
+{\Lear}
+}
 
 Процессоры семейства x86 объединяют ячейку%
 % Ячейка
@@ -1936,8 +2259,116 @@ baseline=(mant0.base)
 Структура команды показана на рис.~\ref{ris:x86-cmd_structure}.
 
 \begin{illustration}
-% \includegraphics[width=1\linewidth,keepaspectratio,valign=t]{cmd_structure}
-\includegraphics[width=1\linewidth,keepaspectratio,valign=t]{cmd_structure_intel}
+% % \includegraphics[width=1\linewidth,keepaspectratio,valign=t]{cmd_structure}
+% \includegraphics[width=1\linewidth,keepaspectratio,valign=t]{cmd_structure_intel}
+
+% \def\commentsize{\small}
+% \def\commentsize{\normalsize}
+
+\tikzstyle{block}	= [text badly centered, minimum height=12ex, draw=black, very thick, solidchaincell]
+
+\tikzmath{real \bitwidthex, \halfbitex; 
+  \bitwidthex=5; 
+  \halfbitex = \bitwidthex/2;}
+%   
+% \tikzstyle{bitlabel}	= []
+% \tikzstyle{block}	= [text badly centered, minimum height=\bitwidthex ex, draw=black]
+% \tikzstyle{reg}	= [block,  fill=clRegisterLight]
+\tikzstyle{bit}	= [block, minimum width=\bitwidthex ex, on chain=Digits, minimum height=9ex, inner sep=0]
+% 
+% 
+% \renewcommand{\bitfield}[4][]
+% {
+%   \tikzmath{int \bits, \wdex; \bits = #3 - #2 + 1;
+%     \wdex = \bits * \bitwidthex;
+%     \textwdex = \wdex-2;}
+%   \node[bit, minimum width= \wdex ex, text width=\textwdex ex, #1] (#2)  {$#4$};
+%   \coordinate[right = \halfbitex ex of #2.south west, label=below:$#3$] (be#3);
+%   \coordinate[left = \halfbitex ex of #2.south east, label=below:$#2$] (bs#2);
+% }
+
+% \tikzstyle{blockfield}	= [text badly centered, text width=18ex, minimum height=12ex, draw=black, very thick, solidchaincell, on chain=Mem]
+\tikzstyle{blockfield}	= [block, text width=18ex, on chain=Mem]
+
+% \footnotesize
+
+\resizebox{\linewidth}{!}
+{
+\singlespacing
+
+\footnotesize
+\def\commentsize{\footnotesize}
+
+\begin{tikzpicture}[
+start chain=Mem going right,
+start chain=Digits going left,
+% node distance=0ex,
+% baseline=(current bounding box.north)
+]
+  \node[blockfield]  (prefix) {\emph{Префиксы}
+  
+  \commentsize
+  Произвольное количество (от~0) \mbox{по 1 байту}
+%   несколько однобайтовых префиксов
+  
+  };
+  
+  \node[blockfield]  (opcode) {\emph{Опкод}
+  
+  \commentsize
+  Код операции: \mbox{1, 2 или 3 байта}
+  
+  };
+
+
+  
+  \node[blockfield]  (modrm) {$Mod R/M$
+  
+  \commentsize
+  Адресация операндов: 0~или~1~байт
+  
+  };
+  
+  \node[blockfield]  (sib) {$SIB$
+  
+  \commentsize
+  Указатель на операнд в~памяти:  0~или~1~байт
+  
+  };
+
+  \node[blockfield]  (disp) {$Displacement$
+  
+  \commentsize
+  Смещение операнда в~памяти: \mbox{0, 1, 2 или 4 байта}
+  
+  };
+  
+  
+  \node[blockfield]  (imm) {$Immediate$
+  
+  \commentsize
+  Непосредственный операнд: \mbox{0, 1, 2 или 4 байта}
+  
+  };
+
+  
+  \bitfield[below=3em of modrm]{0}{2}{R/M}
+  \bitfield[]{3}{5}{\begin{array}{@{}c@{}}Reg/\\\text{продолжение}\\\text{опкода}\end{array}}
+  \bitfield[]{6}{7}{Mod}
+  
+  \draw[blockarrow] (modrm.south east) -- (0.north east);
+  \draw[blockarrow] (modrm.south west) -- (6.north west);
+
+  \bitfield[below=3em of imm.south west]{0}{2}{Base}
+  \bitfield[]{3}{5}{Index}
+  \bitfield[]{6}{7}{Scale}
+  
+  \draw[blockarrow] (sib.south east) -- (0.north east);
+  \draw[blockarrow] (sib.south west) -- (6.north west);
+
+\end{tikzpicture}
+}
+
 \caption{Структура команды x86}
 \label{ris:x86-cmd_structure}
 \end{illustration}
@@ -1976,6 +2407,7 @@ baseline=(mant0.base)
 
 \subsection{Общие для тридцатидвухбитного и~шестидесятичетырёхбитного режимов %типы
 сведения об~адресации}
+\label{sec:addressing-common}
 
 \epigraph{\begin{stanza}[0mm]
 Но если б я был не здесь,\\
@@ -1997,7 +2429,8 @@ baseline=(mant0.base)
 \index{Команды!mov}%
 % а~соответствующий машинный код \hex{B8\,00\,00\,00\,0D} содержит номер  регистра%~$eax$. %
 % ~$A$ ($B8_{16} = 10111000_2$, последние три бита $000$ задают регистр-приёмник).
-При этом, если опкодом задаётся использование
+
+При этом, если опкодом задаётся использование \modifyone[только одного операнда или]{}
 двух операндов,
 один из которых непосредственный, а~второй 
 % в~памяти,
@@ -2007,6 +2440,9 @@ baseline=(mant0.base)
 % Код операции задаёт, в~частности, неявну
 % Неявная и~непосредственная адресация задаются кодом операции.
 % Значение непосредственного 
+\modifyone[В~частности, однобайтовый опкод \hex{FF}, требующий поля $ModR/M$ (в~зависимости от значений $Mod$ и~$R/M$ также возможны $SIB$ и~$Displacement$) соответствует, в~зависимости от поля $Reg$, четырём различным %двухбайтовым 
+однооперандным командам: \texttt{inc}, \texttt{dec}, \texttt{call} и~\texttt{push}.
+Таким образом, полный код операции в~этом случае занимает не восемь, а~одиннадцать бит и~записывается в~двух полях.]{}
 
 % В~большинстве команд адресация задаётся байтом  $Mod~R/M$ и~при необходимости уточняется байтом $SIB$ и~полем $Displacement$.
 Кроме непосредственного% операнда
@@ -2027,7 +2463,8 @@ baseline=(mant0.base)
 
 \begin{table}[!ht]
 % \caption{Адресация второго операнда}
-\caption{Адресация операнда при помощи поля $R/M$}
+% \caption{Адресация операнда при помощи поля $ModR/M$}
+\caption{Адресация операнда при помощи полей $Mod$ и~$R/M$}
 \label{tab:command:rm}
 \renewcommand{\tabularxcolumn}[1]{m{#1}}
 
@@ -2442,6 +2879,7 @@ $edi$ & $di$ & $bh$ & $mm7$ & $xmm7$ & $111$ \\
 Указатель стека $sp$ может быть базовым, что широко используется при адресации элементов стека,\index{Стек} но не индексным,  так как его код совпадает со специальным значением $100$ поля $Index$.
 
 \subsection{Расширение регистров в~шестидесятичетырёхбитном режиме}
+\label{sec:command:rex}
 
 \epigraph{\begin{limerick}
 Жил старик, по фамилии Плиски,\\
@@ -2456,13 +2894,145 @@ $edi$ & $di$ & $bh$ & $mm7$ & $xmm7$ & $111$ \\
 
 \index{REX, префикс}\index{Шестидесятичетырёхбитный режим}%
 В~шестидесятичетырёхбитном режиме между историческими префиксами и~опкодом может находиться
-специальный однобайтовый префикс расширения регистров $REX$.
+специальный однобайтовый префикс расширения регистров $REX$\modifyone[ (рис.~\ref{ris:x86-cmd_structure-rex})]{}.
 Его 
 младшие три бита (биты 0-2, обозначаемые в~документации как $B$, $X$, $R$)
 используются для увеличения разрядности номеров регистров, % (добавления старшего бита к~номеру).
-следующий (третий) бит ($W$) определяет, используются ли шестидесятичетырёхбитные операнды (1) или разрядность операндов %определяется опкодом,
-не изменяется (0),
-старшие четыре бита равны $0100$ и~служат для идентификации.
+следующий (третий) бит $W$ определяет, используются ли шестидесятичетырёхбитные операнды (\modifyone[$REX.W=1$]{1}) или разрядность операндов %определяется опкодом,
+не изменяется (\modifyone[$REX.W=0$). С]{0),
+с}таршие четыре бита равны $0100$ и~служат для идентификации.
+\modifyone[Таким образом, префиксы $REX$ "--- байты в~диапазоне \hex{40-4F}.]{}
+\modifyone[Соответственно, команды с~опкодами \hex{40-4F} (это однобайтовые формы команд \texttt{inc} и~\texttt{dec}) в~шестидесятичетырёхбитном режиме недоступны (при этом доступны двухбайтовые формы \texttt{inc} и~\texttt{dec} с~полем $ModR/M$, так что изменения в~программы, написанные на ассемблере, вносить не нужно).
+% При этом при програгрооооооооооооооооо
+% Это не приводит к~
+]{}
+
+\begin{illustration}
+\tikzstyle{block}	= [text badly centered, minimum height=24ex, draw=black, very thick, solidchaincell]
+
+\tikzmath{real \bitwidthex, \halfbitex; 
+  \bitwidthex=5; 
+  \halfbitex = \bitwidthex/2;}
+%   
+% \tikzstyle{bitlabel}	= []
+% \tikzstyle{block}	= [text badly centered, minimum height=\bitwidthex ex, draw=black]
+% \tikzstyle{reg}	= [block,  fill=clRegisterLight]
+\tikzstyle{bit}	= [block, minimum width=\bitwidthex ex, on chain=Digits, minimum height=9ex, inner sep=0]
+% 
+% 
+% \renewcommand{\bitfield}[4][]
+% {
+%   \tikzmath{int \bits, \wdex; \bits = #3 - #2 + 1;
+%     \wdex = \bits * \bitwidthex;
+%     \textwdex = \wdex-2;}
+%   \node[bit, minimum width= \wdex ex, text width=\textwdex ex, #1] (#2)  {$#4$};
+%   \coordinate[right = \halfbitex ex of #2.south west, label=below:$#3$] (be#3);
+%   \coordinate[left = \halfbitex ex of #2.south east, label=below:$#2$] (bs#2);
+% }
+
+% \tikzstyle{blockfield}	= [text badly centered, text width=18ex, minimum height=12ex, draw=black, very thick, solidchaincell, on chain=Mem]
+\tikzstyle{blockfield}	= [block, text width=14ex, on chain=Mem]
+
+% \footnotesize
+
+\resizebox{\linewidth}{!}
+{
+\singlespacing
+
+\footnotesize
+\def\commentsize{\footnotesize\medskip}
+
+\begin{tikzpicture}[
+start chain=Mem going right,
+start chain=Digits going left,
+% node distance=0ex,
+% baseline=(current bounding box.north)
+]
+  \node[blockfield]  (prefix) {\emph{Префиксы}
+  
+  \commentsize
+  Произвольное количество (от~0) \mbox{по 1 байту}
+%   несколько однобайтовых префиксов
+  
+  };
+  
+  \node[blockfield]  (rex) {$REX$
+  
+  \smallskip
+  Повышение разрядности до~64 и~расширение регистров: 
+  
+  \smallskip
+  
+  \mbox{0 или 1 байт}
+  
+  };
+  
+  \node[blockfield]  (opcode) {\emph{Опкод}
+  
+  \commentsize
+%   Код операции: 
+  \mbox{1, 2} \mbox{или 3 байта}
+  
+  };
+
+
+  
+  \node[blockfield]  (modrm) {$Mod R/M$
+  
+  \commentsize
+%   Адресация операндов: 
+  0~или~1~байт
+  
+  };
+  
+  \node[blockfield]  (sib) {$SIB$
+  
+  \commentsize
+%   Указатель на операнд в~памяти:  
+  0~или~1~байт
+  
+  };
+
+  \node[blockfield]  (disp) {$Displacement$
+  
+  \commentsize
+%   Смещение операнда в~памяти: 
+  \mbox{0, 1, 2} \mbox{или 4 байта}
+  
+  };
+  
+  
+  \node[blockfield]  (imm) {$Immediate$
+  
+  \commentsize
+%   Непосредственный операнд: 
+  \mbox{0, 1, 2} \mbox{или 4 байта}
+  
+  };
+
+  
+  \onebit[below=3em of opcode.south east]{0}{B}
+  \onebit{1}{X}
+  \onebit{2}{R}
+  \onebit{3}{W}
+%   \bitfield[]{4}{7}{0100}
+  \onebit{4}{0}
+  \onebit{5}{0}
+  \onebit{6}{1}
+  \onebit{7}{0}
+  
+  \draw[blockarrow] (rex.south east) -- (0.north east);
+%   \draw[blockarrow] (rex.south west) -- (4.north west);
+  \draw[blockarrow] (rex.south west) -- (7.north west);
+
+
+
+\end{tikzpicture}
+}
+
+\caption{Префикс расширения регистров $REX$ в~структуре команды x86-64}
+\label{ris:x86-cmd_structure-rex}
+\end{illustration}
 
 Бит 2 префикса $REX$ ($REX.R$)
  добавляется к~полю $Reg$ байта $Mod~R/M$,

@@ -162,11 +162,159 @@
 обеспечивающие согласование и~передачу информационных потоков между различными компонентами системного блока и~внешними устройствами.
 
 \begin{illustration}
-\includegraphics[width=
-% \approvedImageWidth
-\wideImageWidth
-% 1.2\approvedImageWidth
-,valign=c]{Motherboard_diagram_ru}
+% \includegraphics[width=
+% 0.8\approvedImageWidth
+% % \wideImageWidth
+% % 1.2\approvedImageWidth
+% ,valign=c]{Motherboard_diagram_ru}
+
+% \tikzstyle{arrowline}	= [-latex'new]
+\tikzstyle{blockdraw}	= [draw, very thick]
+% \tikzstyle{blockdraw}	= [draw, thick]
+
+\tikzstyle{slot}	= [rectangle, blockdraw, minimum width=1em, minimum height=8em, fill=white]
+\tikzstyle{widetext}	= [text width=12em]
+% \tikzstyle{hubhei}	= [minimum height=8em]
+\tikzstyle{hub}	= [widetext, blockdraw, text badly centered, minimum height=12em]
+
+\tikzstyle{bus}	= [draw, double, thick]
+% \tikzstyle{bus}	= [draw, double]
+
+% \resizebox{\approvedImageWidth}{!}
+\resizebox{\linewidth}{!}
+{
+% \singlespacing
+
+\schemafont
+\footnotesize
+% \scriptsize
+% \tiny
+
+\begin{tikzpicture}[
+start chain=Mem going right,
+% node distance=12em,
+start chain=Txt going below,
+start chain=Ex going left,
+% every node/.style={scale=0.5}
+node distance=5em and 10em, % y and x 
+x = 10em, y = 4em,
+% baseline=(current bounding box.north)
+]
+
+% \tikzstyle{minitext}	= [widetext, left, on chain=Txt, solidchaincell] не работает
+\tikzstyle{minitext}	= [solidchaincell, widetext, align=right, on chain=Txt, inner ysep = 0.5ex]
+
+%   \node[minitext, text badly centered] (u_caption) {\normalsize Южный мост\par\footnotesize (контроллер"=концентратор ввода-вывода)\par};
+  \node[minitext, text badly centered, inner ysep = 1ex] (u_caption) {\textbf{Южный мост}\par (контроллер"=концентратор ввода-вывода)\par};
+\foreach \i/\n in {SATA, USB, Ethernet, Аудио/audio}
+{
+  \node[minitext] (\n) {\i};
+}
+%   \node[minitext] (audio) {\footnotesize Аудио\par};
+
+  \node[hub, fit=(u_caption) (audio), inner sep = 0em] (sbridge) {};
+  
+  \node[slot, left=of sbridge, on chain=Ex] (ex0)  {};
+{  
+  \tikzset{node distance=1em}
+  \node[slot, on chain=Ex]   {};
+  \node[slot, on chain=Ex]   {};
+  \node[slot, on chain=Ex]  (exlast) {};
+}
+\node[fit=(ex0) (exlast), inner sep = 0em] (ex) {};
+\node[above=0em of ex] {Слоты PCI Express};
+
+  \node[hub, above= of sbridge] (nbridge)  {\textbf{Северный мост}\par (контроллер"=концентратор памяти)};
+%   \node[hub, below=of nbridge] (sbridge)  {Южный мост\par\footnotesize (контроллер-концентратор ввода-вывода)
+%   \par
+%   \hfill SATA\par\hfill USB};
+
+  \path[bus] (nbridge) -- node[auto] {Внутренняя шина} (sbridge);
+
+  \node[draw, dashed, fit=(nbridge) (sbridge), inner sep = 2em] (chipset) {};
+  \node[above=0em of chipset.north west, anchor=south west] {Чипсет};
+
+%   \node[slot, left=of nbridge] (gra)  {};
+   \node[slot] (gra) at (nbridge-|exlast) {};
+\node[above=0em of gra, text width=6em, text badly centered] {Слот графического контроллера};
+   
+ \node[slot, right=of nbridge, on chain=Mem] (mem0)  {};
+{  
+  \tikzset{node distance=1em}
+  \node[slot, on chain=Mem]   {};
+  \node[slot, on chain=Mem]   {};
+  \node[slot, on chain=Mem] (memlast)  {};
+}
+\node[fit=(mem0) (memlast), inner sep = 0em] (mem) {};
+\node[above=0em of mem] {Слоты памяти};
+
+\tikzstyle{widetext}	= [text width=10em]
+\tikzstyle{minihub}	= [hub, minimum height=8em]
+
+%   \node[minitext, text badly centered, below=4em of sbridge.east|-chipset.south, outer ysep=1em] (m_caption) {\textbf{Мультиконтроллер}};
+  \node[minitext, text badly centered, below=4em of chipset.south east, outer ysep=1em] (m_caption) {\textbf{Мультиконтроллер}};
+\foreach \i/\n in {Клавиатура/kb, Мышь/mouse}
+{
+  \node[minitext] (\n) {\i};
+}
+  \node[minihub, fit=(m_caption) (mouse), inner sep = 0em] (mk) {};
+  
+\tikzstyle{minihub}	= [hub, minimum height=6em]
+\tikzstyle{microhub}	= [hub, minimum height=5em, text width = 6em]
+ 
+  \node[microhub, anchor=south] (bios) at (mk.south-|sbridge.west)  {\textbf{ПЗУ}\par (BIOS)};
+  
+  \node[minihub, above=1.5 of chipset] (cpu) {\textbf{ЦПУ}};
+  \path[bus] (cpu) -- coordinate[pos=0.2] (from_tgen) node[auto, pos=0.5] {Фронтальная шина} (nbridge);
+  
+  \node[microhub, left=2em of from_tgen-|chipset.west] (tgen) {Тактовый генератор};
+  \draw (tgen) -- (from_tgen);
+  
+\begin{pgfonlayer}{background}
+  \path[bus] (nbridge) --  node[auto] {Шина памяти} (mem0) -- (memlast);
+  \path[bus] (gra) --  node[auto] {Шина графического контроллера} (nbridge);
+  \path[bus] (exlast)--(ex0) --  node[auto] {Шина PCI Express} (sbridge);
+
+\end{pgfonlayer} 
+
+  \path[bus] (mk) -- (mk-|sbridge);
+  \path[bus] (sbridge) |- node[auto, swap, pos=0.25] {Шина LPC} (bios);
+  
+  
+  \node[text width = 7em, text badly centered] (rmlabel) at (memlast|-Ethernet) {Разъёмы на~системной плате};
+  \tikzstyle{rmstyle}	= [circle, draw, thick, minimum height=0.5em, inner sep = 0.1em]
+
+\foreach \n in {SATA, USB, Ethernet, audio}
+{
+  \node[rmstyle] (r\n) at (\n-|rmlabel.west) {};
+  \draw (\n-|sbridge.east) -- (r\n);
+}  
+\tikzmath{
+coordinate \dc, \mklabeldiff, \a, \b;
+\dc = ($(rUSB) - (rSATA)$);
+\mklabeldiff = ($(mk.east)-(rmlabel.west)$);
+% \a = 0.5*(\mkd+(\dcy,0));
+\a = ($0.5*(\mklabeldiffx,0) + 0.5*(\dcy,0)$);	% dcy < 0
+\b = ($(\a) - (\dcy,0)$);
+}
+
+  \node[rmstyle] (rkb) at ($(raudio) + (\dc)$) {};
+  \node[rmstyle] (rmouse) at ($(rkb) + (\dc)$) {};
+  
+% \foreach \n/\dx in {kb/3em, mouse/2em}
+% {
+%   \coordinate[left = \dx of r\n] (vr\n);
+%   \draw (\n-|mk.east) -| (vr\n) -- (r\n);
+% } 
+%   \draw (kb-|mk.east) -| ($(rkb) + 0.67*(\mklabeldiffx,0)$) -- (rkb);
+%   \draw (mouse-|mk.east) -| ($(rmouse) + 0.33*(\mklabeldiffx,0)$) -- (rmouse);
+  \draw (kb-|mk.east) -| ($(rkb) + (\a)$) -- (rkb);
+  \draw (mouse-|mk.east) -| ($(rmouse) + (\b)$) -- (rmouse);
+
+
+\end{tikzpicture}
+}
+
 
 \caption{Схема системной платы}
 \label{ris:motherboard_diagram}
@@ -210,8 +358,9 @@
 \begin{illustration}
 
 % \resizebox{0.8\linewidth}{!}{
-\resizebox{\approvedImageWidth}{!}{
+% \resizebox{\approvedImageWidth}{!}{
 % \resizebox{\wideImageWidth}{!}{
+\resizebox{\linewidth}{!}{
 \schemafont
 % \setlength{\leftmargini}{14ex}
 % \setlist{leftmargin=*,topsep=0pt,itemsep=0pt}
@@ -712,7 +861,8 @@ node distance=0.5ex,
 На рис.~\ref{ris:command-cycle} указатель команд хранит адрес команды К-1.
 
 \begin{illustration}
-\resizebox{\wideImageWidth}{!}{
+% \resizebox{\wideImageWidth}{!}{
+\resizebox{\linewidth}{!}{
 \schemafont
 \input{book/drawings/command-cycle}
 }
@@ -856,7 +1006,10 @@ node distance=0.5ex,
 \end{enumerate}
 
 
-
+\begingroup
+% \setstretch{1.5}
+% \renewcommand{\baselinestretch}{2}
+\setlength{\baselineskip}{1.15\baselineskip}
 \subsection{Расположение программ и~данных}
 \epigraph{\begin{limerick}
     Старичок, проживавший в Рангуне,\\
@@ -867,6 +1020,7 @@ node distance=0.5ex,
 \end{limerick}
 }
 {\Lear}
+
 
 Данные и~команды поступают в~процессор по системной шине из памяти.
 % Системная шина, кроме всего прочего, реализует связь процессора с~памятью, хранящей программы и~данные.
@@ -882,7 +1036,8 @@ node distance=0.5ex,
   \path[blockarrow] (#2-|#1)   ++(0,-0.5ex) coordinate(tmpDown) -- (tmpDown-|#2) ;
 }
 
-\resizebox{\wideImageWidth}{!}{
+% \resizebox{\wideImageWidth}{!}{
+\resizebox{\linewidth}{!}{
 \schemafont
 \begin{tikzpicture}[
 node distance=2ex and 4ex,
@@ -969,6 +1124,7 @@ baseline=(current bounding box.north)
 %архитектуры фон Неймана.
 % принстонской архитектуры.
 фон-неймановской архитектуры.
+
 Ускорить обмен с~памятью можно, введя раздельные шины и,~соответственно,
 физически раздельные запоминающие устройства для программ и~для данных (рис.~\ref{ris:harvard-prinston}, б).
 Это дороже и~сложнее в~реализации, 
@@ -978,6 +1134,7 @@ baseline=(current bounding box.north)
 сама идея раздельных шин  использовалась  в~позднем проекте Бэббиджа,
 а~практический проект подобной архитектуры разрабатывался в~Гарвардском университете США одновременно с~проектом школы Мура,
 % (соответственно, архитектура с~раздельными шинами программ и~данных называется гарвардской),
+\picturecensored[широко]{}
 использоваться на практике этот подход стал относительно недавно.
 Архитектура с~раздельными шинами программ и~данных обычно называется гарвардской.
 
@@ -990,6 +1147,7 @@ baseline=(current bounding box.north)
 % третья "--- для трансляции адресов
 \index{Кеш-память}%
 
+\endgroup
 
 \subsection{Память}
 \epigraph{\begin{limerick}
@@ -1007,7 +1165,135 @@ baseline=(current bounding box.north)
 Память в~вычислительных системах образуют запоминающие устройства различной природы, имеющие разные характеристики по объёму памяти, по скорости обмена и~по времени создания контакта (рис.~\ref{ris:hierarchy}).
 
 \begin{illustration}
-\includegraphics[width=\wideImageWidth,valign=c]{4-hierarchy}
+% \includegraphics[width=\wideImageWidth,valign=c]{4-hierarchy}
+
+\newlength{\commenttonext}
+\setlength{\commenttonext}{1.3em}
+
+\resizebox{\linewidth}{!}
+{
+% \singlespacing
+
+\schemafont
+\footnotesize
+% \scriptsize
+% \tiny
+
+\begin{tikzpicture}[
+start chain=Mem going right,
+start chain=Lvl going above,
+start chain=Ex going left,
+% every node/.style={scale=0.5}
+node distance=5em and 10em, % y and x 
+x = 10em, y = 4em,
+% baseline=(current bounding box.north)
+]
+% \tikzstyle{blockdraw}	= [draw, very thick]
+\tikzstyle{blockdraw}	= [draw, thick]
+% \tikzstyle{block}	= [solidchaincell, rectangle, blockdraw, minimum height=4em, text badly centered, inner sep =1ex]
+\tikzstyle{block}	= [solidchaincell, rectangle, minimum height=4em, text badly centered, inner sep =1ex]
+% \tikzstyle{vzustyle}	= [block, text width=8em, fill=white]
+% \tikzstyle{blockstyle}	= [block, text width=6em, minimum width=8em, fill=white]
+\tikzstyle{blockstyle}	= [block, text width=6em, minimum width=8em]
+\tikzstyle{thinblockstyle}	= [blockstyle, minimum height=1em, inner sep = 0.8ex]
+% \tikzstyle{commentstyle}	= [scale=0.9]
+\tikzstyle{commentstyle}	= []
+
+\foreach \n/\l/\ll in {hdd/Жёсткие/диски, net/Сетевые/хранилища, flash/Портативные/накопители, rom/ПЗУ/(BIOS)}
+{
+  \node[blockstyle, on chain=Mem] (\n) {\l\par\ll};
+} 
+\node[fit = (hdd) (rom), inner sep = 0mm] (bvzu) {};
+% \node[above= 0mm of bvzu, minimum width = 32em] (lvzu) {Внешние запоминающие устройства};
+\node[commentstyle, above= 0mm of bvzu, minimum width = 32em] (lvzu) {Внешняя память};
+% \node[fit = (bvzu) (lvzu), inner sep = -0.5\pgflinewidth, blockdraw] (ovzu) {};
+% \node[ above=0mm of bvzu, block, minimum width = 32em, outer sep = -\pgflinewidth] (lvzu) {Внешние запоминающие устройства};
+% \path[blockdraw] (lvzu.north west) -- (lvzu.north east);
+
+% \tikzstyle{memstyle}	= [block, text width=8em, fill=clMemoryLight]
+% \tikzstyle{blockstyle}	= [block, text width=8em, fill=clMemoryLight]
+
+
+\tikzstyle{blockstyle}	= [block, text width=6em, minimum width=11em]
+
+\node[blockstyle, on chain=Mem, above= \commenttonext of lvzu.north, anchor = south east] (phis) {Физическое ОЗУ};
+\node[blockstyle, %above= 0mm of lvzu.north, anchor = south west
+on chain=Mem] (virt) {Виртуальная память};
+
+\node[fit = (phis) (virt), inner sep = 0mm] (bozu) {};
+\node[commentstyle, above= 0mm of bozu, minimum width = 32em] (lozu) {Оперативная память};
+
+% \tikzstyle{blockstyle}	= [block, text width=7em, fill=white]
+
+\node[thinblockstyle, on chain=Lvl, above= \commenttonext of lozu] (L3) {L3};
+\node[thinblockstyle, on chain=Lvl] (L2) {L2};
+\node[thinblockstyle, on chain=Lvl] (L1) {L1};
+\node[commentstyle, above= 0mm of L1, minimum width = 32em] (lL) {Кеш-память};
+
+\node[blockstyle, on chain=Lvl, above= \commenttonext of lL] (reg) {Регистры процессора};
+
+\coordinate[above=2.6em of bvzu|-reg.north] (lvlTop);
+\coordinate[right=\commenttonext of rom.south east] (lvlRight);
+\coordinate[left=\commenttonext of hdd.south west] (lvlLeft);
+
+\path[blockdraw, name path=cliptriangle] (lvlRight) -- (lvlTop) -- (lvlLeft)  -- cycle;
+
+
+
+% \path[name path=lbottom] (reg.south-|lvlLeft) --  (reg.south-|lvlRight);
+% \path[name intersections={of=lbottom and cliptriangle, by={bl, br}}];
+% \path[blockdraw] (bl) -- (br);
+% \begin{pgfonlayer}{background}
+%   \fill[fill=clRegisterLight] (br) -- (lvlTop) -- (bl) -- cycle;
+% \end{pgfonlayer} 
+
+\foreach \n/\l in {reg/reg, lL/, L1/, L2/, L3/, lozu, bozu/mem, lvzu/hddtop}
+{
+\path[name path=ltop] (\n.north-|lvlLeft) --  (\n.north-|lvlRight);
+\path [name intersections={of=ltop and cliptriangle, by={tl\l, tr\l}}];
+
+\path[name path=lbottom] (\n.south-|lvlLeft) --  (\n.south-|lvlRight);
+\path[name intersections={of=lbottom and cliptriangle, by={bl\l, br\l}}];
+
+% \path[blockdraw] (tl\l) -- (tr\l);
+\path[blockdraw] (bl\l) -- (br\l);
+} 
+
+\begin{pgfonlayer}{background}
+  \fill[fill=clRegisterLight] (brreg) -- (lvlTop) -- (blreg) -- cycle;
+  \fill[fill=clMemoryLight] (brmem) -- (trmem) -- (tlmem) -- (blmem) -- cycle;
+\end{pgfonlayer} 
+
+\path[blockdraw] (trmem-|lvlTop) -- (brmem-|lvlTop);
+\path[blockdraw] (brhddtop-|lvlTop) -- (lvlLeft-|lvlTop);
+
+\foreach \v in {lvlTop, flash.east, net.west}
+{
+\path[blockdraw] (brhddtop-|\v) -- (lvlLeft-|\v);
+
+} 
+
+% \path[name path=ltop] (hdd.north-|lvlLeft) --  (hdd.north-|lvlRight);
+% \path [name intersections={of=ltop and cliptriangle, by={tl, tr}}];
+% \path[blockdraw] (tl) -- (tr);
+% \path[blockdraw] (tl-|lvlTop) -- (lvlLeft-|lvlTop);
+\tikzstyle{bigcommentstyle}	= [text width=10em]
+
+\foreach \nstart/\nend/\comment/\style in 
+% {lvlLeft/trhddtop/Косвенный доступ (с~помощью функций операционной системы)/bigcommentstyle, brmem/lvlTop/Прямой доступ/}
+{tlhddtop/lvlRight/Косвенный доступ (с~помощью функций операционной системы)/bigcommentstyle, lvlTop/blmem/Прямой доступ/}
+{
+  \draw [decorate,decoration={brace,amplitude=2ex}]
+  (\nstart) -- (\nend) node [%midway, 
+  pos=0.52,
+  auto, %sloped, 
+  xshift=2ex, commentstyle, text badly centered, \style] {\comment};
+  
+}
+
+\end{tikzpicture}
+}
+
 
 \caption{Иерархия запоминающих устройств.
 Сверху вниз увеличивается объём и~уменьшается скорость обмена}
@@ -1194,7 +1480,7 @@ ${+}{+}i$ (или соответствующая ему команда ассемблера \lstinline$inc i$) будет в
 
 Сигналы обрабатываются базовыми элементами схем "--- \termin{логическими вентилями\index{Логический вентиль},}
 преобразующими множество входных сигналов в~выходной
-в~соответствии с~какой-либо из логических операций\picturecensored[ (в~частности, «и», «или», «не», «и-не).]{.
+в~соответствии с~какой-либо из логических операций \picturecensored[(в~частности, «и», «или», «не», «и-не»).]{.
 % (рис.~\ref{ris:logic-gates}).
 На рис.~\ref{ris:logic-gates} показаны таблицы истинности некоторых из них "--- «и», «или», «не», «и-не».
 
@@ -1247,7 +1533,11 @@ ${+}{+}i$ (или соответствующая ему команда ассемблера \lstinline$inc i$) будет в
 % "--- в~суммирующей машине Паскаля.
 
 \subsection{Микроархитектурный уровень}
-
+\epigraphcensored[\epigraph{
+...Антагонизмы в~области материального производства делают необходимой надстройку из~идеологических сословий, деятельность которых, "--- хороша ли она или дурна, "--- хороша потому, что необходима... 
+}
+{К.\,Маркс}
+]{
 \epigraph{\begin{limerick}
 Говорят, в~самом сердце Тибета\\
 в~страшной тайне содержится
@@ -1258,7 +1548,7 @@ ${+}{+}i$ (или соответствующая ему команда ассемблера \lstinline$inc i$) будет в
 \end{limerick}
 }
 {С.\,Сатин}
-
+}
 
 
 Микроархитектура %микро
@@ -1649,9 +1939,15 @@ GM-NAA I/O (General Motors \& North American Aviation Input/Output system)  для 
 % Язык C++ реализован для  Синтаксис C++ стандартизирован и~подде
 
 \section{История} 
-\epigraph{\begin{stanza}[0mm]Действительность "--- не бред собачий.\\
+\epigraphcensored[\epigraph{%Вместе с тем  первое, будучи  вечным,  не может  уничтожиться; в  
+...В~самом
+деле,  так  как возникновение  по  направлению  вверх  не  беспредельно,  то
+необходимо, чтобы не  было вечным то, из чего как из первого возникло что-то
+через его уничтожение.
+}{\Metaphiz}]
+{\epigraph{\begin{stanza}[0mm]Действительность "--- не бред собачий.\\
 Она сложнее и~богаче.\end{stanza}}
-{Валентин Берестов}
+{Валентин Берестов}}
 
 % Современные ВС: 6 уровней; как отрастали эти шесть уровней, начиная от одноуровневых счётов и~одно?двух?уровневого жаккардова станка
 Термин «компьютер»\index{Компьютер} (вычислитель) в~разное время обозначал различные понятия "--- и~клерка-вычислителя,
@@ -1744,7 +2040,7 @@ GM-NAA I/O (General Motors \& North American Aviation Input/Output system)  для 
 \index{Бэббидж, Чарльз}%
 
 При этом, если заменить в определении компьютера «последовательность вычислительных операций» 
-на просто «последовательность операций», как это сделано\picturecensored[ в~некоторых источниках]{, в~частности, в~Википедии},
+на просто «последовательность операций», как это сделано \picturecensored[в~некоторых источниках]{, в~частности, в~Википедии},
 к~минус первому поколению компьютеров также можно отнести 
 цифровые мультимедийные механические устройства, серийно выпускавшиеся в~\RN{XV{-}XIX}~вв.  (шарманки и~музыкальные шкатулки),
 а~также механические станки с~ЧПУ "--- первый известный такой станок был разработан в~1802~г. Жозефом Жаккаром\index{Жаккар, Жозеф}.
@@ -1806,7 +2102,6 @@ GM-NAA I/O (General Motors \& North American Aviation Input/Output system)  для 
 включающий
 управляющий барабан (УУ\index{УУ}), хранилище (регистровую память),
 мельницу (арифметическое устройство "--- АУ\index{АЛУ}).
-
 \picturecensored{
 \begin{illustration}
 \includegraphics[width=\linewidth,keepaspectratio,valign=t]{babbage-lovelace-color}
@@ -1857,7 +2152,6 @@ Z1 обрабатывал 22-битные числа с~плавающей запятой,
 команды сложения и~вычитания, умножения и~деления, ввода и~вывода, загрузки и~сохранения в~память.
 В~системе команд Z1\index{Z1} не было условных переходов, так как их затруднительно выполнять на перфоленте.
 Цикл реализовывался склейкой перфоленты в~кольцо~\cite{586067-ru,586067}.
-
 \picturecensored{
 \begin{illustration}
 \includegraphics[width=\linewidth,keepaspectratio,valign=t]{z1}
@@ -1913,8 +2207,6 @@ Z1 обрабатывал 22-битные числа с~плавающей запятой,
 \index{Цузе, Конрад}%
 В~1941~г. "---  Z3\index{Z3} с~полностью релейной памятью, к~системе команд которого было добавлено вычисление квадратного корня~\cite{586067-ru,586067}.
 Перфоленты для программ Z2\index{Z2} и~Z3\index{Z3} делались уже не из бумаги, а~из более прочной киноплёнки\picturecensored{ (рис.~\ref{ris:z3})}.
-
-
 \picturecensored{
 \begin{illustration}
 \includegraphics[width=\approvedImageWidth,keepaspectratio,valign=t]{z3}
@@ -1968,7 +2260,7 @@ Z1 обрабатывал 22-битные числа с~плавающей запятой,
 который можно назвать ранней операционной системой.
 % https://geektimes.ru/company/mailru/blog/289239/
 %  Забытое поколение релейных компьютеров 
-Система команд Bell Model V{Bell Model V} включала условные переходы, реализующиеся как переключение между различными перфолентами.
+Система команд Bell Model V\index{Bell Model V} включала условные переходы, реализующиеся как переключение между различными перфолентами.
 % https://www.itweek.ru/themes/detail.php?ID=71978
 % % Две следующие машины Bell Labs (Model III и Model IV) были по существу идентичны и также предназначались для систем ПВО. 
 % % Model III, известная как "Баллистическая вычислительная машина” (Ballistic Computer), была установлена в июне 1944 г. 
@@ -2461,7 +2753,28 @@ Apple II\index{Apple II}, IBM 5100\index{IBM PC}, Tandy TRS-80\index{Tandy TRS-8
 \epigraph{
 Вертикальная структура древа больше связана с~космологией, а~горизонтальная "--- с~магическими ритуалами. Чаще всего древо изображалось с~восемью ветвями, по четыре с~каждой стороны. Имело оно и~четыре главных цвета: красный, чёрный, белый, синий.}{Г.\,Белякова}
 
-Наиболее известным семейством операционных систем является семейство Unix.
+% \modifyonelong[
+% 
+% Уровень операционной системы, облегчающий взаимодействие прикладных программ с~аппаратной частью ВС, возник достаточно рано.
+% При этом первые операционные системы были неотделимы от соответствующих компьютеров и~создавались %, как правило, 
+% той же компанией, что и~сам компьютер.
+% В~них использовалось множество прогрессивных архитектурных решений и~приёмов человеко-машинного взаимодействия,
+% в~частности, в~1972 г. в~системе PLATO появился графический интерфейс пользователя;
+% но при смене компьютера приходилось менять и~систему.
+% 
+% Позже появились операционные системы, разработанные сторонними организациями.
+% Так как при смене компьютера нерационально полностью отказываться от старой операционной системы и,~соответственно, от написанного для неё ПО, появились порты таких систем на архитектуры, отличные от первоначальной, 
+% а~также семейства схожих систем.
+% 
+% В~настоящее время наиболее известным семейством являются  Unix-подобные операционные системы.
+% Для архитектуры x86 наиболее распространены такие представители этого семейства, как GNU/Linux и~разнообразные ветки BSD;
+% для ARM\index{ARM} "--- основанная на ядре Linux система Android.
+% Именно Android сейчас является наиболее распространённой операционной системой.
+% 
+% \subsubsection{История семейства Unix}
+% ]{}
+
+Наиболее известным семейством операционных систем является семейство Unix\index{Unix}.
 % 
 Первоначально операционная система Unics (Uniplexed Information and Computing System) 
 была разработана %Кен Томпсон Денис Ритчи Брайан Керниган
@@ -2484,6 +2797,11 @@ Multics (Multiplexed Information and Computing Service)
 В~настоящее время потомки операционной системы Unix
 % разделяющие принципы
 называются Unix-подобными операционными системами.
+\modifyone[Для архитектуры x86 наиболее распространены такие представители этого семейства, как GNU/Linux и~разнообразные ветки BSD;
+для ARM\index{ARM} "--- основанная на ядре Linux система Android.
+Именно Android сейчас является наиболее распространённой операционной системой.
+]{}
+
 % Семейство стандартов Single UNIX Specification (SUS)
 % Лицензированными Unix 
 Понятие Unix-системы описывается семейством стандартов Single UNIX Specification (SUS\index{SUS}).
@@ -2495,10 +2813,23 @@ Multics (Multiplexed Information and Computing Service)
 служащий для обеспечения совместимости Unix-подобных систем на уровне исходного кода.
 При этом операционная система может поддерживать POSIX и~не являясь Unix-подобной.
 
-% Для~компьютера IBM PC, использовавшего процессор Intel 8086, фирмой Microsoft была куплена операционная система DOS
-
-
-Для процессоров семейства x86, кроме множества вариантов Unix-подобных систем,
+% \modifyonelong[
+% \subsubsection{Операционные системы IBM PC}
+% 
+% Оригинальный компьютер IBM PC\index{IBM PC} (1981~г), использовавший восьмиразрядный процессор Intel 8088\index{Intel 8088},
+% из-за множества аппаратных ограничений не мог использовать существовавшие в~то время многозадачные и~многопользовательские операционные системы.
+% 
+% Разработка специализированной системы, вопреки обычной политике IBM (но в~соответствии с~положенными в~основу IBM PC принципами модульности и~открытости), была поручена сторонней фирме "--- Microsoft, которой и~была куплена и~доработана простая однозадачная операционная система DOS, обладающая текстовым интерфейсом.
+% Позже была разработана графическая надстройка над DOS "--- Windows.
+% Дальнейшее развитие связки DOS и~Windows привело к~линейке операционных систем Microsoft Windows 95/98/Me для IBM~PC, которая так и~не стала полностью многозадачной и~была закрыта.
+% 
+% Практически сразу были предприняты попытки разработки для IBM PC альтернативных операционных систем (в~частности, OS/2), а~также портирования Unix. 
+% Начиная с~процессора 80386\index{Intel 80386}, на платформе x86 возможна работа полноценных многозадачных операционных систем, наиболее известной из которых стала Unix-подобная GNU/Linux.
+% 
+% 
+% В~настоящее время
+% д]
+{Д}ля процессоров семейства x86, кроме множества вариантов Unix-подобных систем,
 доступны также специфические операционные системы:
 % Microsoft DOS
 линейка операционных систем с~закрытым исходным кодом Microsoft Windows NT (в~настоящее время  NT является единственной поддерживаемой линейкой Microsoft Windows, поэтому обозначение NT часто опускают), 

@@ -5,11 +5,37 @@
 %  bash makebook
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \def\pressversion{1}	% удалять ли ссылки на файлы из лаб
 \def\blackandwhiteschemas{0}
 % \def\blackandwhiteschemas{1}
 
-\newcommand\picturecensored[2][]{#1}
+
+% \newcommand*{\TakeFourierOrnament}[1]{{%
+% \fontencoding{U}\fontfamily{futs}\selectfont\char#1}}
+% \newcommand*{\danger}{\TakeFourierOrnament{66}}
+\newcommand{\warningsign}{\tikz[baseline=-.75ex] \node[shape=regular polygon, regular polygon sides=3, inner sep=0pt, draw=red, very thick] {\textbf{!}};}
+
+\newcommand\picturecensored[2][]{\marginpar{\warningsign}\textcolor{green!50!black}{#1}}
+% \newcommand\redchangesfirst[3][]{\textcolor{green!50!black}{#3}}
+
+% \usepackage{marginnote}
+% \newcommand\picturecensoredfloatmark{\protect\marginnote[]}
+
+\newcommand\modifyone[2][]{\textcolor{green!50!black}{#1}\marginpar{\warningsign}}
+\newcommand\unmodifyone[2][]{#2} % временно передумали менять
+
+
+% \newcommand\modifyonelong[2][]{{\color{green!50!black}\marginpar{\warningsign}#1}}
+\newenvironment{modifyonelong}[1][!ht]%
+{\begingroup\color{green!50!black}
+}
+{\marginpar{\warningsign}\endgroup}
+
+% \newcommand\epigraphcensored[2][]{\textcolor{green!50!black}{#1}\marginpar{\warningsign}}
+\newcommand\epigraphcensored[2][]{\modifyone[#1]{#2}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \input{commonpath}
 \input{\COMMONPATH/1disser}
@@ -20,6 +46,9 @@
 \graphicspath{{fig/}{fig/digits/}{fig/fpu/}}
 
 \geometry{margin=20mm}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 \newcommand\stdOs{GNU/Linux}
@@ -42,6 +71,28 @@
 
 
 
+\makeatletter
+% \@namedef{Snark}{Льюис Кэрролл, \mbox{перевод Григория Кружкова}}
+\@namedef{Snark}{Льюис Кэрролл}
+\@namedef{Carroll}{Льюис Кэрролл}
+\@namedef{Lear}{Эдвард Лир}
+\@namedef{Aquarium}{Аквариум}
+\@namedef{Orgia}{Оргия праведников}
+% {С. Калугин}
+\@namedef{MathFolk}{Математический фольклор}
+\@namedef{ProgFolk}{Программистский фольклор}
+\@namedef{Khlebnikov}{В.\,Хлебников}
+
+\@namedef{Metaphiz}{Аристотель%, «Метафизика»
+}
+
+\@namedef{ZhvalevskijMytko}{А.\,В.\,Жвалевский, И.\,Е.\,Мытько}
+% {Жвалевский/Мытько}
+
+\makeatother
+
+
+\newcommand\Vvm[1][]{В.\,В.\,Маяковский}
 
 
 \makeatletter
