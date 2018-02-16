@@ -7,8 +7,8 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \def\pressversion{1}	% удалять ли ссылки на файлы из лаб
-\def\blackandwhiteschemas{0}
-% \def\blackandwhiteschemas{1}
+\def\blackandwhiteschemas{0}	% цветные рисунки и шрифты
+% \def\blackandwhiteschemas{1}	% чёрно-белая палитра
 
 
 % \newcommand*{\TakeFourierOrnament}[1]{{%
@@ -16,21 +16,22 @@
 % \newcommand*{\danger}{\TakeFourierOrnament{66}}
 \newcommand{\warningsign}{\tikz[baseline=-.75ex] \node[shape=regular polygon, regular polygon sides=3, inner sep=0pt, draw=red, very thick] {\textbf{!}};}
 
-\newcommand\picturecensored[2][]{\marginpar{\warningsign}\textcolor{green!50!black}{#1}}
-% \newcommand\redchangesfirst[3][]{\textcolor{green!50!black}{#3}}
-
-% \usepackage{marginnote}
-% \newcommand\picturecensoredfloatmark{\protect\marginnote[]}
-
 \newcommand\modifyone[2][]{\textcolor{green!50!black}{#1}\marginpar{\warningsign}}
 \newcommand\unmodifyone[2][]{#2} % временно передумали менять
-
 
 % \newcommand\modifyonelong[2][]{{\color{green!50!black}\marginpar{\warningsign}#1}}
 \newenvironment{modifyonelong}[1][!ht]%
 {\begingroup\color{green!50!black}
 }
 {\marginpar{\warningsign}\endgroup}
+
+% \newcommand\picturecensored[2][]{\marginpar{\warningsign}\textcolor{green!50!black}{#1}}
+% % \newcommand\redchangesfirst[3][]{\textcolor{green!50!black}{#3}}
+\newcommand\picturecensored[2][]{\modifyone[#1]{#2}}
+
+% \usepackage{marginnote}
+% \newcommand\picturecensoredfloatmark{\protect\marginnote[]}
+
 
 % \newcommand\epigraphcensored[2][]{\textcolor{green!50!black}{#1}\marginpar{\warningsign}}
 \newcommand\epigraphcensored[2][]{\modifyone[#1]{#2}}
