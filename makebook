@@ -20,8 +20,8 @@ pdflatex ${MAINFILE}
 
 COMPILEDFILE="${MAINFILE}.pdf"
 
-ps2pdf -dUseFlatCompression=true ${COMPILEDFILE}
-COMPRESSEDFILE="${MAINFILE}.pdf.pdf"
+# ps2pdf -dUseFlatCompression=true ${COMPILEDFILE}
+# COMPRESSEDFILE="${MAINFILE}.pdf.pdf"
 
 MINSIZEFILE=${COMPILEDFILE}
 
