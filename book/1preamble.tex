@@ -18,6 +18,7 @@
 
 \newcommand\modifyone[2][]{\textcolor{green!50!black}{#1}%\marginpar{\warningsign}
 }
+% \newcommand\modifyone[2][]{{\color{green!50!black}#1}}
 \newcommand\unmodifyone[2][]{#2} % временно передумали менять
 
 % \newcommand\modifyonelong[2][]{{\color{green!50!black}\marginpar{\warningsign}#1}}
@@ -37,6 +38,10 @@
 
 % \newcommand\epigraphcensored[2][]{\textcolor{green!50!black}{#1}\marginpar{\warningsign}}
 \newcommand\epigraphcensored[2][]{\modifyone[#1]{#2}}
+
+\newcommand\modifytwo[2][]{{\color{violet!50!black}#1}}
+\newcommand\unmodifytwo[2][]{#2} % временно передумали менять
+\newcommand\epigraphcensoredtwo[2][]{\modifytwo[#1]{#2}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
