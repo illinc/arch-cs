@@ -25,12 +25,13 @@ COMPILEDFILE="${MAINFILE}.pdf"
 
 MINSIZEFILE=${COMPILEDFILE}
 
+RESFILE=archcs-gas-glg-kai
 
 #cp ${MAINFILE}.pdf "../../АрхВС лаб/${MAINFILE}-labs.pdf"
 #cp ${MAINFILE}.pdf.pdf "../../${MAINFILE}-labs.pdf"
-cp ${MINSIZEFILE} "../../${MAINFILE}-labs.pdf"
+cp ${MINSIZEFILE} "../../${RESFILE}.pdf"
 
 #cp ${MAINFILE}.pdf.pdf "${MAINFILE}-book.pdf"
-cp ${MINSIZEFILE} "${MAINFILE}-book.pdf"
+cp ${MINSIZEFILE} "${RESFILE}.pdf"
 
 
