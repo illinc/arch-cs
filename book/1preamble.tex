@@ -43,6 +43,13 @@
 \newcommand\unmodifytwo[2][]{#2} % временно передумали менять
 \newcommand\epigraphcensoredtwo[2][]{\modifytwo[#1]{#2}}
 
+\newcommand\modifythree[2][]{{\color{violet!70!blue!70!black}#1}}
+% \newenvironment{modifythreelong}[1][!ht]%
+% {\begingroup\color{violet!70!blue}
+% }
+% {\endgroup}
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \input{commonpath}
@@ -89,13 +96,14 @@
 % {С. Калугин}
 \@namedef{MathFolk}{Математический фольклор}
 \@namedef{ProgFolk}{Программистский фольклор}
-\@namedef{Khlebnikov}{В.\,Хлебников}
+% \@namedef{Khlebnikov}{В.\,Хлебников}
 
-\@namedef{Metaphiz}{Аристотель%, «Метафизика»
-}
+\@namedef{Metaphiz}{Аристотель. Метафизика}
+\@namedef{Kapital}{К.\,Маркс. Капитал}
+\@namedef{PrutkovMA}{К.\,П.\,Прутков. \mbox{Плоды раздумья. Мысли и~афоризмы}}
 
-\@namedef{ZhvalevskijMytko}{А.\,В.\,Жвалевский, И.\,Е.\,Мытько}
-% {Жвалевский/Мытько}
+% \@namedef{ZhvalevskijMytko}{А.\,В.\,Жвалевский, И.\,Е.\,Мытько}
+% % {Жвалевский/Мытько}
 
 \@namedef{Edda}{Младшая Эдда}
 % \@namedef{Edda}{ДревнескандинавскийМладшая Эдда}
@@ -103,8 +111,27 @@
 \makeatother
 
 
-\newcommand\Vvm[1][]{В.\,В.\,Маяковский}
-\newcommand\Quran[1][]{Коран, #1}
+\newcommand\Vvm[1][]{В.\,В.\,Маяковский. #1}
+\newcommand\Quran[1][]{Коран. #1}
+
+\newcommand\ZhvalevskijMytko[1][]{А.\,В.\,Жвалевский, И.\,Е.\,Мытько.\par #1}
+\newcommand\Bg[1][]{Б.\,Б.\,Гребенщиков. #1}
+\newcommand\Sk[1][]{С.\,А.\,Калугин. #1}
+\newcommand\Rosarium[1][]{\Sk[Rosarium. Венок~сонетов.~Сонет~#1]}
+% С.\,А.\,Калугин, Алексей Бурков - Rosarium. Венок сонетов
+% Бурков "--- музыка
+
+\newcommand\Khlebnikov[1][]{В.\,Хлебников. #1}
+\newcommand\Gumilyov[1][]{Н.\,C.\,Гумилёв. #1}
+\newcommand\Lomonosov[1][]{М.\,В.\,Ломоносов. #1}
+
+
+
+
+
+
+
+
 
 
 \makeatletter

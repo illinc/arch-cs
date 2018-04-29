@@ -1,35 +1,40 @@
 # noexec на флешке #!/bin/bash
 
 MAINFILE=archcs-gas
-
-pdflatex ${MAINFILE}
-
-# Одного вызова мало
-bibtex ${MAINFILE}
-bibtex ${MAINFILE}
-
-pdflatex ${MAINFILE}
-# pdflatex ${MAINFILE}
-
-# utf-8 не годится, нужна однобайтовая кодировка (любая подходит, но официально результат rumakeindex в koi8)
-LANG=ru_RU.KOI8-RU rumakeindex ${MAINFILE}.idx
-iconv -f KOI8-RU -t WINDOWS-1251 ${MAINFILE}.ind -o ${MAINFILE}.ind
-pdflatex ${MAINFILE} 
-
-pdflatex ${MAINFILE} 
-
 COMPILEDFILE="${MAINFILE}.pdf"
-
-# ps2pdf -dUseFlatCompression=true ${COMPILEDFILE}
-# COMPRESSEDFILE="${MAINFILE}.pdf.pdf"
-
-MINSIZEFILE=${COMPILEDFILE}
-
+  # COMPRESSEDFILE="${MAINFILE}.pdf.pdf"
+  MINSIZEFILE=${COMPILEDFILE}
 RESFILE=archcs-gas-glg-kai
 
-#cp ${MAINFILE}.pdf "../../АрхВС лаб/${MAINFILE}-labs.pdf"
-#cp ${MAINFILE}.pdf.pdf "../../${MAINFILE}-labs.pdf"
-cp ${MINSIZEFILE} "../../${RESFILE}.pdf"
+pdflatex ${MAINFILE}
+
+if [[ "$1" != "-1" ]]
+then
+
+  # Одного вызова мало
+  bibtex ${MAINFILE}
+  bibtex ${MAINFILE}
+
+  pdflatex ${MAINFILE}
+  # pdflatex ${MAINFILE}
+
+  # utf-8 не годится, нужна однобайтовая кодировка (любая подходит, но официально результат rumakeindex в koi8)
+  LANG=ru_RU.KOI8-RU rumakeindex ${MAINFILE}.idx
+  iconv -f KOI8-RU -t WINDOWS-1251 ${MAINFILE}.ind -o ${MAINFILE}.ind
+  pdflatex ${MAINFILE} 
+
+  pdflatex ${MAINFILE} 
+
+
+  # ps2pdf -dUseFlatCompression=true ${COMPILEDFILE}
+
+
+
+  #cp ${MAINFILE}.pdf "../../АрхВС лаб/${MAINFILE}-labs.pdf"
+  #cp ${MAINFILE}.pdf.pdf "../../${MAINFILE}-labs.pdf"
+  cp ${MINSIZEFILE} "../../${RESFILE}.pdf"
+
+fi
 
 #cp ${MAINFILE}.pdf.pdf "${MAINFILE}-book.pdf"
 cp ${MINSIZEFILE} "${RESFILE}.pdf"
