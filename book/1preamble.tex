@@ -6,49 +6,11 @@
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\def\pressversion{1}	% удалять ли ссылки на файлы из лаб
+\def\pressversion{1}	% удалять ли ссылки на локальные файлы из лаб: 0/1 = оставить/удалить
+
+% Цвет иллюстраций и шрифтов: 0/1 = нет/есть
 \def\blackandwhiteschemas{0}	% цветные рисунки и шрифты
 % \def\blackandwhiteschemas{1}	% чёрно-белая палитра
-
-
-% \newcommand*{\TakeFourierOrnament}[1]{{%
-% \fontencoding{U}\fontfamily{futs}\selectfont\char#1}}
-% \newcommand*{\danger}{\TakeFourierOrnament{66}}
-\newcommand{\warningsign}{\tikz[baseline=-.75ex] \node[shape=regular polygon, regular polygon sides=3, inner sep=0pt, draw=red, very thick] {\textbf{!}};}
-
-\newcommand\modifyone[2][]{\textcolor{green!50!black}{#1}%\marginpar{\warningsign}
-}
-% \newcommand\modifyone[2][]{{\color{green!50!black}#1}}
-\newcommand\unmodifyone[2][]{#2} % временно передумали менять
-
-% \newcommand\modifyonelong[2][]{{\color{green!50!black}\marginpar{\warningsign}#1}}
-\newenvironment{modifyonelong}[1][!ht]%
-{\begingroup\color{green!50!black}
-}
-{%\marginpar{\warningsign}
-\endgroup}
-
-% \newcommand\picturecensored[2][]{\marginpar{\warningsign}\textcolor{green!50!black}{#1}}
-% % \newcommand\redchangesfirst[3][]{\textcolor{green!50!black}{#3}}
-\newcommand\picturecensored[2][]{\modifyone[#1]{#2}}
-
-% \usepackage{marginnote}
-% \newcommand\picturecensoredfloatmark{\protect\marginnote[]}
-
-
-% \newcommand\epigraphcensored[2][]{\textcolor{green!50!black}{#1}\marginpar{\warningsign}}
-\newcommand\epigraphcensored[2][]{\modifyone[#1]{#2}}
-
-\newcommand\modifytwo[2][]{{\color{violet!50!black}#1}}
-\newcommand\unmodifytwo[2][]{#2} % временно передумали менять
-\newcommand\epigraphcensoredtwo[2][]{\modifytwo[#1]{#2}}
-
-\newcommand\modifythree[2][]{{\color{violet!70!blue!70!black}#1}}
-% \newenvironment{modifythreelong}[1][!ht]%
-% {\begingroup\color{violet!70!blue}
-% }
-% {\endgroup}
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -57,6 +19,42 @@
 \input{\COMMONPATH/3times}
 \input{\COMMONPATH/3subj-book}
 \input{4archcompsys}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+% Цвета, которыми выделяются правки
+\colorlet{clModifyOne}{green!50!black}
+\colorlet{clModifyTwo}{violet!50!black}
+% \colorlet{clModifyThree}{violet!50!blue!70!black}
+\colorlet{clModifyThree}{violet!30!blue!70!black}
+
+
+% \newcommand{\warningsign}{\tikz[baseline=-.75ex] \node[shape=regular polygon, regular polygon sides=3, inner sep=0pt, draw=red, very thick] {\textbf{!}};}
+
+\newcommand\modifyone[2][]{\textcolor{clModifyOne}{#1}}
+\newcommand\unmodifyone[2][]{#2} % временно передумали менять
+
+\newenvironment{modifyonelong}[1][!ht]%
+{\begingroup\color{clModifyOne}
+}
+{\endgroup}
+
+\newcommand\picturecensored[2][]{\modifyone[#1]{#2}}
+
+
+\newcommand\modifytwo[2][]{{\color{clModifyTwo}#1}}
+\newcommand\unmodifytwo[2][]{#2} % временно передумали менять
+
+\newcommand\modifythree[2][]{{\color{clModifyThree}#1}} % не работает с ] в аргументе
+\newenvironment{modifythreelong}
+{\begingroup\color{clModifyThree}
+}
+{\endgroup}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \input{viewheader}
 \graphicspath{{book/fig/}}
 
@@ -107,7 +105,7 @@
 % % {Жвалевский/Мытько}
 
 \@namedef{Edda}{Младшая Эдда}
-% \@namedef{Edda}{ДревнескандинавскийМладшая Эдда}
+% \@namedef{Edda}{Древнескандинавский Младшая Эдда}
 
 \makeatother
 
@@ -116,6 +114,7 @@
 \newcommand\Quran[1][]{Коран. #1}
 
 \newcommand\ZhvalevskijMytko[1][]{А.\,В.\,Жвалевский, И.\,Е.\,Мытько.\par #1}
+\newcommand\ZhvalevskijMytkoSA[1][]{А.\,В.\,Жвалевский, И.\,Е.\,Мытько.\par Девять подвигов Сена Аесли. Подвиги #1}
 \newcommand\Bg[1][]{Б.\,Б.\,Гребенщиков. #1}
 \newcommand\Sk[1][]{С.\,А.\,Калугин. #1}
 \newcommand\Rosarium[1][]{\Sk[Rosarium. Венок~сонетов.~Сонет~#1]}
@@ -126,8 +125,12 @@
 \newcommand\Gumilyov[1][]{Н.\,C.\,Гумилёв. #1}
 \newcommand\Lomonosov[1][]{М.\,В.\,Ломоносов. #1}
 
+\newcommand\Kandinsky[1][]{В.\,Кандинский. \mbox{Пощёчина общественному вкусу.} #1}
 
 
+% Аквариум — 1/2 БГ, 3/4 замена
+% \newcommand{\epigraphA}[4]{\epigraph{#1}{#2}}
+\newcommand{\epigraphA}[4]{\epigraph{#3}{#4}}
 
 
 
