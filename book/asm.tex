@@ -1318,15 +1318,15 @@ addl $3*4, %esp // Три четырёхбайтовых числа из стека
 \newcommand{\foocompile}[4]
 {
 \resizebox{\linewidth}{!}{
-\tikzstyle{blockarrow}	= [-latex',thick,draw=blue]
+\tikzstyle{blockarrow}	= [-latex',thick,draw=clCompileArrow]
 \footnotesize
 \begin{tikzpicture}[start chain=cpp going below,start chain=S going below,
 every on chain/.style=join,every join/.style=blockarrow,
 node distance=2ex and 4ex
 ]
 \tikzstyle{block}	= [text width=22ex,text badly centered, minimum height=4ex, draw=black]
-\tikzstyle{file}	= [block,  fill=yellow!40!white]
-\tikzstyle{stage}	= [block, fill=blue,text=white, minimum height=3ex]
+\tikzstyle{file}	= [block, compilefile]
+\tikzstyle{stage}	= [block, compilestage, minimum height=3ex]
 
 \node[file,on chain=cpp] (prog1_cpp) {extern "C"\ int foo()};
 \node[stage,on chain=cpp] (cpp_preprocess) {Препроцессор};

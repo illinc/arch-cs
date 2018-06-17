@@ -20,6 +20,7 @@
 # *.pdf
 *.pdf
 !fig/**/*.pdf
+!book/fig/*.pdf
 !archcs-gas-glg-kai.pdf
 
 ## Bibliography auxiliary files (bibtex/biblatex/biber):

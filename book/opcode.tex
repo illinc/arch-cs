@@ -328,7 +328,7 @@ x = 6em, y = 6em,
   ежим совместимости};
 
 \begin{pgfonlayer}{background}
-  \node[ellipse, fit=(m64) (m32), inner sep = 0.5em, fill=gray!20, draw,name path=longmodeborder] (longmode) {};
+  \node[ellipse, fit=(m64) (m32), inner sep = 0.5em, fill=clShadow, draw,name path=longmodeborder] (longmode) {};
 \end{pgfonlayer} 
 
 
@@ -1157,9 +1157,9 @@ int main(int argc,
 \newcommand{\regA}[6][]
 {
     
-    \node[r2, on chain, #1	,	fill=clRegisterLight!75!clRegisterDark] (h2#2) {};
-    \node[r1, solidchaincell, right = of h2#2] (h1#2) {$#4$};
-    \node[r1, solidchaincell, right = of h1#2	,	fill=clRegisterLight!75] (l#2) {$#3$};
+    \node[r2, on chain, #1	,	regPart16] (h2#2) {};
+    \node[r1, solidchaincell, right = of h2#2	,	regPart8h] (h1#2) {$#4$};
+    \node[r1, solidchaincell, right = of h1#2	,	regPart8l] (l#2) {$#3$};
     
     \node[left = 1ex of h2#2, titlesc] (title#2)  {$#2$}; 
     
@@ -1187,7 +1187,7 @@ int main(int argc,
 \newcommand{\regsi}[4][]
 {
     
-    \node[r2, on chain,	fill=clRegisterLight!75!clRegisterDark,	right=7ex of l#1] (h2#2) {};
+    \node[r2, on chain,	regPart16,	right=7ex of l#1] (h2#2) {};
     \node[r2, solidchaincell, right = of h2#2] (l#2) {$#3$};
     
     \node[left = 1ex of h2#2, titlesc] (title#2)  {$#2$}; 
@@ -1333,10 +1333,10 @@ $A, B, C, D, si, di$ и~$bp$.
 
 \newcommand{\regc}[7][]
 {
-    \node[r4, on chain, #1	,	fill=clRegisterLight!50!clRegisterDark] (h4#2) {};
-    \node[r2, solidchaincell, right = of h4#2	,	fill=clRegisterLight!75!clRegisterDark] (h2#2) {};
-    \node[r1, solidchaincell, right = of h2#2] (h1#2) {$#4$};
-    \node[r1, solidchaincell, right = of h1#2	,	fill=clRegisterLight!75] (l#2) {$#3$};
+    \node[r4, on chain, #1	,	regPart32] (h4#2) {};
+    \node[r2, solidchaincell, right = of h4#2	,	regPart16] (h2#2) {};
+    \node[r1, solidchaincell, right = of h2#2	,	regPart8h] (h1#2) {$#4$};
+    \node[r1, solidchaincell, right = of h1#2	,	regPart8l] (l#2) {$#3$};
     
 %     \node[left = 2ex of h4#2, scale=0.7]  {$#2$}; 
     \node[left = 2ex of h4#2, titlesc] (title#2)  {$#2$}; 

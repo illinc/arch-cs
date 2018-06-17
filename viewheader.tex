@@ -34,6 +34,30 @@
   }
 }
 
+\newcommand{\colordarklet}[2]
+{
+  \ifthenelse{\equal{\blackandwhiteschemas}{1}}
+  {
+%       \colorlet{#1}{black}
+      \colorlet{cl#1}{black}
+  }
+  {
+%       \colorlet{#1}{#2}
+      \colorlet{cl#1}{#2}
+  }
+}
+
+\newcommand{\colorlightlet}[2]
+{
+  \ifthenelse{\equal{\blackandwhiteschemas}{1}}
+  {
+      \colorlet{cl#1}{white}
+  }
+  {
+      \colorlet{cl#1}{#2}
+  }
+}
+
 % \ifthenelse{\equal{\blackandwhiteschemas}{1}}
 % {
 %   \colorlet{clRegisterDark}{black}
@@ -66,7 +90,26 @@
 % \colorpairlet{Comment}{gray}{clDark!40!white}
 \colorpairlet{Comment}{blue}{clDark!40!white}
 
+\colorlightlet{Shadow}{gray!40}
 
+% \colorlightlet{RegisterShadow}{clRegisterDark}
+  \ifthenelse{\equal{\blackandwhiteschemas}{1}}
+  {
+      \colorlet{clRegisterShadow}{gray!20}
+    \tikzstyle{regPart8l} = []
+    \tikzstyle{regPart8h} = []
+%     \tikzstyle{regPart16} = [pattern=north east lines]
+    \tikzstyle{regPart16} = [pattern=custom north east lines, hatchspread=5pt,]
+%     \tikzstyle{regPart32} = [pattern=north west lines]
+    \tikzstyle{regPart32} = [pattern=custom north west lines, hatchspread=3.5pt,]
+  }
+  {
+%       \colorlet{clRegisterShadow}{clRegistderDark}
+    \tikzstyle{regPart8l} = [fill=clRegisterLight!75]
+    \tikzstyle{regPart8h} = [fill=clRegisterLight]
+    \tikzstyle{regPart16} = [fill=clRegisterLight!75!clRegisterDark]
+    \tikzstyle{regPart32} = [fill=clRegisterLight!50!clRegisterDark]
+  }
 
 
 \colorlet{csControl}{green!50}
@@ -82,34 +125,12 @@
 \colorpairlet{Funcname}{black}{codehighlight}
 
 
-\newcommand{\colordarklet}[2]
-{
-  \ifthenelse{\equal{\blackandwhiteschemas}{1}}
-  {
-%       \colorlet{#1}{black}
-      \colorlet{cl#1}{black}
-  }
-  {
-%       \colorlet{#1}{#2}
-      \colorlet{cl#1}{#2}
-  }
-}
 \colordarklet{Ethimology}{olive}
 
 \colordarklet{Intel}{intelblue}
 \colordarklet{ATT}{magenta}
 \colordarklet{Gas}{magenta}
 
-\newcommand{\colorlightlet}[2]
-{
-  \ifthenelse{\equal{\blackandwhiteschemas}{1}}
-  {
-      \colorlet{cl#1}{white}
-  }
-  {
-      \colorlet{cl#1}{#2}
-  }
-}
 
 \colorlightlet{Marker}{yellow!50}
 
